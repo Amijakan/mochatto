@@ -4,8 +4,7 @@ EXPOSE 4000
 # Do environmental setup here
 # Installing node modules
 WORKDIR /app
-RUN yarn
 
-ENTRYPOINT ["yarn", "dev"]
+ENTRYPOINT yarn && yarn dev
 
 

@@ -3,6 +3,5 @@ EXPOSE 4500
 ENV PORT=4500
 
 WORKDIR /app
-RUN yarn
 
-ENTRYPOINT ["yarn", "start"]
+ENTRYPOINT yarn && yarn start

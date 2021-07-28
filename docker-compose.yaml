@@ -3,13 +3,13 @@ services:
   server:
     build:
       context: ./server
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile.prod
     ports:
       - '4000:4000'
   client:
     build:
       context: ./client
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile.prod
     ports:
       - '4500:4500'
 

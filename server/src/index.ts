@@ -4,7 +4,7 @@ const app = express()
 const port = 4000
 
 app.get('/', (req, res) => {
-  res.send('Hello world')
+  res.send({body: 'Hello world'})
 })
 
 app.listen(port, () => {

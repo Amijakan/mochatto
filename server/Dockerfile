@@ -2,8 +2,6 @@ FROM node:14.17.3
 
 # Do environmental setup here
 
-ENV PORT=$PORT
-
 # Installing node modules
 COPY . /
 RUN yarn

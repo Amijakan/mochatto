@@ -1,4 +1,5 @@
 FROM node:14.17.3
+EXPOSE 4500
 
 COPY . /
 

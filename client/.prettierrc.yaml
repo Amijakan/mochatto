@@ -4,4 +4,4 @@ singleQuote: false
 semi: true
 parser: 'typescript'
 bracketSpacing: true
-filepath: 'src/*.{ts,tsx,js}'
+filepath: src/*.{ts,tsx,js}

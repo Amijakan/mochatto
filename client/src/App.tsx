@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import request from 'superagent'
 
 function App() {
   return (
@@ -18,6 +19,13 @@ function App() {
         >
           Learn React
         </a>
+        <button
+          onClick={() => {
+            request.get(':4000').then(resp => {
+              console.log(resp)
+            })
+          }}
+  >Click</button>
       </header>
     </div>
   );

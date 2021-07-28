@@ -1,6 +1,7 @@
-node_modules/
-dist/
-
+# Common stuff
+.envrc
 *.sw[n-r]
 
-
+# Nodejs stuff
+node_modules/
+dist/

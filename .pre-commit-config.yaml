@@ -1,0 +1,6 @@
+- repo: https://github.com/prettier/pre-commit
+  rev: main
+  hooks:
+    - id: prettier
+      types: [javascript]
+

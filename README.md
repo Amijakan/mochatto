@@ -1,2 +1,5 @@
-# spatialchatclone
-An open source project that will basically copy spatial chat
+
+# Try it out
+
+1. `docker-compose build`
+1. `docker-compose up`

@@ -1,15 +1,14 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import request from 'superagent'
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import request from "superagent";
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-        </p>
+        <p></p>
         <a
           className="App-link"
           href="https://reactjs.org"
@@ -20,11 +19,13 @@ function App() {
         </a>
         <button
           onClick={() => {
-            request.get(':4000').then(resp => {
-              console.log(resp)
-            })
+            request.get(":4000").then((resp) => {
+              console.log(resp);
+            });
           }}
-  >Click</button>
+        >
+          Click
+        </button>
       </header>
     </div>
   );

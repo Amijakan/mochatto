@@ -3,6 +3,6 @@ EXPOSE 4500
 
 COPY . /
 
-RUN yarn
+RUN yarn && yarn build
 
-ENTRYPOINT ["yarn", "start"]
+ENTRYPOINT ["PORT=4500", "yarn", "serve"]

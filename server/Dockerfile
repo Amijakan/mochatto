@@ -1,4 +1,5 @@
 FROM node:14.17.3
+EXPOSE 4000
 
 # Do environmental setup here
 
@@ -6,7 +7,6 @@ FROM node:14.17.3
 COPY . /
 RUN yarn
 
-EXPOSE 4000
 ENTRYPOINT ["yarn", "start"]
 
 

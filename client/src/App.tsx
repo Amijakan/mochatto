@@ -9,12 +9,27 @@ const ENDPOINT = 'http://localhost:4000';
 function App() {
 	const [response, setResponse] = useState("");
 
+	const context = new AudioContext();
+
 	useEffect(() => {
 		const socket = socketIOClient(ENDPOINT);
 		socket.on("FromAPI", data => {
 			setResponse(data);
 		});
+		navigator.mediaDevices.getUserMedia({ audio: true, video: false}).then((stream) => {
+			const source = context.createMediaStreamSource(stream);
+			const processor = context.createScriptProcessor(1024, 1, 1);
+
+			source.connect(processor);
+			processor.connect(context.destination);
+
+			processor.onaudioprocess = function(e) {
+				// Do something with the data, e.g. convert it to WAV
+				console.log(e.inputBuffer);
+			};
+		});
 	}, []);
+
 
   return (
     <div className="App">

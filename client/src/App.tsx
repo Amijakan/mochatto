@@ -2,31 +2,27 @@ import React, { useState, useEffect } from 'react';
 import socketIOClient from 'socket.io-client';
 import logo from './logo.svg';
 import './App.css';
-import request from 'superagent'
+import request from 'superagent';
 
 const ENDPOINT = 'http://localhost:4000';
 
 function App() {
 	const [response, setResponse] = useState("");
 
-	const context = new AudioContext();
-
 	useEffect(() => {
 		const socket = socketIOClient(ENDPOINT);
+		const audio = document.querySelector('audio');
 		socket.on("FromAPI", data => {
 			setResponse(data);
 		});
-		navigator.mediaDevices.getUserMedia({ audio: true, video: false}).then((stream) => {
-			const source = context.createMediaStreamSource(stream);
-			const processor = context.createScriptProcessor(1024, 1, 1);
 
-			source.connect(processor);
-			processor.connect(context.destination);
-
-			processor.onaudioprocess = function(e) {
-				// Do something with the data, e.g. convert it to WAV
-				console.log(e.inputBuffer);
-			};
+		navigator.mediaDevices.enumerateDevices().then((devices) => {
+			navigator.mediaDevices.getUserMedia({ audio: {deviceId: devices[9].deviceId}, video: false}).then((stream) => {
+				if(audio){
+					(audio as HTMLAudioElement).srcObject=stream;
+					console.log(stream.getAudioTracks());
+				}
+			});
 		});
 	}, []);
 
@@ -46,6 +42,7 @@ function App() {
         >
           Learn React
         </a>
+				<audio controls autoPlay></audio>
         <button
           onClick={() => {
             request.get(':4000').then(resp => {

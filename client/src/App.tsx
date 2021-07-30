@@ -3,34 +3,58 @@ import socketIOClient from 'socket.io-client';
 import logo from './logo.svg';
 import './App.css';
 import request from 'superagent';
+//import socketio from 'socket.io-client';
+import Select from 'react-select';
 
 const ENDPOINT = 'http://localhost:4000';
 
 function App() {
 	const [response, setResponse] = useState("");
+	const Device = () => {
+		const value = "";
+		const label = "";
+		return {value, label};
+	};
+	const [inputOptions, setInputOptions] = useState([{}]);
+	const [selectedInput, setSelectedInput] = useState(Device());
 
+	//when rendered
+	useEffect(() => {
+		//enumerate through media devices
+		navigator.mediaDevices.enumerateDevices().then((devices) => {
+			var inputs = [{}];
+			devices.map((device) => {
+				var input = Device();
+				input.value = device.deviceId;
+				input.label = device.label;
+				inputs.push(input);
+			});
+			setInputOptions(inputs);
+		});
+	}, []);
+
+	//when new input is selected
 	useEffect(() => {
 		const socket = socketIOClient(ENDPOINT);
 		const audio = document.querySelector('audio');
 		socket.on("FromAPI", data => {
 			setResponse(data);
 		});
-
-		navigator.mediaDevices.enumerateDevices().then((devices) => {
-			navigator.mediaDevices.getUserMedia({ audio: {deviceId: devices[9].deviceId}, video: false}).then((stream) => {
-				if(audio){
-					(audio as HTMLAudioElement).srcObject=stream;
-					console.log(stream.getAudioTracks());
-				}
-			});
+		navigator.mediaDevices.getUserMedia({ audio: {deviceId: selectedInput.value}, video: false}).then((stream) => {
+			console.log("selected input");
+			console.log(selectedInput);
+			if(audio){
+				(audio as HTMLAudioElement).srcObject=stream;
+			}
 		});
-	}, []);
+	}, [selectedInput]);
 
 
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+				<audio controls autoPlay></audio>
+				<Select value={selectedInput} options={inputOptions} onChange={selection => {setSelectedInput(selection)}}/>
         <p>
 					It's <time dateTime={response}>{response}</time>
         </p>
@@ -42,7 +66,6 @@ function App() {
         >
           Learn React
         </a>
-				<audio controls autoPlay></audio>
         <button
           onClick={() => {
             request.get(':4000').then(resp => {

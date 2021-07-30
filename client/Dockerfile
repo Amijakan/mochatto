@@ -4,4 +4,4 @@ ENV PORT=4500
 
 WORKDIR /app
 
-ENTRYPOINT yarn && yarn start
+ENTRYPOINT yarn start

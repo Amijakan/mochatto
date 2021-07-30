@@ -8,6 +8,7 @@ services:
       - '4000:4000'
     volumes:
       - './server:/app'
+
   client:
     build:
       context: ./client

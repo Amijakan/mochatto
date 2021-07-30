@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Pretty much what it does is yarn install on server and client before docker-compose up
+ROOT=$PWD
+cd $ROOT/server
+yarn
+
+cd $ROOT/client
+yarn
+
+

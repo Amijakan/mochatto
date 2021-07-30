@@ -54,14 +54,6 @@ function JoinPage() {
         <p>
 					It's <time dateTime={response}>{response}</time>
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
         <button
           onClick={() => {
             request.get(':4000').then(resp => {

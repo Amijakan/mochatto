@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import socketIOClient from 'socket.io-client';
-import logo from './logo.svg';
-import './App.css';
 import request from 'superagent';
-import socketio from 'socket.io-client';
 import Select from 'react-select';
 
 const ENDPOINT = 'http://localhost:4000';

@@ -21,13 +21,10 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
 	console.log('new client connected')
-	getApiAndEmit(socket)
+	socket.on("SEND_USER_AUDIO", (stream) => {
+		socket.broadcast.emit("BROADCAST_AUDIO", stream)
+	})
 	socket.on('disconnect', () => {
 		console.log('client disconnect')
 	})
 })
-
-const getApiAndEmit = (socket: any) => {
-	const response = new Date()
-	socket.emit('FromAPI', response)
-}

@@ -1,17 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
-import socketIOClient from 'socket.io-client'
 import Select from 'react-select'
 import { Link } from 'react-router-dom'
-import DeviceSelector from './DeviceSelector'
-
-const ENDPOINT = 'http://localhost:4000'
-const socket = socketIOClient(ENDPOINT)
-
-const Device = () => {
-	const value = ''
-	const label = ''
-	return { value, label }
-}
+import { Device, DeviceSelector } from './DeviceSelector'
 
 function JoinPage() {
 	const [inputOptions, setInputOptions] = useState([{}])
@@ -28,7 +18,6 @@ function JoinPage() {
 	useEffect(() => {
 		if (audio) {
 			;(audio as HTMLAudioElement).srcObject = stream
-			socket.emit('SEND_USER_AUDIO', stream)
 		}
 	}, [selectedInput])
 

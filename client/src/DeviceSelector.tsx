@@ -48,4 +48,4 @@ function DeviceSelector(props) {
 	)
 }
 
-export default DeviceSelector
+export { Device, DeviceSelector }

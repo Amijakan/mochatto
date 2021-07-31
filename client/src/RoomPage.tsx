@@ -1,12 +1,40 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react'
+import socketIOClient from 'socket.io-client'
+import { Device, DeviceSelector } from './DeviceSelector'
 
-function RoomPage(){
+const ENDPOINT = 'http://localhost:4000'
+const socket = socketIOClient(ENDPOINT)
 
-	return(
+function RoomPage() {
+	const [inputOptions, setInputOptions] = useState([{}])
+	const [selectedInput, setSelectedInput] = useState(Device())
+	const [stream, setStream] = useState(new MediaStream())
+
+	const onSelect = ({ selectedInput, inputOptions, stream }) => {
+		setSelectedInput(selectedInput)
+		setInputOptions(inputOptions)
+		setStream(stream)
+	}
+
+	useEffect(() => {
+		socket.emit('SEND_USER_AUDIO', stream)
+		const audio = document.querySelector('audio')
+		socket.on('BROADCAST_AUDIO', (broadcast) => {
+			if (audio) {
+				;(audio as HTMLAudioElement).srcObject = broadcast
+			}
+		})
+	}, [stream])
+
+	return (
 		<>
-			Room page
+			<div>Room page</div>
+			<div>Broadcasted audio</div>
+			<audio controls autoPlay></audio>
+			<div>Input selector</div>
+			<DeviceSelector onSelect={onSelect} />
 		</>
-	);
+	)
 }
 
-export default RoomPage;
+export default RoomPage

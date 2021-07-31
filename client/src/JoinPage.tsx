@@ -19,7 +19,7 @@ function JoinPage() {
 		if (audio) {
 			;(audio as HTMLAudioElement).srcObject = stream
 		}
-	}, [selectedInput])
+	}, [stream])
 
 	return (
 		<>

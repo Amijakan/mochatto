@@ -19,6 +19,7 @@ function DeviceSelector(props) {
 				video: false,
 			})
 			.then((stream) => {
+				//if microphone permission is allowed
 				//enumerate through media devices
 				navigator.mediaDevices.enumerateDevices().then((devices) => {
 					var inputs = [{}]

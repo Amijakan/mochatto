@@ -25,7 +25,7 @@ function JoinPage() {
 
 	return (
 		<>
-			<audio controls autoPlay></audio>
+			<audio autoPlay></audio>
 			<DeviceSelector onSelect={onSelect} />
 			<Link to="/RoomPage">Join</Link>
 		</>

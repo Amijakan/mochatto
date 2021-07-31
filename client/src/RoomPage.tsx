@@ -17,11 +17,12 @@ function RoomPage() {
 	}
 
 	useEffect(() => {
-		socket.emit('SEND_USER_AUDIO', stream)
+		console.log(stream)
+		socket.emit('SEND_USER_AUDIO', JSON.stringify(stream))
 		const audio = document.querySelector('audio')
 		socket.on('BROADCAST_AUDIO', (broadcast) => {
 			if (audio) {
-				;(audio as HTMLAudioElement).srcObject = broadcast
+				;(audio as HTMLAudioElement).srcObject = JSON.parse(broadcast)
 			}
 		})
 	}, [stream])

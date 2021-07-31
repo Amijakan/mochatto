@@ -17,12 +17,39 @@ function RoomPage() {
 	}
 
 	useEffect(() => {
-		console.log(stream)
-		socket.emit('SEND_USER_AUDIO', JSON.stringify(stream))
+		let mediaRecorder = new MediaRecorder(stream)
+		if (stream.active) {
+			let chunks
+			mediaRecorder.onstart = function (e) {
+				chunks = []
+			}
+			mediaRecorder.ondataavailable = function (e) {
+				chunks.push(e.data)
+			}
+			mediaRecorder.start()
+			mediaRecorder.onstop = function (e) {
+				var blob = new Blob(chunks, { type: 'audio/ogg; codecs=opus' })
+				socket.emit('SEND_USER_AUDIO', blob)
+				// Start recording again
+				mediaRecorder.start()
+			}
+		}
+
+		//stop recording every second
+		setInterval(function () {
+			console.log(mediaRecorder.state)
+			if (mediaRecorder.state == 'recording') {
+				mediaRecorder.stop()
+			}
+		}, 1000)
 		const audio = document.querySelector('audio')
 		socket.on('BROADCAST_AUDIO', (broadcast) => {
 			if (audio) {
-				;(audio as HTMLAudioElement).srcObject = JSON.parse(broadcast)
+				//;(audio as HTMLAudioElement).srcObject = broadcast
+				var blob = new Blob([broadcast], {
+					type: 'audio/ogg; codecs=opus',
+				})
+				audio.src = window.URL.createObjectURL(blob)
 			}
 		})
 	}, [stream])

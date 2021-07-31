@@ -18,26 +18,22 @@ function JoinPage() {
 	const [inputOptions, setInputOptions] = useState([{}]);
 	const [selectedInput, setSelectedInput] = useState(Device());
 
-	//when rendered
-	useEffect(() => {
-
-		//enumerate through media devices
-		navigator.mediaDevices.enumerateDevices().then((devices) => {
-			var inputs = [{}];
-			devices.map((device) => {
-				var input = Device();
-				input.value = device.deviceId;
-				input.label = device.label;
-				inputs.push(input);
-			});
-			setInputOptions(inputs);
-		});
-	}, []);
-
 	//when new input is selected
 	useEffect(() => {
+
 		const audio = document.querySelector('audio');
 		navigator.mediaDevices.getUserMedia({ audio: {deviceId: selectedInput.value}, video: false}).then((stream) => {
+			//enumerate through media devices
+			navigator.mediaDevices.enumerateDevices().then((devices) => {
+				var inputs = [{}];
+				devices.map((device) => {
+					var input = Device();
+					input.value = device.deviceId;
+					input.label = device.label;
+					inputs.push(input);
+				});
+				setInputOptions(inputs);
+			});
 			console.log("selected input");
 			console.log(selectedInput);
 			if(audio){
@@ -52,7 +48,7 @@ function JoinPage() {
 		<>
 			<audio controls autoPlay></audio>
 			<Select value={selectedInput} options={inputOptions} onChange={selection => {setSelectedInput(selection)}}/>
-			<Link to="./RoomPage"></Link>
+			<Link to="/RoomPage">Join</Link>
 		</>
 	
   );

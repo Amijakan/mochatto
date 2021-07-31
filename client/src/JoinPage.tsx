@@ -15,8 +15,10 @@ function JoinPage() {
 	}
 
 	const audio = document.querySelector('audio')
+	//if the stream changes
 	useEffect(() => {
 		if (audio) {
+			//set the audio src to the stream
 			;(audio as HTMLAudioElement).srcObject = stream
 		}
 	}, [stream])

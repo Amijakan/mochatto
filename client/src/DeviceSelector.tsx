@@ -30,7 +30,6 @@ function DeviceSelector(props) {
 					})
 					setInputOptions(inputs)
 				})
-				console.log(selectedInput)
 				props.onSelect({ selectedInput, inputOptions, stream })
 			})
 	}, [selectedInput])

@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react';
-import socketIOClient from 'socket.io-client';
-import request from 'superagent';
-import Select from 'react-select';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react'
+import socketIOClient from 'socket.io-client'
+import Select from 'react-select'
+import { Link } from 'react-router-dom'
+import DeviceSelector from './DeviceSelector'
 
-const ENDPOINT = 'http://localhost:4000';
-const socket = socketIOClient(ENDPOINT);
+const ENDPOINT = 'http://localhost:4000'
+const socket = socketIOClient(ENDPOINT)
 
 const Device = () => {
 	const value = ''
@@ -14,44 +14,31 @@ const Device = () => {
 }
 
 function JoinPage() {
-	const [response, setResponse] = useState("");
-	const [inputOptions, setInputOptions] = useState([{}]);
-	const [selectedInput, setSelectedInput] = useState(Device());
+	const [inputOptions, setInputOptions] = useState([{}])
+	const [selectedInput, setSelectedInput] = useState(Device())
+	const [stream, setStream] = useState(new MediaStream())
 
-	//when new input is selected
+	const onSelect = ({ selectedInput, inputOptions, stream }) => {
+		setSelectedInput(selectedInput)
+		setInputOptions(inputOptions)
+		setStream(stream)
+	}
+
+	const audio = document.querySelector('audio')
 	useEffect(() => {
+		if (audio) {
+			;(audio as HTMLAudioElement).srcObject = stream
+			socket.emit('SEND_USER_AUDIO', stream)
+		}
+	}, [selectedInput])
 
-		const audio = document.querySelector('audio');
-		navigator.mediaDevices.getUserMedia({ audio: {deviceId: selectedInput.value}, video: false}).then((stream) => {
-			//enumerate through media devices
-			navigator.mediaDevices.enumerateDevices().then((devices) => {
-				var inputs = [{}];
-				devices.map((device) => {
-					var input = Device();
-					input.value = device.deviceId;
-					input.label = device.label;
-					inputs.push(input);
-				});
-				setInputOptions(inputs);
-			});
-			console.log("selected input");
-			console.log(selectedInput);
-			if(audio){
-				(audio as HTMLAudioElement).srcObject=stream;
-				socket.emit("SEND_USER_AUDIO", stream);
-			}
-		});
-	}, [selectedInput]);
-
-
-  return (
+	return (
 		<>
 			<audio controls autoPlay></audio>
-			<Select value={selectedInput} options={inputOptions} onChange={selection => {setSelectedInput(selection)}}/>
+			<DeviceSelector onSelect={onSelect} />
 			<Link to="/RoomPage">Join</Link>
 		</>
-	
-  );
+	)
 }
 
-export default JoinPage;
+export default JoinPage

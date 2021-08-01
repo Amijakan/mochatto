@@ -7,16 +7,20 @@ function JoinPage() {
 
 	const onSelect = ({ selectedInput, inputOptions, stream }) => {
 		setStream(stream)
-		const audio = new Audio()
-		//set the audio src to the stream
-		audio.srcObject = stream
-		if (selectedInput != '') {
-			audio.play()
-		}
 	}
+
+	const audio = document.querySelector('audio')
+	//if the stream changes
+	useEffect(() => {
+		if (audio) {
+			//set the audio src to the stream
+			;(audio as HTMLAudioElement).srcObject = stream
+		}
+	}, [stream])
 
 	return (
 		<>
+			<audio autoPlay></audio>
 			<DeviceSelector onSelect={onSelect} />
 			<Link to="/RoomPage">Join</Link>
 		</>

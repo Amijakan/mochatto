@@ -49,7 +49,7 @@ function RoomPage() {
 						audio.src = window.URL.createObjectURL(blob)
 					}
 				}
-			}, 1000)
+			}, 500)
 		}
 
 		// when recorder stops
@@ -85,8 +85,7 @@ function RoomPage() {
 	return (
 		<>
 			<div>Room page</div>
-			<div>Broadcasted audio</div>
-			<audio controls autoPlay></audio>
+			<audio autoPlay></audio>
 			<div>Input selector</div>
 			<DeviceSelector onSelect={onSelect} />
 		</>

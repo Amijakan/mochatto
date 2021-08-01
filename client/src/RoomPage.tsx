@@ -7,26 +7,17 @@ const socket = socketIOClient(ENDPOINT)
 
 function RoomPage() {
 	const [stream, setStream] = useState(new MediaStream())
-	const [blobsQueue, setBlobsQueue] = useState([new Blob()])
-	const [mediaRecorder, setMediaRecorder] = useState(
-		new MediaRecorder(stream)
-	)
 
 	const onSelect = ({ selectedInput, inputOptions, stream }) => {
 		console.log('1. input is selected')
-		setStream(stream)
-		if (stream.active) {
-			setMediaRecorder(new MediaRecorder(stream))
-			setBlobsQueue([new Blob()])
-		}
-	}
+		console.log(stream)
+		console.log(selectedInput)
+		let mediaRecorder = new MediaRecorder(stream)
+		let blobsQueue: Blob[] = []
 
-	// on render
-	useEffect(() => {
-		console.log('2. mediarecorder.stream is updated')
 		if (mediaRecorder.state === 'inactive') {
 			if (mediaRecorder.stream.active) {
-				console.log('3. recorder starts')
+				console.log('2. recorder starts')
 				// start recording if it's not already and the stream is active
 				mediaRecorder.start()
 			}
@@ -40,17 +31,17 @@ function RoomPage() {
 		}
 
 		mediaRecorder.onstart = (e) => {
-			console.log('4. onstart is called')
+			console.log('3. onstart is called')
 			const audio = document.querySelector('audio')
 			//every second: stop recording and play the next audio chunk in queue
 			setTimeout(() => {
 				if (mediaRecorder.state === 'recording') {
-					console.log('5. stop is called after timer')
+					console.log('4. stop is called after timer')
 					// stop recording if it is
 					mediaRecorder.stop()
 				}
 				// queue a blob and play it
-				console.log('5.1. blob is queued')
+				console.log('5. blob is queued')
 				console.log(blobsQueue.length)
 				let blob = blobsQueue.shift()
 				console.log(blobsQueue.length)
@@ -62,7 +53,7 @@ function RoomPage() {
 						audio.src = window.URL.createObjectURL(blob)
 					}
 				}
-			}, 2000)
+			}, 500)
 		}
 
 		// when recorder stops
@@ -101,7 +92,7 @@ function RoomPage() {
 			console.log(blobsQueue)
 			console.log(blobsQueue.length)
 		})
-	}, [])
+	}
 
 	return (
 		<>

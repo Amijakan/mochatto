@@ -11,13 +11,16 @@ function RoomPage() {
 	)
 
 	const onSelect = ({ selectedInput, inputOptions, stream }) => {
+		// remove old event listeners to avoid duplicate
 		prevMediaRecorder.ondataavailable = null
 		prevMediaRecorder.onstart = null
 		prevMediaRecorder.onstop = null
 
+		// instantiate new MediaRecorder with the new stream
 		let mediaRecorder = new MediaRecorder(stream)
+		// set state for event listeners cleanup
 		setPrevMediaRecorder(mediaRecorder)
-
+		// initialize audio queue
 		let blobsQueue: Blob[] = []
 
 		if (mediaRecorder.state === 'inactive') {
@@ -27,6 +30,7 @@ function RoomPage() {
 			}
 		}
 
+		// initialize audio chunk
 		let chunk = [new Blob()]
 
 		mediaRecorder.ondataavailable = (e) => {
@@ -34,9 +38,10 @@ function RoomPage() {
 			chunk.push(e.data)
 		}
 
+		// when recording starts
 		mediaRecorder.onstart = (e) => {
 			const audio = document.querySelector('audio')
-			//every second: stop recording and play the next audio chunk in queue
+			// stop recording and play the next audio chunk in queue every x-milliseconds
 			setTimeout(() => {
 				if (mediaRecorder.state === 'recording') {
 					// stop recording if it is
@@ -52,9 +57,9 @@ function RoomPage() {
 			}, 500)
 		}
 
-		// when recorder stops
+		// when recording stops
 		mediaRecorder.onstop = (e) => {
-			// create a blob from the chunk
+			// create a blob from the audio chunk
 			var blobToSend = new Blob(chunk, {
 				type: 'audio/ogg; codecs=opus',
 			})
@@ -72,12 +77,14 @@ function RoomPage() {
 			}
 		}
 
+		// remove old listener to avoid duplicates
 		socket.off('BROADCAST_AUDIO')
 		// listen for broadcast
 		socket.on('BROADCAST_AUDIO', (broadcast) => {
 			let blob = new Blob([broadcast], {
 				type: 'audio/ogg; codecs=opus',
 			})
+			// push the audio blob into the queue for playing
 			blobsQueue.push(blob)
 		})
 	}

@@ -65,7 +65,6 @@ function RoomPage() {
 			if (blobToSend.size) {
 				// emit the audio chunk
 				socket.emit('SEND_USER_AUDIO', blobToSend)
-				console.log('emit')
 				//restart the recorder if the stream is active
 				if (mediaRecorder.stream.active) {
 					mediaRecorder.start()

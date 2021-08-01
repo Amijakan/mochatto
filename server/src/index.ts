@@ -21,8 +21,9 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
 	console.log('new client connected')
-	socket.on('SEND_USER_AUDIO', (buffer) => {
-		socket.broadcast.emit('BROADCAST_AUDIO', buffer)
+	socket.on('SEND_USER_AUDIO', (blob) => {
+		// change to socket.broadcast.emit to omit the sender for multiple clients
+		socket.emit('BROADCAST_AUDIO', blob)
 	})
 	socket.on('disconnect', () => {
 		console.log('client disconnect')

@@ -34,7 +34,7 @@ function DeviceSelector(props) {
 				})
 				props.onSelect({ selectedInput, inputOptions, stream })
 			})
-	}, [selectedInput, inputOptions, props])
+	}, [selectedInput])
 
 	return (
 		<>

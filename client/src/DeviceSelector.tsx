@@ -28,12 +28,13 @@ function DeviceSelector(props) {
 						input.value = device.deviceId
 						input.label = device.label
 						inputs.push(input)
+						return null
 					})
 					setInputOptions(inputs)
 				})
 				props.onSelect({ selectedInput, inputOptions, stream })
 			})
-	}, [selectedInput])
+	}, [selectedInput, inputOptions, props])
 
 	return (
 		<>

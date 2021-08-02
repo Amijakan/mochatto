@@ -23,6 +23,7 @@ const users = [{}]
 io.on('connection', (socket) => {
 	console.log('new client: ' + socket.id)
 	socket.on('NEW_USER', (name) => {
+		console.log(name + ' joined.')
 		users.push({ id: socket.id, name })
 	})
 	socket.on('OFFER_OUT', (dataString) => {

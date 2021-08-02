@@ -3,20 +3,13 @@ import { Link } from 'react-router-dom'
 import { DeviceSelector } from './DeviceSelector'
 
 function JoinPage() {
-	const [stream, setStream] = useState(new MediaStream())
-
-	const onSelect = ({ selectedInput, inputOptions, stream }) => {
-		setStream(stream)
-	}
-
 	const audio = document.querySelector('audio')
-	//if the stream changes
-	useEffect(() => {
+	const onSelect = ({ selectedInput, inputOptions, stream }) => {
 		if (audio) {
 			//set the audio src to the stream
 			;(audio as HTMLAudioElement).srcObject = stream
 		}
-	}, [stream])
+	}
 
 	return (
 		<>

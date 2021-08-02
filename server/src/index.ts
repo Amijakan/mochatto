@@ -19,12 +19,12 @@ app.get('/', (req, res) => {
 	res.send({ body: 'Hello world, 3' })
 })
 
-const socketIds: string[] = []
+const users = [{}]
 io.on('connection', (socket) => {
 	console.log('new client: ' + socket.id)
-	if (!socketIds.includes(socket.id)) {
-		socketIds.push(socket.id)
-	}
+	socket.on('NEW_USER', (name) => {
+		users.push({ id: socket.id, name })
+	})
 	socket.on('OFFER_OUT', (dataString) => {
 		socket.broadcast.emit('OFFER_IN', dataString)
 	})

@@ -26,14 +26,10 @@ io.on('connection', (socket) => {
 		socketIds.push(socket.id)
 	}
 	socket.on('OFFER_OUT', (dataString) => {
-		console.log('offer out from: ' + JSON.parse(dataString).id)
 		socket.broadcast.emit('OFFER_IN', dataString)
 	})
 	socket.on('ANSWER_OUT', (dataString) => {
 		const target = JSON.parse(dataString).target
-		console.log(
-			'answer out to: ' + target + ' from: ' + JSON.parse(dataString).id
-		)
 		socket.broadcast.to(target).emit('ANSWER_IN', dataString)
 	})
 

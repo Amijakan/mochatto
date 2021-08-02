@@ -101,7 +101,7 @@ function RoomPage() {
 	return (
 		<>
 			<div>Room page</div>
-			<audio controls autoPlay></audio>
+			<audio autoPlay></audio>
 			<div>Input selector</div>
 			<DeviceSelector onSelect={onSelect} />
 		</>

@@ -32,10 +32,6 @@ io.on('connection', (socket) => {
 		const target = JSON.parse(dataString).target
 		socket.broadcast.to(target).emit('ANSWER_IN', dataString)
 	})
-
-	socket.on('UPDATE_OUT', () => {
-		socket.broadcast.emit('UPDATE_IN')
-	})
 	socket.on('disconnect', () => {
 		console.log('client disconnect')
 	})

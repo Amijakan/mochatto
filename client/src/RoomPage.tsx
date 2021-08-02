@@ -5,89 +5,69 @@ import { Device, DeviceSelector } from './DeviceSelector'
 const ENDPOINT = 'http://localhost:4000'
 const socket = socketIOClient(ENDPOINT)
 
+const peerConnection = new RTCPeerConnection({
+	iceServers: [{ urls: 'stun:global.stun.twilio.com:3478?transport=udp' }],
+})
+
 function RoomPage() {
-	const [prevMediaRecorder, setPrevMediaRecorder] = useState(
-		new MediaRecorder(new MediaStream())
-	)
-
+	// when new input is selected
 	const onSelect = ({ selectedInput, inputOptions, stream }) => {
-		// remove old event listeners to avoid duplicate
-		prevMediaRecorder.ondataavailable = null
-		prevMediaRecorder.onstart = null
-		prevMediaRecorder.onstop = null
-
-		// instantiate new MediaRecorder with the new stream
-		let mediaRecorder = new MediaRecorder(stream)
-		// set state for event listeners cleanup
-		setPrevMediaRecorder(mediaRecorder)
-		// initialize audio queue
-		let blobsQueue: Blob[] = []
-
-		if (mediaRecorder.state === 'inactive') {
-			if (mediaRecorder.stream.active) {
-				// start recording if it's not already and the stream is active
-				mediaRecorder.start()
-			}
-		}
-
-		// initialize audio chunk
-		let chunk = [new Blob()]
-
-		mediaRecorder.ondataavailable = (e) => {
-			// push new audio data into the chunks as they become available
-			chunk.push(e.data)
-		}
-
-		// when recording starts
-		mediaRecorder.onstart = (e) => {
-			const audio = document.querySelector('audio')
-			// stop recording and play the next audio chunk in queue every x-milliseconds
-			setTimeout(() => {
-				if (mediaRecorder.state === 'recording') {
-					// stop recording if it is
-					mediaRecorder.stop()
-				}
-				// queue a blob and play it
-				let blob = blobsQueue.shift()
-				if (audio && blob) {
-					if (blob.size) {
-						audio.src = window.URL.createObjectURL(blob)
-					}
-				}
-			}, 500)
-		}
-
-		// when recording stops
-		mediaRecorder.onstop = (e) => {
-			// create a blob from the audio chunk
-			var blobToSend = new Blob(chunk, {
-				type: 'audio/ogg; codecs=opus',
-			})
-
-			// reset the chunk after using it
-			chunk = [new Blob()]
-
-			if (blobToSend.size) {
-				// emit the audio chunk
-				socket.emit('SEND_USER_AUDIO', blobToSend)
-				//restart the recorder if the stream is active
-				if (mediaRecorder.stream.active) {
-					mediaRecorder.start()
-				}
-			}
-		}
-
-		// remove old listener to avoid duplicates
-		socket.off('BROADCAST_AUDIO')
-		// listen for broadcast
-		socket.on('BROADCAST_AUDIO', (broadcast) => {
-			let blob = new Blob([broadcast], {
-				type: 'audio/ogg; codecs=opus',
-			})
-			// push the audio blob into the queue for playing
-			blobsQueue.push(blob)
+		stream.getTracks().forEach((track: MediaStreamTrack) => {
+			peerConnection.addTrack(track)
 		})
+
+		// send an RTC offer to server to be broadcasted
+		peerConnection
+			.createOffer()
+			.then((offer) => {
+				return peerConnection.setLocalDescription(offer)
+			})
+			.then(() => {
+				const data = JSON.stringify({
+					sdp: peerConnection.localDescription,
+					id: socket.id,
+				})
+				socket.emit('OFFER_OUT', data)
+			})
+			.catch((e) => {
+				console.warn(e)
+			})
+
+		stream.getTracks().forEach((track: MediaStreamTrack) => {})
 	}
+
+	// answer when offer is received
+	socket.on('OFFER_IN', (data) => {
+		const sdp = JSON.parse(data).sdp
+		peerConnection
+			.setRemoteDescription(new RTCSessionDescription(sdp))
+			.then(() => {
+				peerConnection
+					.createAnswer()
+					.then((answer) => {
+						return peerConnection.setLocalDescription(answer)
+					})
+					.then(() => {
+						const data = JSON.stringify({
+							sdp: peerConnection.localDescription,
+							id: socket.id,
+						})
+						socket.emit('ANSWER_OUT', data)
+					})
+					.catch((e) => {
+						console.warn(e)
+					})
+			})
+			.catch((e) => {
+				console.warn(e)
+			})
+	})
+
+	// set remote description once answer is recieved
+	socket.on('ANSWER_IN', (data) => {
+		const sdp = JSON.parse(data).id
+		peerConnection.setRemoteDescription(sdp)
+	})
 
 	return (
 		<>

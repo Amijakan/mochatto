@@ -12,11 +12,17 @@ const peerConnection = new RTCPeerConnection({
 function RoomPage() {
 	const remoteStream = new MediaStream()
 	const [localStream, setLocalStream] = useState(new MediaStream())
+	const [oldSender, setOldSender] = useState<RTCRtpSender | undefined>(
+		undefined
+	)
 
 	// when new input is selected
 	const onSelect = ({ selectedInput, inputOptions, stream }) => {
 		setLocalStream(stream)
-		peerConnection.addTrack(stream.getAudioTracks()[0])
+		if (oldSender) {
+			peerConnection.removeTrack(oldSender)
+		}
+		setOldSender(peerConnection.addTrack(stream.getAudioTracks()[0]))
 		// send an RTC offer to server to be broadcasted
 		peerConnection
 			.createOffer()

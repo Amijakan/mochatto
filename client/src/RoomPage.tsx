@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import socketIOClient from 'socket.io-client'
-import { Device, DeviceSelector } from './DeviceSelector'
+import { DeviceSelector } from './DeviceSelector'
 
 const ENDPOINT = 'http://localhost:4000'
 const socket = socketIOClient(ENDPOINT)
@@ -10,15 +10,12 @@ const peerConnection = new RTCPeerConnection({
 })
 
 function RoomPage() {
-	const remoteStream = new MediaStream()
-	const [localStream, setLocalStream] = useState(new MediaStream())
 	const [oldSender, setOldSender] = useState<RTCRtpSender | undefined>(
 		undefined
 	)
 
 	// when new input is selected
 	const onSelect = ({ selectedInput, inputOptions, stream }) => {
-		setLocalStream(stream)
 		if (oldSender) {
 			peerConnection.removeTrack(oldSender)
 		}
@@ -44,6 +41,7 @@ function RoomPage() {
 	}
 
 	useEffect(() => {
+		const remoteStream = new MediaStream()
 		const remotePlayer = document.querySelector('audio')
 		socket.on('connect', () => {
 			console.log(socket.id)

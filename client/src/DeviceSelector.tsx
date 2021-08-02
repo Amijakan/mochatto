@@ -34,7 +34,7 @@ function DeviceSelector(props) {
 				})
 				props.onSelect({ selectedInput, inputOptions, stream })
 			})
-	}, [selectedInput])
+	}, [selectedInput]) // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
 		<>

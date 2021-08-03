@@ -13,6 +13,7 @@ function RoomPage() {
 	const [oldSender, setOldSender] = useState<RTCRtpSender | undefined>(
 		undefined
 	)
+	const [announcement, setAnnouncement] = useState('')
 
 	// when new input is selected
 	const onSelect = ({ selectedInput, inputOptions, stream }) => {
@@ -85,6 +86,10 @@ function RoomPage() {
 			const sdp = JSON.parse(dataString).sdp
 			peerConnection.setRemoteDescription(sdp)
 		})
+
+		socket.on('NEW_USER', (name) => {
+			setAnnouncement(name + ' has joined.')
+		})
 	}, [])
 
 	return (
@@ -93,6 +98,7 @@ function RoomPage() {
 			<audio autoPlay></audio>
 			<div>Input selector</div>
 			<DeviceSelector onSelect={onSelect} />
+			<div>{announcement}</div>
 		</>
 	)
 }

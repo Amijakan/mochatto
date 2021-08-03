@@ -23,15 +23,15 @@ const users = [{}]
 io.on('connection', (socket) => {
 	console.log('new client: ' + socket.id)
 	socket.on('NEW_USER', (name) => {
-		console.log(name + ' joined.')
 		users.push({ id: socket.id, name })
+		socket.broadcast.emit('NEW_USER', name)
 	})
-	socket.on('OFFER_OUT', (dataString) => {
-		socket.broadcast.emit('OFFER_IN', dataString)
+	socket.on('OFFER', (dataString) => {
+		socket.broadcast.emit('OFFER', dataString)
 	})
-	socket.on('ANSWER_OUT', (dataString) => {
+	socket.on('ANSWER', (dataString) => {
 		const target = JSON.parse(dataString).target
-		socket.broadcast.to(target).emit('ANSWER_IN', dataString)
+		socket.broadcast.to(target).emit('ANSWER', dataString)
 	})
 	socket.on('disconnect', () => {
 		console.log('client disconnect')

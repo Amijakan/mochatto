@@ -33,7 +33,7 @@ function RoomPage() {
 					id: socket.id,
 					type: 'offer',
 				}
-				socket.emit('OFFER_OUT', JSON.stringify(data))
+				socket.emit('OFFER', JSON.stringify(data))
 			})
 			.catch((e) => {
 				console.warn(e)
@@ -52,7 +52,7 @@ function RoomPage() {
 		}
 
 		// answer when offer is received
-		socket.on('OFFER_IN', (dataString) => {
+		socket.on('OFFER', (dataString) => {
 			const sdp = JSON.parse(dataString).sdp
 			const target = JSON.parse(dataString).id
 			peerConnection
@@ -70,7 +70,7 @@ function RoomPage() {
 								target: target,
 								type: 'answer',
 							}
-							socket.emit('ANSWER_OUT', JSON.stringify(data))
+							socket.emit('ANSWER', JSON.stringify(data))
 						})
 						.catch((e) => {
 							console.warn(e)
@@ -82,7 +82,7 @@ function RoomPage() {
 		})
 
 		// set remote description once answer is recieved
-		socket.on('ANSWER_IN', (dataString) => {
+		socket.on('ANSWER', (dataString) => {
 			const sdp = JSON.parse(dataString).sdp
 			peerConnection.setRemoteDescription(sdp)
 		})

@@ -1,17 +1,15 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { DeviceSelector } from './DeviceSelector'
-import socketIOClient from 'socket.io-client'
 
-const ENDPOINT = 'http://localhost:4000'
-const socket = socketIOClient(ENDPOINT)
-
-function JoinPage() {
+function JoinPage(props) {
 	const [name, setName] = useState('')
 
 	const onJoin = () => {
-		// notify server on join
-		socket.emit('NEW_USER', name)
+		if (props.socket) {
+			// notify server on join
+			props.socket.emit('NEW_USER', name)
+		}
 	}
 
 	return (

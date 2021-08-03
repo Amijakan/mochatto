@@ -18,10 +18,13 @@ function RoomPage() {
 	// when new input is selected
 	const onSelect = ({ selectedInput, inputOptions, stream }) => {
 		if (oldSender) {
+			// if there was an old track, remove it
 			peerConnection.removeTrack(oldSender)
 		}
+		// add the new track
 		setOldSender(peerConnection.addTrack(stream.getAudioTracks()[0]))
-		// send an RTC offer to server to be broadcasted
+
+		// emit an offer to the server to be broadcasted
 		peerConnection
 			.createOffer()
 			.then((offer) => {
@@ -44,19 +47,21 @@ function RoomPage() {
 		const remoteStream = new MediaStream()
 		const remotePlayer = document.querySelector('audio')
 
+		// when a peer adds a track
 		peerConnection.ontrack = (event) => {
 			remoteStream.addTrack(event.track)
 			if (remotePlayer) {
+				// set the new stream as the audio source
 				remotePlayer.srcObject = remoteStream
 			}
 		}
 
-		// answer when offer is received
+		// emit an answer when offer is received
 		socket.on('OFFER', (dataString) => {
 			const sdp = JSON.parse(dataString).sdp
 			const target = JSON.parse(dataString).id
 			peerConnection
-				.setRemoteDescription(new RTCSessionDescription(sdp))
+				.setRemoteDescription(new RTCSessionDescription(sdp)) // establish connection with the sender
 				.then(() => {
 					peerConnection
 						.createAnswer()
@@ -81,7 +86,7 @@ function RoomPage() {
 				})
 		})
 
-		// set remote description once answer is recieved
+		// set remote description once answer is recieved to establish connection
 		socket.on('ANSWER', (dataString) => {
 			const sdp = JSON.parse(dataString).sdp
 			peerConnection.setRemoteDescription(sdp)

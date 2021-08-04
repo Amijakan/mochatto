@@ -3,20 +3,20 @@ import User from "./User";
 
 let socket = null as any;
 
+// initialize socketio (exported)
 const setSocket = (s: any) => {
 	socket = s;
 };
 
 const users: User[] = [];
 
+// add user to the network (exported)
 const addUser = (id: string) => {
 	users.push(new User(id));
 };
 
-const updateAllTracks = (track: MediaStreamTrack) => {
-	users.forEach((user) => {
-		user.updateTrack(track);
-	});
+const getUsers = () => {
+	return users;
 };
 
 const findUserById = (id: string) => {
@@ -25,10 +25,14 @@ const findUserById = (id: string) => {
 	});
 };
 
-const getUsers = () => {
-	return users;
+// update tracks for all peer connections (exported)
+const updateAllTracks = (track: MediaStreamTrack) => {
+	users.forEach((user) => {
+		user.updateTrack(track);
+	});
 };
 
+// send out offer to every user on network (exported)
 const sendOffer = () => {
 	// for each user
 	users.forEach((user) => {
@@ -93,4 +97,4 @@ socket.on("ANSWER", (dataString) => {
 	peerConnection.setRemoteDescription(sdp);
 });
 
-export { setSocket, updateAllTracks, sendOffer };
+export { addUser, setSocket, updateAllTracks, sendOffer };

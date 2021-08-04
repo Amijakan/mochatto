@@ -45,7 +45,7 @@ const sendOffer = () => {
 			.then(() => {
 				const data = {
 					sdp: user.peerConnection.localDescription,
-					id: socket.id,
+					senderId: socket.id,
 					type: "offer",
 				};
 				socket.emit("OFFER", JSON.stringify(data));
@@ -73,8 +73,8 @@ socket.on("OFFER", (dataString) => {
 				.then(() => {
 					const data = {
 						sdp: peerConnection.localDescription,
-						id: socket.id,
-						target: target,
+						senderId: socket.id,
+						receiver: target,
 						type: "answer",
 					};
 					socket.emit("ANSWER", JSON.stringify(data));
@@ -91,10 +91,13 @@ socket.on("OFFER", (dataString) => {
 // set remote description once answer is recieved to establish connection
 socket.on("ANSWER", (dataString) => {
 	const sdp = JSON.parse(dataString).sdp;
-	const target = JSON.parse(dataString).id;
-	const user = findUserById(target);
-	const peerConnection = (user as User).peerConnection;
-	peerConnection.setRemoteDescription(sdp);
+	const senderId = JSON.parse(dataString).senderId;
+	const receiverId = JSON.parse(dataString).receiverId;
+	const user = findUserById(senderId);
+	if (socket.id === receiverId) {
+		const peerConnection = (user as User).peerConnection;
+		peerConnection.setRemoteDescription(sdp);
+	}
 });
 
 export { addUser, setSocket, updateAllTracks, sendOffer };

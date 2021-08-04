@@ -19,6 +19,16 @@ const updateAllTracks = (track: MediaStreamTrack) => {
 	});
 };
 
+const findUserById = (id: string) => {
+	return getUsers().find((user) => {
+		user.id = id;
+	});
+};
+
+const getUsers = () => {
+	return users;
+};
+
 const sendOffer = () => {
 	// for each user
 	users.forEach((user) => {
@@ -46,9 +56,7 @@ const sendOffer = () => {
 socket.on("OFFER", (dataString) => {
 	const sdp = JSON.parse(dataString).sdp;
 	const target = JSON.parse(dataString).id;
-	const user = users.find((user) => {
-		user.id = target;
-	});
+	const user = findUserById(target);
 	const peerConnection = (user as User).peerConnection;
 	peerConnection
 		.setRemoteDescription(new RTCSessionDescription(sdp)) // establish connection with the sender
@@ -74,6 +82,15 @@ socket.on("OFFER", (dataString) => {
 		.catch((e) => {
 			console.warn(e);
 		});
+});
+
+// set remote description once answer is recieved to establish connection
+socket.on("ANSWER", (dataString) => {
+	const sdp = JSON.parse(dataString).sdp;
+	const target = JSON.parse(dataString).id;
+	const user = findUserById(target);
+	const peerConnection = (user as User).peerConnection;
+	peerConnection.setRemoteDescription(sdp);
 });
 
 export { setSocket, updateAllTracks, sendOffer };

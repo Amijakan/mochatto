@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import JoinPage from "./JoinPage";
 import RoomPage from "./RoomPage";
 
-const Screen = () => {
+const Pages = () => {
   const [name, setName] = useState("");
   const [joined, setJoined] = useState(false);
   return (
@@ -16,4 +16,4 @@ const Screen = () => {
   );
 };
 
-export default Screen;
+export default Pages;

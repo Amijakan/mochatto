@@ -1,5 +1,5 @@
 import React from "react";
-import Screen from "./pages";
+import Pages from "./pages";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { SocketProvider } from "./SocketIOContext";
 
@@ -9,7 +9,7 @@ const App = () => {
       <SocketProvider>
         <BrowserRouter>
           <Switch>
-            <Route path="/:room_id" component={Screen} />
+            <Route path="/:room_id" component={Pages} />
           </Switch>
         </BrowserRouter>
       </SocketProvider>

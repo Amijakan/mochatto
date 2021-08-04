@@ -2,6 +2,7 @@ import React from "react";
 import Page from "./Page";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
+import socketIOClient from "socket.io-client";
 
 const ENDPOINT = "http://localhost:4000";
 const socket = socketIOClient(ENDPOINT);

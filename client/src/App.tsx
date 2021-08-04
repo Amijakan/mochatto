@@ -1,5 +1,5 @@
 import React from "react";
-import RoomPage from "./RoomPage";
+import Page from "./Page";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
@@ -16,7 +16,7 @@ const App = () => {
         <Switch>
           <Route
             path="/:room_id"
-            component={RoomPage}
+            component={Page}
             socket={socket}
             peerConnection={peerConnection}
           />
@@ -26,4 +26,4 @@ const App = () => {
   );
 };
 
-export default App
+export default App;

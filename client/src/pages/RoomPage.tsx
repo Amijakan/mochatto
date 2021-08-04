@@ -1,15 +1,9 @@
-import React, { useState, useEffect } from "react";
-import socketIOClient from "socket.io-client";
-import { DeviceSelector } from "./DeviceSelector";
+import React, { useState, useEffect, useContext } from "react";
+import { SocketContext } from "../SocketIOContext";
+import { DeviceSelector } from "../DeviceSelector";
 
-const ENDPOINT = "http://localhost:4000";
-const socket = socketIOClient(ENDPOINT);
-
-const peerConnection = new RTCPeerConnection({
-  iceServers: [{ urls: "stun:iphone-stun.strato-iphone.de:3478" }],
-});
-
-function RoomPage() {
+function RoomPage({ name }) {
+  const { socket, peerConnection } = useContext(SocketContext);
   const [oldSender, setOldSender] = useState<RTCRtpSender | undefined>(undefined);
   const [announcement, setAnnouncement] = useState("");
 
@@ -93,7 +87,7 @@ function RoomPage() {
     socket.on("NEW_USER", (name) => {
       setAnnouncement(name + " has joined.");
     });
-  }, []);
+  }, [socket, peerConnection]);
 
   return (
     <>

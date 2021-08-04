@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext } from "react";
+import { SocketContext } from "../SocketIOContext";
 
-function JoinPage(props) {
-  const [name, setName] = useState("");
-
+const JoinPage = ({ name, setName, setJoined }) => {
+  const { socket } = useContext(SocketContext);
   const onJoin = () => {
-    if (props.socket) {
+    if (socket) {
       // notify server on join
-      props.socket.emit("NEW_USER", name);
+      socket.emit("NEW_USER", name);
+      setJoined(true);
     }
   };
 
@@ -26,12 +26,10 @@ function JoinPage(props) {
         </label>
       </div>
       <div>
-        <Link to="/RoomPage" onClick={onJoin}>
-          Join
-        </Link>
+        <button onClick={() => onJoin()}>Join</button>
       </div>
     </>
   );
-}
+};
 
 export default JoinPage;

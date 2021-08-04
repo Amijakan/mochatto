@@ -9,12 +9,9 @@ const setSocket = (s: any) => {
 
 const users: User[] = [];
 
-const connectToUser = (id: string) => {
+const addUser = (id: string) => {
 	users.push(new User(id));
 };
-const peerConnection = new RTCPeerConnection({
-	iceServers: [{ urls: "stun:iphone-stun.strato-iphone.de:3478" }],
-});
 
 const updateAllTracks = (track: MediaStreamTrack) => {
 	users.forEach((user) => {
@@ -44,5 +41,39 @@ const sendOffer = () => {
 			});
 	});
 };
+
+// emit an answer when offer is received
+socket.on("OFFER", (dataString) => {
+	const sdp = JSON.parse(dataString).sdp;
+	const target = JSON.parse(dataString).id;
+	const user = users.find((user) => {
+		user.id = target;
+	});
+	const peerConnection = (user as User).peerConnection;
+	peerConnection
+		.setRemoteDescription(new RTCSessionDescription(sdp)) // establish connection with the sender
+		.then(() => {
+			peerConnection
+				.createAnswer()
+				.then((answer) => {
+					return peerConnection.setLocalDescription(answer);
+				})
+				.then(() => {
+					const data = {
+						sdp: peerConnection.localDescription,
+						id: socket.id,
+						target: target,
+						type: "answer",
+					};
+					socket.emit("ANSWER", JSON.stringify(data));
+				})
+				.catch((e) => {
+					console.warn(e);
+				});
+		})
+		.catch((e) => {
+			console.warn(e);
+		});
+});
 
 export { setSocket, updateAllTracks, sendOffer };

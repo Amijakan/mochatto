@@ -1,5 +1,5 @@
 import React from "react";
-import Screen from "./Screen";
+import Screen from "./pages";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { SocketProvider } from "./SocketIOContext";
 

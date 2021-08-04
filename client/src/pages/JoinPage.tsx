@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { SocketContext } from "./SocketIOContext";
+import { SocketContext } from "../SocketIOContext";
 
 const JoinPage = ({ name, setName, setJoined }) => {
   const { socket } = useContext(SocketContext);

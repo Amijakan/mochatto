@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-import { SocketContext } from "./SocketIOContext";
-import { DeviceSelector } from "./DeviceSelector";
+import { SocketContext } from "../SocketIOContext";
+import { DeviceSelector } from "../DeviceSelector";
 
 function RoomPage({ name }) {
   const { socket, peerConnection } = useContext(SocketContext);

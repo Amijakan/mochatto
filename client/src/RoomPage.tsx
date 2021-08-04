@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import { DeviceSelector } from "./DeviceSelector";
 
-const ENDPOINT = "http://localhost:4000";
-const socket = socketIOClient(ENDPOINT);
-
-const peerConnection = new RTCPeerConnection({
-  iceServers: [{ urls: "stun:iphone-stun.strato-iphone.de:3478" }],
-});
-
-function RoomPage() {
+function RoomPage({ socket, peerConnection }) {
+  const [name, setName] = useState("");
+  const onJoin = () => {
+    if (socket) {
+      // notify server on join
+      socket.emit("NEW_USER", name);
+    }
+  };
   const [oldSender, setOldSender] = useState<RTCRtpSender | undefined>(undefined);
   const [announcement, setAnnouncement] = useState("");
 
@@ -97,11 +97,33 @@ function RoomPage() {
 
   return (
     <>
-      <div>Room page</div>
-      <audio autoPlay></audio>
-      <div>Input selector</div>
-      <DeviceSelector onSelect={onSelect} />
-      <div>{announcement}</div>
+      {name ? (
+        <>
+          <div>Room page</div>
+          <audio autoPlay></audio>
+          <div>Input selector</div>
+          <DeviceSelector onSelect={onSelect} />
+          <div>{announcement}</div>
+        </>
+      ) : (
+        <>
+          <div>
+            <label>
+              Name:
+              <input
+                type="text"
+                name="name"
+                onChange={(e) => {
+                  setName(e.target.value);
+                }}
+              />
+            </label>
+          </div>
+          <div>
+            <button onClick={onJoin}>Join</button>
+          </div>
+        </>
+      )}
     </>
   );
 }

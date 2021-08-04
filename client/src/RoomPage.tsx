@@ -1,15 +1,37 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import socketIOClient from "socket.io-client";
 import { DeviceSelector } from "./DeviceSelector";
 
-function RoomPage({ socket, peerConnection }) {
-  const [name, setName] = useState("");
+const JoinPage = ({ socket, peerConnection, name, setName, setJoined }) => {
   const onJoin = () => {
     if (socket) {
       // notify server on join
       socket.emit("NEW_USER", name);
     }
   };
+
+  return (
+    <>
+      <div>
+        <label>
+          Name:
+          <input
+            type="text"
+            name="name"
+            onChange={(e) => {
+              setName(e.target.value);
+            }}
+          />
+        </label>
+      </div>
+      <div>
+        <button onClick={onJoin}>Join</button>
+      </div>
+    </>
+  );
+};
+
+function RoomPage({ socket, peerConnection }) {
   const [oldSender, setOldSender] = useState<RTCRtpSender | undefined>(undefined);
   const [announcement, setAnnouncement] = useState("");
 
@@ -97,35 +119,33 @@ function RoomPage({ socket, peerConnection }) {
 
   return (
     <>
-      {name ? (
-        <>
-          <div>Room page</div>
-          <audio autoPlay></audio>
-          <div>Input selector</div>
-          <DeviceSelector onSelect={onSelect} />
-          <div>{announcement}</div>
-        </>
-      ) : (
-        <>
-          <div>
-            <label>
-              Name:
-              <input
-                type="text"
-                name="name"
-                onChange={(e) => {
-                  setName(e.target.value);
-                }}
-              />
-            </label>
-          </div>
-          <div>
-            <button onClick={onJoin}>Join</button>
-          </div>
-        </>
-      )}
+      <div>Room page</div>
+      <audio autoPlay></audio>
+      <div>Input selector</div>
+      <DeviceSelector onSelect={onSelect} />
+      <div>{announcement}</div>
     </>
   );
 }
 
-export default RoomPage;
+const Page = ({ socket, peerConnection }) => {
+  const [name, setName] = useState("");
+  const [joined, setJoined] = useState(false);
+  return (
+    <>
+      {joined ? (
+        <RoomPage socket={socket} peerConnection={peerConnection} name={name} />
+      ) : (
+        <JoinPage
+          socket={socket}
+          peerConnection={peerConnection}
+          name={name}
+          setName={setName}
+          setJoined={setJoined}
+        />
+      )}
+    </>
+  );
+};
+
+export default Page;

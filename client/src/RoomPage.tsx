@@ -1,42 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-import { SocketContext } from "./App";
+import { SocketContext } from "./SocketIOContext";
 import { DeviceSelector } from "./DeviceSelector";
-
-const JoinPage = ({ name, setName, setJoined }) => {
-  const { socket, peerConnection } = useContext(SocketContext);
-  useEffect(() => {
-    console.log(socket);
-  }, [socket]);
-  const onJoin = () => {
-    console.log(name);
-    console.log(socket);
-    if (socket) {
-      // notify server on join
-      socket.emit("NEW_USER", name);
-      setJoined(true);
-    }
-  };
-
-  return (
-    <>
-      <div>
-        <label>
-          Name:
-          <input
-            type="text"
-            name="name"
-            onChange={(e) => {
-              setName(e.target.value);
-            }}
-          />
-        </label>
-      </div>
-      <div>
-        <button onClick={() => onJoin()}>Join</button>
-      </div>
-    </>
-  );
-};
 
 function RoomPage({ name }) {
   const { socket, peerConnection } = useContext(SocketContext);
@@ -123,7 +87,7 @@ function RoomPage({ name }) {
     socket.on("NEW_USER", (name) => {
       setAnnouncement(name + " has joined.");
     });
-  }, []);
+  }, [socket, peerConnection]);
 
   return (
     <>
@@ -136,18 +100,4 @@ function RoomPage({ name }) {
   );
 }
 
-const Page = ({}) => {
-  const [name, setName] = useState("");
-  const [joined, setJoined] = useState(false);
-  return (
-    <>
-      {joined ? (
-        <RoomPage name={name} />
-      ) : (
-        <JoinPage name={name} setName={setName} setJoined={setJoined} />
-      )}
-    </>
-  );
-};
-
-export default Page;
+export default RoomPage;

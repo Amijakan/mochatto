@@ -19,11 +19,11 @@ app.get("/", (req, res) => {
   res.send({ body: "Hello world, 3" });
 });
 
-const users = [{}];
+const userIds: String[] = [];
 io.on("connection", (socket) => {
   console.log("new client: " + socket.id);
   socket.on("NEW_USER", (name) => {
-    users.push({ id: socket.id, name });
+    userIds.push(socket.id);
     socket.broadcast.emit("NEW_USER", name);
   });
   socket.on("OFFER", (dataString) => {

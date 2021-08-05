@@ -1,12 +1,15 @@
 
 
 
-build: 
+dev: 
 	./pre-up
 	docker-compose build
-
-dev:
 	docker-compose up
+
+dev-d: 
+	./pre-up
+	docker-compose build
+	docker-compose up -d
 
 prod:
 	docker-compose -f ./docker-compose.prod.yaml build

@@ -5,8 +5,6 @@ const JoinPage = ({ name, setName, setJoined }) => {
   const { socket } = useContext(SocketContext);
   const onJoin = () => {
     if (socket) {
-      // notify server on join
-			socket.emit("NEW_USER", {id: socket.id, name});
       setJoined(true);
     }
   };

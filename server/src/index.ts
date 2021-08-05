@@ -22,6 +22,8 @@ app.get("/", (req, res) => {
 const users = [{}];
 io.on("connection", (socket) => {
 	console.log("new client: " + socket.id);
+	socket.on("REQUEST_USERS", () => {
+	});
 	socket.on("NEW_USER", (name) => {
 		users.push({id: socket.id, name});
 		socket.broadcast.emit("NEW_USER", name);
@@ -30,8 +32,8 @@ io.on("connection", (socket) => {
 		socket.broadcast.emit("OFFER", dataString);
 	});
 	socket.on("ANSWER", (dataString) => {
-		const target = JSON.parse(dataString).target;
-		socket.broadcast.to(target).emit("ANSWER", dataString);
+		const targetId = JSON.parse(dataString).receiverId;
+		socket.broadcast.to(targetId).emit("ANSWER", dataString);
 	});
 	socket.on("disconnect", () => {
 		console.log("client disconnect");

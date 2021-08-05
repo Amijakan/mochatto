@@ -23,6 +23,7 @@ const users = [{}];
 io.on("connection", (socket) => {
 	console.log("new client: " + socket.id);
 	socket.on("REQUEST_USERS", () => {
+		socket.broadcast.to(socket.id).emit("REQUEST_USERS", JSON.stringify(users))
 	});
 	socket.on("NEW_USER", (name) => {
 		users.push({id: socket.id, name});

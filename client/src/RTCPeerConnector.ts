@@ -59,8 +59,8 @@ const sendOffer = () => {
 // emit an answer when offer is received
 socket.on("OFFER", (dataString) => {
 	const sdp = JSON.parse(dataString).sdp;
-	const target = JSON.parse(dataString).id;
-	const user = findUserById(target);
+	const targetId = JSON.parse(dataString).id;
+	const user = findUserById(targetId);
 	const peerConnection = (user as User).peerConnection;
 	peerConnection
 		.setRemoteDescription(new RTCSessionDescription(sdp)) // establish connection with the sender
@@ -74,7 +74,7 @@ socket.on("OFFER", (dataString) => {
 					const data = {
 						sdp: peerConnection.localDescription,
 						senderId: socket.id,
-						receiver: target,
+						receiverId: targetId,
 						type: "answer",
 					};
 					socket.emit("ANSWER", JSON.stringify(data));
@@ -92,12 +92,9 @@ socket.on("OFFER", (dataString) => {
 socket.on("ANSWER", (dataString) => {
 	const sdp = JSON.parse(dataString).sdp;
 	const senderId = JSON.parse(dataString).senderId;
-	const receiverId = JSON.parse(dataString).receiverId;
 	const user = findUserById(senderId);
-	if (socket.id === receiverId) {
-		const peerConnection = (user as User).peerConnection;
-		peerConnection.setRemoteDescription(sdp);
-	}
+	const peerConnection = (user as User).peerConnection;
+	peerConnection.setRemoteDescription(sdp);
 });
 
 export { addUser, setSocket, updateAllTracks, sendOffer };

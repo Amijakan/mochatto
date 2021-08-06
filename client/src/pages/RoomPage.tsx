@@ -20,7 +20,6 @@ function RoomPage({ name }) {
 
 		socket.on("JOIN", ({ name, id }) => {
 			setAnnouncement(name + " has joined.");
-			console.log("id: "+id+", socket.id: "+socket.id);
 			if(id !== socket.id){
 				addUser(id);
 			}

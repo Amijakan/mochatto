@@ -27,13 +27,14 @@ io.on("connection", (socket) => {
 		socket.emit("REQUEST_USERS", users);
 	});
 	socket.on("JOIN", (name) => {
-		const user = {id: socket.id, name};
+		const user = {name, id: socket.id};
 		users.push(user);
 		console.log("new user pushed: " + socket.id);
 		io.emit("JOIN", user);
 	});
 	socket.on("OFFER", (dataString) => {
-		socket.broadcast.emit("OFFER", dataString);
+		const targetId = JSON.parse(dataString).receiverId;
+		socket.broadcast.to(targetId).emit("OFFER", dataString);
 	});
 	socket.on("ANSWER", (dataString) => {
 		const targetId = JSON.parse(dataString).receiverId;
@@ -41,7 +42,10 @@ io.on("connection", (socket) => {
 	});
 	socket.on("disconnect", () => {
 		const userIndex = users.findIndex(usr => (usr as any).id === socket.id)
+		console.log(users[userIndex]);
+		if(users[userIndex]){
 		io.emit("LEAVE", users[userIndex]);
+		}
 		users.splice(userIndex, 1);
 		console.log("client disconnect");
 	});

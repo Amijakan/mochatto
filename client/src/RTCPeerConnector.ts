@@ -14,8 +14,8 @@ const setSocket = (s: any, callback?: Function) => {
 	socket.on("OFFER", (dataString) => {
 		const sdp = JSON.parse(dataString).sdp;
 		const targetId = JSON.parse(dataString).senderId;
-		console.log("target is " + targetId);
 		const user = findUserById(targetId);
+		console.log("emitting answer to: "+(user as User).id);
 		const peerConnection = (user as User).peerConnection;
 		peerConnection
 			.setRemoteDescription(new RTCSessionDescription(sdp)) // establish connection with the sender
@@ -48,6 +48,7 @@ const setSocket = (s: any, callback?: Function) => {
 		const sdp = JSON.parse(dataString).sdp;
 		const senderId = JSON.parse(dataString).senderId;
 		const user = findUserById(senderId);
+		console.log("answer received from: "+(user as User).id);
 		const peerConnection = (user as User).peerConnection;
 		peerConnection.setRemoteDescription(sdp);
 	});
@@ -57,7 +58,6 @@ const users: User[] = [];
 
 // add user to the network (exported)
 const addUser = (id: string) => {
-	console.log("user added: " + id);
 	users.push(new User(id));
 };
 
@@ -66,9 +66,7 @@ const getUsers = () => {
 };
 
 const findUserById = (id: string) => {
-	const user = getUsers().find(usr => usr.id == id);
-	console.log(users);
-	console.log(user);
+	const user = getUsers().find(usr => usr.id === id);
 	return user;
 };
 
@@ -93,6 +91,7 @@ const sendOffer = () => {
 				const data = {
 					sdp: user.peerConnection.localDescription,
 					senderId: socket.id,
+					receiverId: user.id,
 					type: "offer",
 				};
 				socket.emit("OFFER", JSON.stringify(data));

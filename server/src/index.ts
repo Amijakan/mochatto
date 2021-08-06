@@ -19,15 +19,15 @@ app.get("/", (req, res) => {
 	res.send({ body: "Hello world, 3" });
 });
 
-const users = [{}];
+const users: object[] = [];
 io.on("connection", (socket) => {
 	console.log("new client: " + socket.id);
 	socket.on("REQUEST_USERS", () => {
-		console.log("users requested by: "+ socket.id);
+		console.log("users requested by: " + socket.id);
 		socket.emit("REQUEST_USERS", users);
 	});
 	socket.on("JOIN", (name) => {
-		const user = {name, id: socket.id};
+		const user = { name, id: socket.id };
 		users.push(user);
 		console.log("new user pushed: " + socket.id);
 		io.emit("JOIN", user);
@@ -41,12 +41,11 @@ io.on("connection", (socket) => {
 		socket.broadcast.to(targetId).emit("ANSWER", dataString);
 	});
 	socket.on("disconnect", () => {
-		const userIndex = users.findIndex(usr => (usr as any).id === socket.id)
-		console.log(users[userIndex]);
-		if(users[userIndex]){
-		io.emit("LEAVE", users[userIndex]);
+		const userIndex = users.findIndex((usr) => (usr as any).id === socket.id);
+		if (users[userIndex]) {
+			io.emit("LEAVE", users[userIndex]);
+			users.splice(userIndex, 1);
+			console.log(socket.id + " has disconnected.");
 		}
-		users.splice(userIndex, 1);
-		console.log("client disconnect");
 	});
 });

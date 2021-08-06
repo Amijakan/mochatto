@@ -38,7 +38,7 @@ function DeviceSelector(props) {
   const handleChangeSelectedInput = (selection) => {
     navigator.mediaDevices
       .getUserMedia({
-        audio: selection.value,
+        audio: selection?.value ?? true,
         video: false,
       })
       .then((stream) => {

@@ -4,14 +4,60 @@ import User from "./User";
 let socket = null as any;
 
 // initialize socketio (exported)
-const setSocket = (s: any) => {
+const setSocket = (s: any, callback?: Function) => {
 	socket = s;
+
+	if (callback) {
+		callback();
+	}
+	// emit an answer when offer is received
+	socket.on("OFFER", (dataString) => {
+		const sdp = JSON.parse(dataString).sdp;
+		const targetId = JSON.parse(dataString).senderId;
+		console.log("target is " + targetId);
+		const user = findUserById(targetId);
+		const peerConnection = (user as User).peerConnection;
+		peerConnection
+			.setRemoteDescription(new RTCSessionDescription(sdp)) // establish connection with the sender
+			.then(() => {
+				peerConnection
+					.createAnswer()
+					.then((answer) => {
+						return peerConnection.setLocalDescription(answer);
+					})
+					.then(() => {
+						const data = {
+							sdp: peerConnection.localDescription,
+							senderId: socket.id,
+							receiverId: targetId,
+							type: "answer",
+						};
+						socket.emit("ANSWER", JSON.stringify(data));
+					})
+					.catch((e) => {
+						console.warn(e);
+					});
+			})
+			.catch((e) => {
+				console.warn(e);
+			});
+	});
+
+	// set remote description once answer is recieved to establish connection
+	socket.on("ANSWER", (dataString) => {
+		const sdp = JSON.parse(dataString).sdp;
+		const senderId = JSON.parse(dataString).senderId;
+		const user = findUserById(senderId);
+		const peerConnection = (user as User).peerConnection;
+		peerConnection.setRemoteDescription(sdp);
+	});
 };
 
 const users: User[] = [];
 
 // add user to the network (exported)
 const addUser = (id: string) => {
+	console.log("user added: " + id);
 	users.push(new User(id));
 };
 
@@ -20,9 +66,10 @@ const getUsers = () => {
 };
 
 const findUserById = (id: string) => {
-	return getUsers().find((user) => {
-		user.id = id;
-	});
+	const user = getUsers().find(usr => usr.id == id);
+	console.log(users);
+	console.log(user);
+	return user;
 };
 
 // update tracks for all peer connections (exported)
@@ -55,46 +102,5 @@ const sendOffer = () => {
 			});
 	});
 };
-
-// emit an answer when offer is received
-socket.on("OFFER", (dataString) => {
-	const sdp = JSON.parse(dataString).sdp;
-	const targetId = JSON.parse(dataString).id;
-	const user = findUserById(targetId);
-	const peerConnection = (user as User).peerConnection;
-	peerConnection
-		.setRemoteDescription(new RTCSessionDescription(sdp)) // establish connection with the sender
-		.then(() => {
-			peerConnection
-				.createAnswer()
-				.then((answer) => {
-					return peerConnection.setLocalDescription(answer);
-				})
-				.then(() => {
-					const data = {
-						sdp: peerConnection.localDescription,
-						senderId: socket.id,
-						receiverId: targetId,
-						type: "answer",
-					};
-					socket.emit("ANSWER", JSON.stringify(data));
-				})
-				.catch((e) => {
-					console.warn(e);
-				});
-		})
-		.catch((e) => {
-			console.warn(e);
-		});
-});
-
-// set remote description once answer is recieved to establish connection
-socket.on("ANSWER", (dataString) => {
-	const sdp = JSON.parse(dataString).sdp;
-	const senderId = JSON.parse(dataString).senderId;
-	const user = findUserById(senderId);
-	const peerConnection = (user as User).peerConnection;
-	peerConnection.setRemoteDescription(sdp);
-});
 
 export { addUser, setSocket, updateAllTracks, sendOffer };

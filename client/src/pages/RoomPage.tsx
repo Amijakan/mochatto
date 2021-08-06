@@ -13,23 +13,36 @@ function RoomPage({ name }) {
 		sendOffer();
 	};
 
-	useEffect(() => {
-		setSocket(socket);
-
+	const onSocketSet = () => {
 		// notify server on join
-		socket.emit("NEW_USER", { id: socket.id, name });
+		socket.emit("JOIN",  name );
 		socket.emit("REQUEST_USERS");
 
-		socket.on("NEW_USER", ({ name, id }) => {
+		socket.on("JOIN", ({ name, id }) => {
 			setAnnouncement(name + " has joined.");
-			addUser(id);
+			console.log("id: "+id+", socket.id: "+socket.id);
+			if(id !== socket.id){
+				addUser(id);
+			}
+		});
+
+		socket.on("LEAVE", ({ name, id }) => {
+			setAnnouncement(name + " has left.");
 		});
 
 		socket.on("REQUEST_USERS", (users) => {
+			console.log("users requested: "+users.length);
 			users.forEach((user) => {
-				addUser(user.id);
+				if(user.id !== socket.id && user.id !== undefined){
+					addUser(user.id);
+				}
 			});
 		});
+	}
+
+	useEffect(() => {
+		console.log(socket.id);
+		setSocket(socket, onSocketSet);
 	}, []);
 
 	return (

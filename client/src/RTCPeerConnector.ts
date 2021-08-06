@@ -15,32 +15,34 @@ const setSocket = (s: any, callback?: Function) => {
 		const sdp = JSON.parse(dataString).sdp;
 		const targetId = JSON.parse(dataString).senderId;
 		const user = findUserById(targetId);
-		console.log("emitting answer to: "+(user as User).id);
-		const peerConnection = (user as User).peerConnection;
-		peerConnection
-			.setRemoteDescription(new RTCSessionDescription(sdp)) // establish connection with the sender
-			.then(() => {
-				peerConnection
-					.createAnswer()
-					.then((answer) => {
-						return peerConnection.setLocalDescription(answer);
-					})
-					.then(() => {
-						const data = {
-							sdp: peerConnection.localDescription,
-							senderId: socket.id,
-							receiverId: targetId,
-							type: "answer",
-						};
-						socket.emit("ANSWER", JSON.stringify(data));
-					})
-					.catch((e) => {
-						console.warn(e);
-					});
-			})
-			.catch((e) => {
-				console.warn(e);
-			});
+		if (user) {
+			console.log("emitting answer to: " + (user as User).id);
+			const peerConnection = (user as User).peerConnection;
+			peerConnection
+				.setRemoteDescription(new RTCSessionDescription(sdp)) // establish connection with the sender
+				.then(() => {
+					peerConnection
+						.createAnswer()
+						.then((answer) => {
+							return peerConnection.setLocalDescription(answer);
+						})
+						.then(() => {
+							const data = {
+								sdp: peerConnection.localDescription,
+								senderId: socket.id,
+								receiverId: targetId,
+								type: "answer",
+							};
+							socket.emit("ANSWER", JSON.stringify(data));
+						})
+						.catch((e) => {
+							console.warn(e);
+						});
+				})
+				.catch((e) => {
+					console.warn(e);
+				});
+		}
 	});
 
 	// set remote description once answer is recieved to establish connection
@@ -48,7 +50,7 @@ const setSocket = (s: any, callback?: Function) => {
 		const sdp = JSON.parse(dataString).sdp;
 		const senderId = JSON.parse(dataString).senderId;
 		const user = findUserById(senderId);
-		console.log("answer received from: "+(user as User).id);
+		console.log("answer received from: " + (user as User).id);
 		const peerConnection = (user as User).peerConnection;
 		peerConnection.setRemoteDescription(sdp);
 	});
@@ -66,7 +68,7 @@ const getUsers = () => {
 };
 
 const findUserById = (id: string) => {
-	const user = getUsers().find(usr => usr.id === id);
+	const user = getUsers().find((usr) => usr.id === id);
 	return user;
 };
 

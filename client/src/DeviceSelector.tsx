@@ -36,12 +36,14 @@ function DeviceSelector(props) {
 
   //when new input is selected
   const handleChangeSelectedInput = (selection) => {
+		console.log(selection);
     navigator.mediaDevices
       .getUserMedia({
-        audio: selection?.value ?? true,
+				audio: {deviceId: selection.value},
         video: false,
       })
       .then((stream) => {
+				console.log(stream);
         setSelectedInput(selection);
         props.onSelect({ selection, inputOptions, stream });
       });

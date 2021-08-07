@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "@types/dom-mediacapture-record": "^1.0.10",
     "@types/jest": "^26.0.15",
@@ -25,7 +24,7 @@
   "scripts": {
     "start": "PORT=4500 react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "./node_modules/.bin/cypress",
     "eject": "react-scripts eject",
     "serve": "serve -s ./build"
   },
@@ -49,6 +48,12 @@
   },
   "devDependencies": {
     "@types/superagent": "^4.1.12",
+    "@typescript-eslint/eslint-plugin": "^4.29.0",
+    "@typescript-eslint/parser": "^4.29.0",
+    "cypress": "^8.2.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-cypress": "^2.11.3",
+    "eslint-plugin-react": "^7.24.0",
     "serve": "^12.0.0"
   }
 }

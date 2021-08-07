@@ -7,8 +7,7 @@ export const SocketContext = createContext<{ socket: Socket; peerConnection: RTC
 	peerConnection: null as unknown as RTCPeerConnection,
 });
 
-export const SocketProvider = ({ children }): JSX.Element => {
-	//eslint-disable-line
+export const SocketProvider = ({ children }): JSX.Element => { //eslint-disable-line
 	const ENDPOINT = "http://localhost:4000/";
 	const socket = socketIOClient(ENDPOINT);
 	const peerConnection = new RTCPeerConnection({

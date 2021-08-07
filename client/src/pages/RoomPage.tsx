@@ -38,7 +38,7 @@ function RoomPage({ name }) {
 }
 
 RoomPage.propTypes = {
-	name: String,
+	name: PropTypes.string,
 };
 
 export default RoomPage;

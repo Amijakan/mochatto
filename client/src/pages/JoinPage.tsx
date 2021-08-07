@@ -32,9 +32,9 @@ const JoinPage = ({ name, setName, setJoined }) => {
 };
 
 JoinPage.propTypes = {
-	name: String,
-	setName: Function,
-	setJoined: Function,
+	name: PropTypes.string,
+	setName: PropTypes.func,
+	setJoined: PropTypes.func,
 };
 
 export default JoinPage;

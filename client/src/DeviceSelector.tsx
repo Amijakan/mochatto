@@ -30,7 +30,7 @@ function DeviceSelector({ onSelect }) {
 }
 
 DeviceSelector.propTypes = {
-	onSelect: Function,
+	onSelect: PropTypes.func,
 };
 
 export { Device, DeviceSelector };

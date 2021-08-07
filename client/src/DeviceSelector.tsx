@@ -3,7 +3,7 @@ import Select from "react-select";
 import PropTypes from "prop-types";
 import { Device, listInputDevices, selectInputDevice } from "./DeviceSelectorHelper";
 
-function DeviceSelector({ onSelect }) {
+function DeviceSelector(onSelect: (MediaStream) => void): JSX.Element {
 	const [inputOptions, setInputOptions] = useState([{}]);
 	const [selectedInput, setSelectedInput] = useState(Device());
 

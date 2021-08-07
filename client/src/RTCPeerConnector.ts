@@ -1,9 +1,9 @@
-import Socket from "socket.io-client";
 import User from "./User";
+import { Socket } from "socket.io-client";
 
 const users: User[] = [];
 
-export const openOfferListener = (users: User[], socket) => {
+export const openOfferListener = (users: User[], socket: Socket): void => {
 	// emit an answer when offer is received
 	socket.on("OFFER", (dataString) => {
 		const sdp = JSON.parse(dataString).sdp;
@@ -39,7 +39,7 @@ export const openOfferListener = (users: User[], socket) => {
 	});
 };
 
-export const openAnswerListener = (users: User[], socket) => {
+export const openAnswerListener = (users: User[], socket: Socket): void => {
 	// set remote description once answer is recieved to establish connection
 	socket.on("ANSWER", (dataString) => {
 		const sdp = JSON.parse(dataString).sdp;
@@ -51,28 +51,28 @@ export const openAnswerListener = (users: User[], socket) => {
 };
 
 // add user to the network (exported)
-export const addUser = (id: string) => {
+export const addUser = (id: string): void => {
 	users.push(new User(id));
 };
 
-export const getUsers = () => {
+export const getUsers = (): User[] => {
 	return users;
 };
 
-export const findUserById = (users: User[], id: string) => {
+export const findUserById = (users: User[], id: string): User => {
 	const user = users.find((usr) => usr.id === id);
-	return user;
+	return user as User;
 };
 
 // update tracks for all peer connections (exported)
-export const updateAllTracks = (track: MediaStreamTrack) => {
+export const updateAllTracks = (track: MediaStreamTrack): void => {
 	users.forEach((user) => {
 		user.updateRemoteTrack(track);
 	});
 };
 
 // send out offer to every user on network (exported)
-export const sendOffer = (socket) => {
+export const sendOffer = (socket: Socket): void => {
 	// for each user
 	users.forEach((user) => {
 		// emit an offer to the server to be broadcasted

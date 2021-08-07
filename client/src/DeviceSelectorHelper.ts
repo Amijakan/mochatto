@@ -4,7 +4,8 @@ export const Device = () => {
 	return { value, label };
 };
 
-export const listInputDevices = () => {
+export const listInputDevices = (): {}[] => {
+	// eslint-disable-line
 	const inputs = [{}];
 	navigator.mediaDevices.enumerateDevices().then((devices) => {
 		devices.map((device) => {
@@ -18,13 +19,15 @@ export const listInputDevices = () => {
 	return inputs;
 };
 
-export const selectInputDevice = (id: string) => {
+export const selectInputDevice = (id: string): MediaStream => {
+	let returnStream = null as unknown as MediaStream;
 	navigator.mediaDevices
 		.getUserMedia({
 			audio: { deviceId: id },
 			video: false,
 		})
 		.then((stream) => {
-			return stream;
+			returnStream = stream;
 		});
+	return returnStream;
 };

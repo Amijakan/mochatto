@@ -1,10 +1,16 @@
-export const notifyAndRequestNetworkInfo = (socket) => {
+import { Socket } from "socket.io-client";
+
+export const notifyAndRequestNetworkInfo = (socket: Socket): void => {
 	// notify server on join
 	socket.emit("JOIN", name);
 	socket.emit("REQUEST_USERS");
 };
 
-export const openJoinListener = (socket, addUser: (string) => void, announce: (string) => void) => {
+export const openJoinListener = (
+	socket: Socket,
+	addUser: (string) => void,
+	announce: (string) => void
+): void => {
 	socket.on("JOIN", ({ name, id }) => {
 		announce(name + " has joined.");
 		if (id !== socket.id) {
@@ -13,13 +19,13 @@ export const openJoinListener = (socket, addUser: (string) => void, announce: (s
 	});
 };
 
-export const openLeaveListener = (socket, announce: (string) => void) => {
-	socket.on("LEAVE", ({ name, id }) => {
+export const openLeaveListener = (socket: Socket, announce: (string) => void): void => {
+	socket.on("LEAVE", (name: string) => {
 		announce(name + " has left.");
 	});
 };
 
-export const openRequestUsersListener = (socket, addUser: (string) => void) => {
+export const openRequestUsersListener = (socket: Socket, addUser: (string) => void): void => {
 	socket.on("REQUEST_USERS", (users) => {
 		users.forEach((user) => {
 			if (user.id !== socket.id && user.id !== undefined) {

@@ -1,5 +1,5 @@
 class User {
-	peerConnection: any;
+	peerConnection: RTCPeerConnection;
 	sender: RTCRtpSender;
 	id: string;
 	stream: MediaStream;
@@ -20,11 +20,11 @@ class User {
 		};
 	}
 
-	setSender(s: RTCRtpSender) {
+	setSender(s: RTCRtpSender): void {
 		this.sender = s;
 	}
 
-	updateLocalTrack(track: MediaStreamTrack) {
+	updateLocalTrack(track: MediaStreamTrack): void {
 		if (this.stream.getAudioTracks()[0]) {
 			this.stream.removeTrack(this.stream.getAudioTracks()[0]);
 		}
@@ -35,7 +35,7 @@ class User {
 		this.player.autoplay = true;
 	}
 
-	updateRemoteTrack(track: MediaStreamTrack) {
+	updateRemoteTrack(track: MediaStreamTrack): void {
 		if (this.sender) {
 			this.peerConnection.removeTrack(this.sender);
 		}

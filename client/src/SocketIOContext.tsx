@@ -1,13 +1,14 @@
 import React, { createContext } from "react";
-import socketIOClient from "socket.io-client";
+import socketIOClient, { Socket } from "socket.io-client";
 import PropTypes from "prop-types";
 
-export const SocketContext = createContext<{ socket: any; peerConnection: any }>({
-	socket: null,
-	peerConnection: null,
+export const SocketContext = createContext<{ socket: Socket; peerConnection: RTCPeerConnection }>({
+	socket: null as unknown as Socket,
+	peerConnection: null as unknown as RTCPeerConnection,
 });
 
-export const SocketProvider = ({ children }) => {
+export const SocketProvider = ({ children }): JSX.Element => {
+	//eslint-disable-line
 	const ENDPOINT = "http://localhost:4000/";
 	const socket = socketIOClient(ENDPOINT);
 	const peerConnection = new RTCPeerConnection({

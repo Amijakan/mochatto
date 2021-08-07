@@ -7,6 +7,7 @@ class User {
 	constructor(id: string) {
 		this.id = id;
 		this.sender = null as unknown as RTCRtpSender;
+		// initialize with a free public STUN server to find out public ip, NAT type, and internet side port
 		this.peerConnection = new RTCPeerConnection({
 			iceServers: [{ urls: "stun:iphone-stun.strato-iphone.de:3478" }],
 		});

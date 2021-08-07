@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react'
-import Select from 'react-select'
-import PropTypes from 'prop-types';
+import React, { useState, useEffect } from "react";
+import Select from "react-select";
+import PropTypes from "prop-types";
 
 const Device = () => {
-	const value = ''
-	const label = ''
-	return { value, label }
-}
+	const value = "";
+	const label = "";
+	return { value, label };
+};
 
 function DeviceSelector(props) {
-	const [inputOptions, setInputOptions] = useState([{}])
-	const [selectedInput, setSelectedInput] = useState(Device())
+	const [inputOptions, setInputOptions] = useState([{}]);
+	const [selectedInput, setSelectedInput] = useState(Device());
 
 	//when new input is selected
 	useEffect(() => {
@@ -23,19 +23,19 @@ function DeviceSelector(props) {
 				//if microphone permission is allowed
 				//enumerate through media devices
 				navigator.mediaDevices.enumerateDevices().then((devices) => {
-					const inputs = [{}]
+					const inputs = [{}];
 					devices.map((device) => {
-						const input = Device()
-						input.value = device.deviceId
-						input.label = device.label
-						inputs.push(input)
-						return null
-					})
-					setInputOptions(inputs)
-				})
-				props.onSelect({ selectedInput, inputOptions, stream })
-			})
-	}, [selectedInput]) // eslint-disable-line react-hooks/exhaustive-deps
+						const input = Device();
+						input.value = device.deviceId;
+						input.label = device.label;
+						inputs.push(input);
+						return null;
+					});
+					setInputOptions(inputs);
+				});
+				props.onSelect({ selectedInput, inputOptions, stream });
+			});
+	}, [selectedInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
 		<>
@@ -43,15 +43,15 @@ function DeviceSelector(props) {
 				value={selectedInput}
 				options={inputOptions}
 				onChange={(selection) => {
-					setSelectedInput(selection)
+					setSelectedInput(selection);
 				}}
 			/>
 		</>
-	)
+	);
 }
 
 DeviceSelector.propTypes = {
-    onSelect: Function
-}
+	onSelect: Function,
+};
 
-export { Device, DeviceSelector }
+export { Device, DeviceSelector };

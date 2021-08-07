@@ -8,7 +8,7 @@ export const SocketContext = createContext<{ socket: any; peerConnection: any }>
 });
 
 export const SocketProvider = ({ children }) => {
-	const ENDPOINT = "http://jimanaka.com:4000/";
+	const ENDPOINT = "http://localhost:4000/";
 	const socket = socketIOClient(ENDPOINT);
 	const peerConnection = new RTCPeerConnection({
 		iceServers: [{ urls: "stun:iphone-stun.strato-iphone.de:3478" }],

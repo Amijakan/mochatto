@@ -15,17 +15,7 @@ class User {
 
 		// listener for when a peer adds a track
 		this.peerConnection.ontrack = (event) => {
-			if (this.stream.getAudioTracks()[0]) {
-				this.stream.removeTrack(this.stream.getAudioTracks()[0]);
-			}
-			console.log(this.stream.getAudioTracks());
-			this.stream.addTrack(event.track);
-			console.log(this.stream.getAudioTracks());
-			// set the new stream as the audio source
-			this.player.srcObject = this.stream;
-			console.log(this.stream);
-			this.player.play();
-			this.player.autoplay = true;
+			this.updateLocalTrack(event.track);
 		};
 	}
 
@@ -33,7 +23,18 @@ class User {
 		this.sender = s;
 	}
 
-	updateTrack(track: MediaStreamTrack) {
+	updateLocalTrack(track: MediaStreamTrack) {
+		if (this.stream.getAudioTracks()[0]) {
+			this.stream.removeTrack(this.stream.getAudioTracks()[0]);
+		}
+		this.stream.addTrack(track);
+		// set the new stream as the audio source
+		this.player.srcObject = this.stream;
+		this.player.play();
+		this.player.autoplay = true;
+	}
+
+	updateRemoteTrack(track: MediaStreamTrack) {
 		if (this.sender) {
 			this.peerConnection.removeTrack(this.sender);
 		}

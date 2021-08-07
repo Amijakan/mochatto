@@ -67,7 +67,7 @@ export const findUserById = (users: User[], id: string) => {
 // update tracks for all peer connections (exported)
 export const updateAllTracks = (track: MediaStreamTrack) => {
 	users.forEach((user) => {
-		user.updateTrack(track);
+		user.updateRemoteTrack(track);
 	});
 };
 

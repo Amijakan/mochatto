@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 const JoinPage = ({ name, setName, setJoined }) => {
 	const { socket } = useContext(SocketContext);
-	const onJoin = () => {
+	const onJoinClicked = () => {
 		if (socket) {
 			setJoined(true);
 		}
@@ -25,7 +25,7 @@ const JoinPage = ({ name, setName, setJoined }) => {
 				</label>
 			</div>
 			<div>
-				<button onClick={() => onJoin()}>Join</button>
+				<button onClick={() => onJoinClicked()}>Join</button>
 			</div>
 		</>
 	);

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { SocketContext } from "../SocketIOContext";
 import { DeviceSelector } from "../DeviceSelector";
 import { addUser, setSocket, updateAllTracks, sendOffer } from "../RTCPeerConnector";
+import PropTypes from "prop-types";
 
 function RoomPage({ name }) {
 	const [announcement, setAnnouncement] = useState("");
@@ -15,12 +16,12 @@ function RoomPage({ name }) {
 
 	const onSocketSet = () => {
 		// notify server on join
-		socket.emit("JOIN",  name );
+		socket.emit("JOIN", name);
 		socket.emit("REQUEST_USERS");
 
 		socket.on("JOIN", ({ name, id }) => {
 			setAnnouncement(name + " has joined.");
-			if(id !== socket.id){
+			if (id !== socket.id) {
 				addUser(id);
 			}
 		});
@@ -30,14 +31,14 @@ function RoomPage({ name }) {
 		});
 
 		socket.on("REQUEST_USERS", (users) => {
-			console.log("users requested: "+users.length);
+			console.log("users requested: " + users.length);
 			users.forEach((user) => {
-				if(user.id !== socket.id && user.id !== undefined){
+				if (user.id !== socket.id && user.id !== undefined) {
 					addUser(user.id);
 				}
 			});
 		});
-	}
+	};
 
 	useEffect(() => {
 		console.log(socket.id);
@@ -53,5 +54,9 @@ function RoomPage({ name }) {
 		</>
 	);
 }
+
+RoomPage.propTypes = {
+	name: String,
+};
 
 export default RoomPage;

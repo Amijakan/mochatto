@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Select from 'react-select'
+import PropTypes from 'prop-types';
 
 const Device = () => {
 	const value = ''
@@ -22,9 +23,9 @@ function DeviceSelector(props) {
 				//if microphone permission is allowed
 				//enumerate through media devices
 				navigator.mediaDevices.enumerateDevices().then((devices) => {
-					var inputs = [{}]
+					const inputs = [{}]
 					devices.map((device) => {
-						var input = Device()
+						const input = Device()
 						input.value = device.deviceId
 						input.label = device.label
 						inputs.push(input)
@@ -47,6 +48,10 @@ function DeviceSelector(props) {
 			/>
 		</>
 	)
+}
+
+DeviceSelector.propTypes = {
+    onSelect: Function
 }
 
 export { Device, DeviceSelector }

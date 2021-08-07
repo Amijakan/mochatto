@@ -4,7 +4,7 @@ import User from "./User";
 let socket = null as any;
 
 // initialize socketio (exported)
-const setSocket = (s: any, callback?: Function) => {
+const setSocket = (s: any, callback?: () => void) => {
 	socket = s;
 
 	if (callback) {

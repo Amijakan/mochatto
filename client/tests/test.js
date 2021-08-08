@@ -1,6 +1,6 @@
 import socketIOClient from "socket.io-client";
-import { addUser, updateAllTracks, sendOffer } from "../../src/RTCPeerConnector";
-import User from "../../src/User";
+import { addUser, updateAllTracks, sendOffer } from "../src/RTCPeerConnector";
+import User from "../src/User";
 
 describe('User class tests', () => {
   it('joins', () => {

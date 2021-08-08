@@ -24,7 +24,7 @@
   "scripts": {
     "start": "PORT=4500 react-scripts start",
     "build": "react-scripts build",
-    "test": "./node_modules/.bin/cypress",
+    "test": "npx cypress run --record --key 7af4c11b-fe02-4012-bfde-b35c55f2306b",
     "eject": "react-scripts eject",
     "serve": "serve -s ./build"
   },

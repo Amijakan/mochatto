@@ -17,7 +17,6 @@ export const Pack = ({
 
 const users: User[] = [];
 const defaultOn = (p) => {
-	//eslint-disable-line
 	console.log(p);
 	return;
 };

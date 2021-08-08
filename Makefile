@@ -2,12 +2,12 @@
 
 
 dev: 
-	./pre-up
+	./bin/pre-up
 	docker-compose build
 	docker-compose up
 
 dev-d: 
-	./pre-up
+	./bin/pre-up
 	docker-compose build
 	docker-compose up -d
 

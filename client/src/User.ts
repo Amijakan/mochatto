@@ -25,7 +25,7 @@ class User {
 	}
 
 	updateLocalTrack(track: MediaStreamTrack): boolean {
-		if(!track.readyState){
+		if (!track.readyState) {
 			return false;
 		}
 		// if there's already a track assigned to the stream, remove it

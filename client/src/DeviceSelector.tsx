@@ -12,20 +12,15 @@ function DeviceSelector({ onSelect }): JSX.Element {
 		setInputOptions(listInputDevices());
 	}, []);
 
-	//when new option is selected
-	useEffect(() => {
-		selectInputDevice(selectedInput.value, (stream) => {
-			onSelect(stream);
-		});
-	}, [selectedInput]); // eslint-disable-line react-hooks/exhaustive-deps
-
 	return (
 		<>
 			<Select
 				value={selectedInput}
 				options={inputOptions}
 				onChange={(selection) => {
-					setSelectedInput(selection);
+					selectInputDevice(selection.value, (stream) => {
+						onSelect(stream);
+					});
 				}}
 			/>
 		</>

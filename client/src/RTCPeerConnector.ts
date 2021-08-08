@@ -17,6 +17,7 @@ export const Pack = ({
 
 const users: User[] = [];
 const defaultOn = (p) => { //eslint-disable-line
+	console.log(p);
 	return;
 };
 
@@ -89,6 +90,9 @@ export const openOfferListener = (
 				.catch((e) => {
 					console.error(e);
 				});
+		}
+		else{
+			console.error("Could not emit answer. Sender was not found on users list.");
 		}
 	});
 };

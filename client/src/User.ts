@@ -24,7 +24,11 @@ class User {
 		this.sender = s;
 	}
 
-	updateLocalTrack(track: MediaStreamTrack): void {
+	updateLocalTrack(track: MediaStreamTrack): boolean {
+		if(!track.readyState){
+			return false;
+		}
+		// if there's already a track assigned to the stream, remove it
 		if (this.stream.getAudioTracks()[0]) {
 			this.stream.removeTrack(this.stream.getAudioTracks()[0]);
 		}
@@ -33,6 +37,7 @@ class User {
 		this.player.srcObject = this.stream;
 		this.player.play();
 		this.player.autoplay = true;
+		return true;
 	}
 
 	updateRemoteTrack(track: MediaStreamTrack): void {

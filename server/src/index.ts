@@ -22,22 +22,23 @@ app.get("/", (req, res) => {
 const users: object[] = [];
 io.on("connection", (socket) => {
 	console.log("new client: " + socket.id);
-	socket.on("REQUEST_USERS", () => {
-		console.log("users requested by: " + socket.id);
-		socket.emit("REQUEST_USERS", users);
-	});
 	socket.on("JOIN", (name) => {
 		const user = { name, id: socket.id };
 		users.push(user);
-		console.log("new user pushed: " + socket.id);
+		console.log(socket.id + " has joined room.");
 		io.emit("JOIN", user);
+	});
+	socket.on("REQUEST_USERS", () => {
+		socket.emit("REQUEST_USERS", users);
 	});
 	socket.on("OFFER", (dataString) => {
 		const targetId = JSON.parse(dataString).receiverId;
+		console.log(socket.id + " has sent offer to " + targetId);
 		socket.broadcast.to(targetId).emit("OFFER", dataString);
 	});
 	socket.on("ANSWER", (dataString) => {
 		const targetId = JSON.parse(dataString).receiverId;
+		console.log(socket.id + " has sent answer to " + targetId);
 		socket.broadcast.to(targetId).emit("ANSWER", dataString);
 	});
 	socket.on("disconnect", () => {
@@ -45,7 +46,7 @@ io.on("connection", (socket) => {
 		if (users[userIndex]) {
 			io.emit("LEAVE", users[userIndex]);
 			users.splice(userIndex, 1);
-			console.log(socket.id + " has disconnected.");
+			console.log(socket.id + " has disconnected. There are currently " + users.length + " users.");
 		}
 	});
 });

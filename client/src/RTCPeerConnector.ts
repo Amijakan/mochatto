@@ -1,18 +1,70 @@
 import User from "./User";
 import { Socket } from "socket.io-client";
 
-const users: User[] = [];
+export const Pack = ({
+	sdp,
+	senderId,
+	receiverId,
+	kind,
+}: {
+	sdp: RTCSessionDescription;
+	senderId: string;
+	receiverId: string;
+	kind: string;
+}): { sdp: RTCSessionDescription; senderId: string; receiverId: string; kind: string } => {
+	return { sdp, senderId, receiverId, kind };
+};
 
-export const openOfferListener = (users: User[], socket: Socket): void => {
+const users: User[] = [];
+const defaultOn = (p) => {
+	//eslint-disable-line
+	return;
+};
+
+// send out offer to every user on network (exported)
+export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultOn): void => {
+	// for each user
+	users.forEach((user) => {
+		// emit an offer to the server to be broadcasted
+		user.peerConnection
+			.createOffer()
+			.then((offer) => {
+				return user.peerConnection.setLocalDescription(offer);
+			})
+			.then(() => {
+				if (user.peerConnection.localDescription) {
+					const offerPack = Pack({
+						sdp: user.peerConnection.localDescription,
+						senderId: socket.id,
+						receiverId: user.id,
+						kind: "offer",
+					});
+					socket.emit("OFFER", JSON.stringify(offerPack));
+					onOfferSent(offerPack);
+				}
+			})
+			.catch((e) => {
+				console.warn(e);
+			});
+	});
+};
+
+export const openOfferListener = (
+	users: User[],
+	socket: Socket,
+	onOfferReceived: (Pack) => void = defaultOn,
+	onAnswerEmitted: (Pack) => void = defaultOn
+): void => {
 	// emit an answer when offer is received
 	socket.on("OFFER", (dataString) => {
-		const sdp = JSON.parse(dataString).sdp;
-		const targetId = JSON.parse(dataString).senderId;
-		const user = findUserById(users, targetId);
-		if (user) {
-			const peerConnection = (user as User).peerConnection;
+		const offerPack = JSON.parse(dataString);
+		const sender = findUserById(users, offerPack.senderId);
+		if (sender) {
+			onOfferReceived(offerPack);
+			// identify and use RTCPeerConnection object for the sender user
+			const peerConnection = (sender as User).peerConnection;
 			peerConnection
-				.setRemoteDescription(new RTCSessionDescription(sdp)) // establish connection with the sender
+				.setRemoteDescription(new RTCSessionDescription(offerPack.sdp)) // set remote description as the sender's
 				.then(() => {
 					peerConnection
 						.createAnswer()
@@ -20,13 +72,16 @@ export const openOfferListener = (users: User[], socket: Socket): void => {
 							return peerConnection.setLocalDescription(answer);
 						})
 						.then(() => {
-							const data = {
-								sdp: peerConnection.localDescription,
-								senderId: socket.id,
-								receiverId: targetId,
-								type: "answer",
-							};
-							socket.emit("ANSWER", JSON.stringify(data));
+							if (peerConnection.localDescription) {
+								const answerPack = Pack({
+									sdp: peerConnection.localDescription,
+									senderId: socket.id,
+									receiverId: offerPack.senderId,
+									kind: "answer",
+								});
+								socket.emit("ANSWER", JSON.stringify(answerPack));
+								onAnswerEmitted(answerPack);
+							}
 						})
 						.catch((e) => {
 							console.warn(e);
@@ -39,14 +94,24 @@ export const openOfferListener = (users: User[], socket: Socket): void => {
 	});
 };
 
-export const openAnswerListener = (users: User[], socket: Socket): void => {
+export const openAnswerListener = (
+	users: User[],
+	socket: Socket,
+	onAnswerReceived: (Pack) => void = defaultOn
+): void => {
 	// set remote description once answer is recieved to establish connection
 	socket.on("ANSWER", (dataString) => {
-		const sdp = JSON.parse(dataString).sdp;
-		const senderId = JSON.parse(dataString).senderId;
-		const user = findUserById(users, senderId);
+		const answerPack = JSON.parse(dataString);
+		const user = findUserById(users, answerPack.senderId);
 		const peerConnection = (user as User).peerConnection;
-		peerConnection.setRemoteDescription(sdp);
+		peerConnection
+			.setRemoteDescription(answerPack.sdp)
+			.then(() => {
+				onAnswerReceived(answerPack);
+			})
+			.catch((e) => {
+				console.warn(e);
+			});
 	});
 };
 
@@ -68,30 +133,5 @@ export const findUserById = (users: User[], id: string): User => {
 export const updateAllTracks = (track: MediaStreamTrack): void => {
 	users.forEach((user) => {
 		user.updateRemoteTrack(track);
-	});
-};
-
-// send out offer to every user on network (exported)
-export const sendOffer = (socket: Socket): void => {
-	// for each user
-	users.forEach((user) => {
-		// emit an offer to the server to be broadcasted
-		user.peerConnection
-			.createOffer()
-			.then((offer) => {
-				return user.peerConnection.setLocalDescription(offer);
-			})
-			.then(() => {
-				const data = {
-					sdp: user.peerConnection.localDescription,
-					senderId: socket.id,
-					receiverId: user.id,
-					type: "offer",
-				};
-				socket.emit("OFFER", JSON.stringify(data));
-			})
-			.catch((e) => {
-				console.warn(e);
-			});
 	});
 };

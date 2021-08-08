@@ -1,40 +1,21 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import PropTypes from "prop-types";
+import { Device, listInputDevices, selectInputDevice } from "./DeviceSelectorHelper";
 
-const Device = () => {
-	const value = "";
-	const label = "";
-	return { value, label };
-};
-
-function DeviceSelector(props) {
+function DeviceSelector({ onSelect }: { onSelect: (MediaStream) => void }): JSX.Element {
 	const [inputOptions, setInputOptions] = useState([{}]);
 	const [selectedInput, setSelectedInput] = useState(Device());
 
-	//when new input is selected
 	useEffect(() => {
-		navigator.mediaDevices
-			.getUserMedia({
-				audio: { deviceId: selectedInput.value },
-				video: false,
-			})
-			.then((stream) => {
-				//if microphone permission is allowed
-				//enumerate through media devices
-				navigator.mediaDevices.enumerateDevices().then((devices) => {
-					const inputs = [{}];
-					devices.map((device) => {
-						const input = Device();
-						input.value = device.deviceId;
-						input.label = device.label;
-						inputs.push(input);
-						return null;
-					});
-					setInputOptions(inputs);
-				});
-				props.onSelect({ selectedInput, inputOptions, stream });
-			});
+		setInputOptions(listInputDevices());
+	}, []);
+
+	//when new option is selected
+	useEffect(() => {
+		selectInputDevice(selectedInput.value, (stream) => {
+			onSelect(stream);
+		});
 	}, [selectedInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
@@ -51,7 +32,7 @@ function DeviceSelector(props) {
 }
 
 DeviceSelector.propTypes = {
-	onSelect: Function,
+	onSelect: PropTypes.func,
 };
 
 export { Device, DeviceSelector };

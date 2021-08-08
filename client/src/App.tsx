@@ -3,7 +3,7 @@ import Pages from "./pages";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { SocketProvider } from "./SocketIOContext";
 
-const App = () => {
+const App = (): JSX.Element => {
   return (
     <div>
       <SocketProvider>

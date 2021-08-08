@@ -1,5 +1,5 @@
 class User {
-	peerConnection: any;
+	peerConnection: RTCPeerConnection;
 	sender: RTCRtpSender;
 	id: string;
 	stream: MediaStream;
@@ -16,29 +16,34 @@ class User {
 
 		// listener for when a peer adds a track
 		this.peerConnection.ontrack = (event) => {
-			if (this.stream.getAudioTracks()[0]) {
-				this.stream.removeTrack(this.stream.getAudioTracks()[0]);
-			}
-			console.log(this.stream.getAudioTracks());
-			this.stream.addTrack(event.track);
-			console.log(this.stream.getAudioTracks());
-			// set the new stream as the audio source
-			this.player.srcObject = this.stream;
-			console.log(this.stream);
-			this.player.play();
-			this.player.autoplay = true;
+			this.updateLocalTrack(event.track);
 		};
 	}
 
-	setSender(s: RTCRtpSender) {
+	setSender(s: RTCRtpSender): void {
 		this.sender = s;
 	}
 
-	updateTrack(track: MediaStreamTrack) {
+	updateLocalTrack(track: MediaStreamTrack): boolean {
+		if (!track.readyState) {
+			return false;
+		}
+		// if there's already a track assigned to the stream, remove it
+		if (this.stream.getAudioTracks()[0]) {
+			this.stream.removeTrack(this.stream.getAudioTracks()[0]);
+		}
+		this.stream.addTrack(track);
+		// set the new stream as the audio source
+		this.player.srcObject = this.stream;
+		this.player.play();
+		this.player.autoplay = true;
+		return true;
+	}
+
+	updateRemoteTrack(track: MediaStreamTrack): void {
 		if (this.sender) {
 			this.peerConnection.removeTrack(this.sender);
 		}
-		console.log(track);
 		this.setSender(this.peerConnection.addTrack(track));
 	}
 }

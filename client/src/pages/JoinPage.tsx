@@ -2,9 +2,15 @@ import React, { useContext } from "react";
 import { SocketContext } from "../SocketIOContext";
 import PropTypes from "prop-types";
 
-const JoinPage = ({ name, setName, setJoined }) => {
+const JoinPage = ({
+	setName,
+	setJoined,
+}: {
+	setName: (string) => void;
+	setJoined: (string) => void;
+}): JSX.Element => {
 	const { socket } = useContext(SocketContext);
-	const onJoin = () => {
+	const onJoinClicked = () => {
 		if (socket) {
 			setJoined(true);
 		}
@@ -25,16 +31,16 @@ const JoinPage = ({ name, setName, setJoined }) => {
 				</label>
 			</div>
 			<div>
-				<button onClick={() => onJoin()}>Join</button>
+				<button onClick={() => onJoinClicked()}>Join</button>
 			</div>
 		</>
 	);
 };
 
 JoinPage.propTypes = {
-	name: String,
-	setName: Function,
-	setJoined: Function,
+	name: PropTypes.string,
+	setName: PropTypes.func,
+	setJoined: PropTypes.func,
 };
 
 export default JoinPage;

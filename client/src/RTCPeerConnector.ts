@@ -1,86 +1,28 @@
-import Socket from "socket.io-client";
 import User from "./User";
+import { Socket } from "socket.io-client";
 
-let socket = null as any;
-
-// initialize socketio (exported)
-const setSocket = (s: any, callback?: () => void) => {
-	socket = s;
-
-	if (callback) {
-		callback();
-	}
-	// emit an answer when offer is received
-	socket.on("OFFER", (dataString) => {
-		const sdp = JSON.parse(dataString).sdp;
-		const targetId = JSON.parse(dataString).senderId;
-		const user = findUserById(targetId);
-		if (user) {
-			console.log("emitting answer to: " + (user as User).id);
-			const peerConnection = (user as User).peerConnection;
-			peerConnection
-				.setRemoteDescription(new RTCSessionDescription(sdp)) // establish connection with the sender
-				.then(() => {
-					peerConnection
-						.createAnswer()
-						.then((answer) => {
-							return peerConnection.setLocalDescription(answer);
-						})
-						.then(() => {
-							const data = {
-								sdp: peerConnection.localDescription,
-								senderId: socket.id,
-								receiverId: targetId,
-								type: "answer",
-							};
-							socket.emit("ANSWER", JSON.stringify(data));
-						})
-						.catch((e) => {
-							console.warn(e);
-						});
-				})
-				.catch((e) => {
-					console.warn(e);
-				});
-		}
-	});
-
-	// set remote description once answer is recieved to establish connection
-	socket.on("ANSWER", (dataString) => {
-		const sdp = JSON.parse(dataString).sdp;
-		const senderId = JSON.parse(dataString).senderId;
-		const user = findUserById(senderId);
-		console.log("answer received from: " + (user as User).id);
-		const peerConnection = (user as User).peerConnection;
-		peerConnection.setRemoteDescription(sdp);
-	});
+export const Pack = ({
+	sdp,
+	senderId,
+	receiverId,
+	kind,
+}: {
+	sdp: RTCSessionDescription;
+	senderId: string;
+	receiverId: string;
+	kind: string;
+}): { sdp: RTCSessionDescription; senderId: string; receiverId: string; kind: string } => {
+	return { sdp, senderId, receiverId, kind };
 };
 
 const users: User[] = [];
-
-// add user to the network (exported)
-const addUser = (id: string) => {
-	users.push(new User(id));
-};
-
-const getUsers = () => {
-	return users;
-};
-
-const findUserById = (id: string) => {
-	const user = getUsers().find((usr) => usr.id === id);
-	return user;
-};
-
-// update tracks for all peer connections (exported)
-const updateAllTracks = (track: MediaStreamTrack) => {
-	users.forEach((user) => {
-		user.updateTrack(track);
-	});
+const defaultOn = (p) => {
+	console.log(p);
+	return;
 };
 
 // send out offer to every user on network (exported)
-const sendOffer = () => {
+export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultOn): void => {
 	// for each user
 	users.forEach((user) => {
 		// emit an offer to the server to be broadcasted
@@ -90,18 +32,108 @@ const sendOffer = () => {
 				return user.peerConnection.setLocalDescription(offer);
 			})
 			.then(() => {
-				const data = {
-					sdp: user.peerConnection.localDescription,
-					senderId: socket.id,
-					receiverId: user.id,
-					type: "offer",
-				};
-				socket.emit("OFFER", JSON.stringify(data));
+				if (user.peerConnection.localDescription) {
+					const offerPack = Pack({
+						sdp: user.peerConnection.localDescription,
+						senderId: socket.id,
+						receiverId: user.id,
+						kind: "offer",
+					});
+					socket.emit("OFFER", JSON.stringify(offerPack));
+					onOfferSent(offerPack);
+				}
 			})
 			.catch((e) => {
-				console.warn(e);
+				console.error(e);
 			});
 	});
 };
 
-export { addUser, setSocket, updateAllTracks, sendOffer };
+export const openOfferListener = (
+	users: User[],
+	socket: Socket,
+	onOfferReceived: (Pack) => void = defaultOn,
+	onAnswerEmitted: (Pack) => void = defaultOn
+): void => {
+	// emit an answer when offer is received
+	socket.on("OFFER", (dataString) => {
+		const offerPack = JSON.parse(dataString);
+		const sender = findUserById(users, offerPack.senderId);
+		if (sender) {
+			onOfferReceived(offerPack);
+			// identify and use RTCPeerConnection object for the sender user
+			const peerConnection = (sender as User).peerConnection;
+			peerConnection
+				.setRemoteDescription(new RTCSessionDescription(offerPack.sdp)) // set remote description as the sender's
+				.then(() => {
+					peerConnection
+						.createAnswer()
+						.then((answer) => {
+							return peerConnection.setLocalDescription(answer);
+						})
+						.then(() => {
+							if (peerConnection.localDescription) {
+								const answerPack = Pack({
+									sdp: peerConnection.localDescription,
+									senderId: socket.id,
+									receiverId: offerPack.senderId,
+									kind: "answer",
+								});
+								socket.emit("ANSWER", JSON.stringify(answerPack));
+								onAnswerEmitted(answerPack);
+							}
+						})
+						.catch((e) => {
+							console.error(e);
+						});
+				})
+				.catch((e) => {
+					console.error(e);
+				});
+		} else {
+			console.error("Could not emit answer. Sender was not found on users list.");
+		}
+	});
+};
+
+export const openAnswerListener = (
+	users: User[],
+	socket: Socket,
+	onAnswerReceived: (Pack) => void = defaultOn
+): void => {
+	// set remote description once answer is recieved to establish connection
+	socket.on("ANSWER", (dataString) => {
+		const answerPack = JSON.parse(dataString);
+		const user = findUserById(users, answerPack.senderId);
+		const peerConnection = (user as User).peerConnection;
+		peerConnection
+			.setRemoteDescription(answerPack.sdp)
+			.then(() => {
+				onAnswerReceived(answerPack);
+			})
+			.catch((e) => {
+				console.error(e);
+			});
+	});
+};
+
+// add user to the network (exported)
+export const addUser = (id: string): void => {
+	users.push(new User(id));
+};
+
+export const getUsers = (): User[] => {
+	return users;
+};
+
+export const findUserById = (users: User[], id: string): User => {
+	const user = users.find((usr) => usr.id === id);
+	return user as User;
+};
+
+// update tracks for all peer connections (exported)
+export const updateAllTracks = (track: MediaStreamTrack): void => {
+	users.forEach((user) => {
+		user.updateRemoteTrack(track);
+	});
+};

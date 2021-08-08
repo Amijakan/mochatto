@@ -1,7 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import { SocketContext } from "../SocketIOContext";
 import { DeviceSelector } from "../DeviceSelector";
-import { addUser, updateAllTracks, sendOffer, openOfferListener, openAnswerListener, getUsers } from "../RTCPeerConnector";
+import {
+	addUser,
+	updateAllTracks,
+	sendOffer,
+	openOfferListener,
+	openAnswerListener,
+	getUsers,
+} from "../RTCPeerConnector";
 import {
 	notifyAndRequestNetworkInfo,
 	openJoinListener,

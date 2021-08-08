@@ -1,12 +1,11 @@
-export const Device = () => {
+export const Device = (): { value: string; label: string } => {
 	const value = "";
 	const label = "";
 	return { value, label };
 };
 
-export const listInputDevices = (): {}[] => {
-	// eslint-disable-line
-	const inputs = [{}];
+export const listInputDevices = (): { value: string; label: string }[] => {
+	const inputs: { value: string; label: string }[] = [];
 	navigator.mediaDevices.enumerateDevices().then((devices) => {
 		devices.map((device) => {
 			const input = Device();
@@ -19,15 +18,13 @@ export const listInputDevices = (): {}[] => {
 	return inputs;
 };
 
-export const selectInputDevice = (id: string): MediaStream => {
-	let returnStream = null as unknown as MediaStream;
+export const selectInputDevice = (id: string, useStream: (MediaStream) => void): void => {
 	navigator.mediaDevices
 		.getUserMedia({
 			audio: { deviceId: id },
 			video: false,
 		})
 		.then((stream) => {
-			returnStream = stream;
+			useStream(stream);
 		});
-	return returnStream;
 };

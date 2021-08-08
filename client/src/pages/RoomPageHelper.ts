@@ -1,6 +1,6 @@
 import { Socket } from "socket.io-client";
 
-export const notifyAndRequestNetworkInfo = (socket: Socket): void => {
+export const notifyAndRequestNetworkInfo = (socket: Socket, name: string): void => {
 	// notify server on join
 	socket.emit("JOIN", name);
 	socket.emit("REQUEST_USERS");

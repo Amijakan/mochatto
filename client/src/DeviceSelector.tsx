@@ -3,7 +3,8 @@ import Select from "react-select";
 import PropTypes from "prop-types";
 import { Device, listInputDevices, selectInputDevice } from "./DeviceSelectorHelper";
 
-function DeviceSelector(onSelect: (MediaStream) => void): JSX.Element {
+function DeviceSelector({ onSelect }): JSX.Element {
+	// eslint-disable-line
 	const [inputOptions, setInputOptions] = useState([{}]);
 	const [selectedInput, setSelectedInput] = useState(Device());
 
@@ -13,7 +14,9 @@ function DeviceSelector(onSelect: (MediaStream) => void): JSX.Element {
 
 	//when new option is selected
 	useEffect(() => {
-		onSelect(selectInputDevice(selectedInput.value));
+		selectInputDevice(selectedInput.value, (stream) => {
+			onSelect(stream);
+		});
 	}, [selectedInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (

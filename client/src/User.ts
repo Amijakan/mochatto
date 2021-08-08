@@ -39,7 +39,6 @@ class User {
 		if (this.sender) {
 			this.peerConnection.removeTrack(this.sender);
 		}
-		console.log(track);
 		this.setSender(this.peerConnection.addTrack(track));
 	}
 }

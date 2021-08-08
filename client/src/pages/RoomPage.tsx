@@ -10,7 +10,7 @@ import {
 } from "./RoomPageHelper";
 import PropTypes from "prop-types";
 
-function RoomPage(): JSX.Element {
+function RoomPage({ name }): JSX.Element {
 	const [announcement, setAnnouncement] = useState("");
 	const { socket } = useContext(SocketContext);
 
@@ -21,7 +21,7 @@ function RoomPage(): JSX.Element {
 	};
 
 	useEffect(() => {
-		notifyAndRequestNetworkInfo(socket);
+		notifyAndRequestNetworkInfo(socket, name);
 		openJoinListener(socket, addUser, setAnnouncement);
 		openLeaveListener(socket, setAnnouncement);
 		openRequestUsersListener(socket, addUser);

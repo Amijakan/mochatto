@@ -43,7 +43,7 @@ export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultO
 				}
 			})
 			.catch((e) => {
-				console.warn(e);
+				console.error(e);
 			});
 	});
 };
@@ -83,11 +83,11 @@ export const openOfferListener = (
 							}
 						})
 						.catch((e) => {
-							console.warn(e);
+							console.error(e);
 						});
 				})
 				.catch((e) => {
-					console.warn(e);
+					console.error(e);
 				});
 		}
 	});
@@ -109,7 +109,7 @@ export const openAnswerListener = (
 				onAnswerReceived(answerPack);
 			})
 			.catch((e) => {
-				console.warn(e);
+				console.error(e);
 			});
 	});
 };

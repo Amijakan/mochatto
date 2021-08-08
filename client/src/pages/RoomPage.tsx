@@ -10,7 +10,7 @@ import {
 } from "./RoomPageHelper";
 import PropTypes from "prop-types";
 
-function RoomPage({ name }): JSX.Element {
+function RoomPage({ name }: { name: string }): JSX.Element {
 	const [announcement, setAnnouncement] = useState("");
 	const { socket } = useContext(SocketContext);
 

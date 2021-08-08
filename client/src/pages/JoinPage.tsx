@@ -2,7 +2,13 @@ import React, { useContext } from "react";
 import { SocketContext } from "../SocketIOContext";
 import PropTypes from "prop-types";
 
-const JoinPage = ({ setName, setJoined }): JSX.Element => { // eslint-disable-line
+const JoinPage = ({
+	setName,
+	setJoined,
+}: {
+	setName: (string) => void;
+	setJoined: (string) => void;
+}): JSX.Element => {
 	const { socket } = useContext(SocketContext);
 	const onJoinClicked = () => {
 		if (socket) {

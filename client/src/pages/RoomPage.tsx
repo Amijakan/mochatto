@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { SocketContext } from "../SocketIOContext";
 import { DeviceSelector } from "../DeviceSelector";
-import { addUser, updateAllTracks, sendOffer } from "../RTCPeerConnector";
+import { addUser, updateAllTracks, sendOffer, openOfferListener, openAnswerListener, getUsers } from "../RTCPeerConnector";
 import {
 	notifyAndRequestNetworkInfo,
 	openJoinListener,
@@ -25,6 +25,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 		openJoinListener(socket, addUser, setAnnouncement);
 		openLeaveListener(socket, setAnnouncement);
 		openRequestUsersListener(socket, addUser);
+		openOfferListener(getUsers(), socket);
+		openAnswerListener(getUsers(), socket);
 	}, []);
 
 	return (

@@ -1,12 +1,28 @@
-import socketIOClient from "socket.io-client";
-import { addUser, updateAllTracks, sendOffer } from "../src/RTCPeerConnector";
-import User from "../src/User";
-
-describe('Server tests', () => {
-	const ENDPOINT = "http://localhost:4000/";
-	const socket = socketIOClient(ENDPOINT);
-  it('should connect to signaling server', () => {
-		cy.wait(1000);
-		expect(socket.connected).to.eq(true);
-  })
-})
+describe("Server tests", () => {
+	const name = `Cy_${Cypress._.random(1000)}`
+	it("joins", () => {
+		cy.task("connect");
+		cy.task("join", name).then(
+			user => {
+				expect(name).to.eq(user.name);
+			}
+		);
+	});
+	it("requests", () => {
+		cy.task("connect");
+		cy.task("requestUsers").then(
+			users => {
+				expect(users).to.have.length(1);
+			}
+		);
+	});
+	it("clears", () => {
+		cy.task("connect");
+		cy.task("clearUsers");
+		cy.task("requestUsers").then(
+			users => {
+				expect(users).to.have.length(0);
+			}
+		);
+	});
+});

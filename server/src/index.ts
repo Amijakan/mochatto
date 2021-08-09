@@ -11,7 +11,7 @@ const server = app.listen(port, () => {
 
 const io = new Server(server, {
 	cors: {
-		origin: ["http://localhost:4500"],
+		origin: ["http://localhost:4500", "http://localhost:4600"],
 	},
 });
 
@@ -25,11 +25,16 @@ io.on("connection", (socket) => {
 	socket.on("JOIN", (name) => {
 		const user = { name, id: socket.id };
 		users.push(user);
-		console.log(socket.id + " has joined room.");
+		console.log(socket.id + " has joined room. There are currently " + users.length + " users.");
 		io.emit("JOIN", user);
 	});
 	socket.on("REQUEST_USERS", () => {
 		socket.emit("REQUEST_USERS", users);
+		console.log("Requested users. There are currently " + users.length + " users.");
+	});
+	socket.on("CLEAR_USERS", () => {
+		users.length = 0;
+		console.log("Cleared users. There are currently " + users.length + " users.");
 	});
 	socket.on("OFFER", (dataString) => {
 		const targetId = JSON.parse(dataString).receiverId;

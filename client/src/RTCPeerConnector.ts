@@ -64,7 +64,7 @@ export const openOfferListener = (
       // identify and use RTCPeerConnection object for the sender user
       const peerConnection = (sender as User).peerConnection;
       peerConnection
-        .setRemoteDescription(new RTCSessionDescription(offerPack.sdp)) // set remote description as the sender's
+        .setRemoteDescription(offerPack.sdp) // set remote description as the sender's
         .then(() => {
           peerConnection
             .createAnswer()

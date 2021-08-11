@@ -23,10 +23,20 @@ module.exports = (on, config) => {
 	// `config` is the resolved Cypress config
 	let socket;
 	const ENDPOINT = "http://localhost:4000/";
+	on("before:browser:launch", (browser, launchOptions) => {
+		launchOptions.args.push("--use-fake-device-for-media-stream");
+		launchOptions.args.push("--use-fake-ui-for-media-stream");
+
+		return launchOptions;
+	});
 	on("task", {
 		connect() {
 			socket = socketIOClient(ENDPOINT);
-			return null;
+			return new Promise((on) => {
+				socket.on("connect", () => {
+					on(socket.id);
+				});
+			});
 		},
 		join(name) {
 			socket.emit("JOIN", name);
@@ -48,13 +58,27 @@ module.exports = (on, config) => {
 			socket.emit("CLEAR_USERS");
 			return null;
 		},
-		offer(socket, dataString) {
+		offer(dataString) {
 			socket.emit("OFFER", dataString);
 			return null;
 		},
-		answer(socket, dataString) {
+		onOffer() {
+			return new Promise((on) => {
+				socket.on("OFFER", (dataString) => {
+					on(dataString);
+				});
+			});
+		},
+		answer(dataString) {
 			socket.emit("ANSWER", dataString);
 			return null;
+		},
+		onAnswer() {
+			return new Promise((on) => {
+				socket.on("ANSWER", (dataString) => {
+					on(dataString);
+				});
+			});
 		},
 	});
 };

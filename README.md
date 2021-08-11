@@ -1,9 +1,15 @@
 
 # Try it out
 
-**Requires yarn**
+## Dev
+1. `make`
+1. `make dev`
 
-1. `docker-compose build`
-1. `./pre-run`
-1. `docker-compose up`
+or
+
+2. `make dev-d` to run it as daemon
+
+## Prod
+1. `make`
+1. `make prod`
 

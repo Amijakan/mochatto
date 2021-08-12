@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { SocketContext } from "../SocketIOContext";
 import { DeviceSelector } from "../DeviceSelector";
+import AvatarCanvas from "../AvatarCanvas";
 import {
 	addUser,
 	updateAllTracks,
@@ -42,6 +43,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 			<div>Input selector</div>
 			<DeviceSelector onSelect={onSelect} />
 			<div>{announcement}</div>
+			<AvatarCanvas />
 		</>
 	);
 }

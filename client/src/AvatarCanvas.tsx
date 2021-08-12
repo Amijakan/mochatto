@@ -60,10 +60,9 @@ function AvatarCanvas(): JSX.Element {
 				style={{
 					background: "black",
 					position: "absolute",
-					left: "20%",
-					top: "20%",
-					width: "60%",
-					height: "60%",
+					left: "10%",
+					width: "80%",
+					height: "80%",
 					padding: "0",
 					margin: "0",
 				}}

@@ -49,7 +49,7 @@ io.on("connection", (socket) => {
 	socket.on("disconnect", () => {
 		const userIndex = users.findIndex((usr) => (usr as any).id === socket.id);
 		if (users[userIndex]) {
-			io.emit("LEAVE", users[userIndex]);
+			io.emit("LEAVE", (users[userIndex] as any).name);
 			users.splice(userIndex, 1);
 			console.log(socket.id + " has disconnected. There are currently " + users.length + " users.");
 		}

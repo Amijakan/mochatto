@@ -39,7 +39,12 @@ export const selectInputDevice = (
 ): void => {
 	navigator.mediaDevices
 		.getUserMedia({
-			audio: { deviceId: id },
+			audio: {
+				deviceId: id,
+				autoGainControl: false,
+				echoCancellation: false,
+				noiseSuppression: false,
+			},
 			video: false,
 		})
 		.then((stream) => {

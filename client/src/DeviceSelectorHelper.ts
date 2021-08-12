@@ -8,6 +8,7 @@ const defaultOnError = (e: MediaStreamError): void => {
 	console.warn(e);
 	return;
 };
+
 export const listInputDevices = (
 	onError: (MediaStreamError) => void = defaultOnError
 ): { value: string; label: string }[] => {
@@ -16,11 +17,13 @@ export const listInputDevices = (
 		.enumerateDevices()
 		.then((devices) => {
 			devices.map((device) => {
-				const input = Device();
-				input.value = device.deviceId;
-				input.label = device.label;
-				inputs.push(input);
-				return null;
+				if (device.kind === "audioinput") {
+					const input = Device();
+					input.value = device.deviceId;
+					input.label = device.label;
+					inputs.push(input);
+					return null;
+				}
 			});
 		})
 		.catch((e) => {

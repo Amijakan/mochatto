@@ -1,5 +1,4 @@
 {
     "projectId": "4p5vm6",
-    "integrationFolder": "cypress/integration",
-    "port": 4600
+    "integrationFolder": "tests"
 }

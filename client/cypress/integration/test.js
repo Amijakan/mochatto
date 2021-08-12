@@ -25,10 +25,10 @@ describe("Signaling server tests", () => {
 });
 
 import { listInputDevices, selectInputDevice } from "../../src/DeviceSelectorHelper.ts";
-describe("Device Selector Helper Tests", () => {
+describe("Device Selector Helper", () => {
 	const onError = (e) => {
 		throw new Error(e);
-	}
+	};
 	it("lists devices", () => {
 		const inputs = listInputDevices(onError);
 	});
@@ -39,5 +39,21 @@ describe("Device Selector Helper Tests", () => {
 			audio.play();
 		};
 		selectInputDevice("default", useStream, onError);
+	});
+});
+
+import User from "../../src/User.ts";
+describe("User", () => {
+	let user;
+	const id = Cypress._.random(1000);
+	it("instantiates user", () => {
+		user = new User(id);
+	});
+	it("updates local track", () => {
+		let stream;
+		const useStream = (stream) => {
+			expect(user.updateLocalTrack(stream.getAudioTracks()[0])).to.eq(true);
+		};
+		selectInputDevice("default", useStream);
 	});
 });

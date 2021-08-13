@@ -1,11 +1,14 @@
 import React, { useState } from "react";
+import Avatar from "./Avatar";
+import { getUsers } from "./RTCPeerConnector";
 
 function AvatarCanvas(): JSX.Element {
 	const [pos, setPos] = useState([0, 0]);
+	const [positions, setPositions] = useState([[0, 0]]);
+	const avatar = new Avatar();
 	let offset;
 
 	const _onMouseDown = (event) => {
-		console.log("down");
 		offset = [event.clientX - pos[0], event.clientY - pos[1]];
 		document.addEventListener("mousemove", _onMouseMove, true);
 		document.addEventListener("mouseup", _onMouseUp, true);
@@ -13,7 +16,6 @@ function AvatarCanvas(): JSX.Element {
 	};
 
 	const _onMouseUp = (event) => {
-		console.log("up");
 		document.removeEventListener("mousemove", _onMouseMove, true);
 		document.removeEventListener("mouseup", _onMouseUp, true);
 	};
@@ -21,11 +23,8 @@ function AvatarCanvas(): JSX.Element {
 	const _onMouseMove = (event) => {
 		// world coordinate
 		const mousePos = [event.clientX, event.clientY];
-
-		console.log("pos: "+pos);
-		console.log("offset: "+offset);
-		console.log("mousepos: "+mousePos);
-		setPos([mousePos[0] - offset[0], mousePos[1] - offset[1]]);
+		avatar.setPos([mousePos[0] - offset[0], mousePos[1] - offset[1]]);
+		setPositions([avatar.getPos()]);
 	};
 	return (
 		<>
@@ -37,8 +36,8 @@ function AvatarCanvas(): JSX.Element {
 					height: "50px",
 					background: "red",
 					position: "absolute",
-					left: pos[0],
-					top: pos[1],
+					left: positions[0][0],
+					top: positions[0][1],
 				}}
 			></div>
 		</>

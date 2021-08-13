@@ -1,23 +1,30 @@
+import Avatar from "./Avatar";
+
 class User {
 	peerConnection: RTCPeerConnection;
+	dataChannel: RTCDataChannel;
 	sender: RTCRtpSender;
 	id: string;
 	stream: MediaStream;
 	player: HTMLAudioElement;
+	avatar: Avatar;
 	constructor(id: string) {
 		this.id = id;
 		this.sender = null as unknown as RTCRtpSender;
+		this.dataChannel = null as unknown as RTCDataChannel;
 		// initialize with a free public STUN server to find out public ip, NAT type, and internet side port
 		this.peerConnection = new RTCPeerConnection({
 			iceServers: [{ urls: "stun:iphone-stun.strato-iphone.de:3478" }],
 		});
 		this.stream = new MediaStream();
 		this.player = new Audio();
+		this.avatar = new Avatar();
 
 		// listener for when a peer adds a track
 		this.peerConnection.ontrack = (event) => {
 			this.updateLocalTrack(event.track);
 		};
+
 	}
 
 	setSender(s: RTCRtpSender): void {

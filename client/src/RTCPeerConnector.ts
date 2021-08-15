@@ -27,7 +27,6 @@ export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultO
 	users.forEach((user) => {
 		// create data channel for the user as the caller
 		user.avatarDC = user.peerConnection.createDataChannel("avatar");
-		console.log(user.avatarDC);
 		user.avatarDC.onopen = user.onAvatarDCOpen.bind(user);
 		user.avatarDC.onclose = user.onAvatarDCClose.bind(user);
 		user.avatarDC.onmessage = user.onAvatarDCMessage.bind(user);

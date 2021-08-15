@@ -16,6 +16,12 @@ const JoinPage = ({
 		}
 	};
 
+	const onClearClicked = () => {
+		if(socket) {
+			socket.emit("CLEAR_USERS");
+		}
+	}
+
 	return (
 		<>
 			<div>
@@ -32,6 +38,9 @@ const JoinPage = ({
 			</div>
 			<div>
 				<button onClick={() => onJoinClicked()}>Join</button>
+			</div>
+			<div>
+				<button onClick={() => onClearClicked()}>Clear</button>
 			</div>
 		</>
 	);

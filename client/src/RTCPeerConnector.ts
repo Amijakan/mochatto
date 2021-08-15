@@ -130,6 +130,14 @@ export const addUser = (id: string): void => {
 	users.push(new User(id));
 };
 
+// remove user to the network (exported)
+export const removeUser = (id: string): void => {
+	const userIndex = users.findIndex((user) => user.id === id);
+	if (users[userIndex]) {
+		users.splice(userIndex, 1);
+	}
+};
+
 export const getUsers = (): User[] => {
 	return users;
 };

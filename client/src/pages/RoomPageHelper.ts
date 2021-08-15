@@ -13,9 +13,7 @@ export const openJoinListener = (
 ): void => {
 	socket.on("JOIN", ({ name, id }) => {
 		announce(name + " has joined.");
-		if (id !== socket.id) {
-			addUser(id);
-		}
+		addUser(id);
 	});
 };
 
@@ -24,7 +22,7 @@ export const openLeaveListener = (
 	announce: (string) => void,
 	removeUser: (string) => void
 ): void => {
-	socket.on("LEAVE", ({name, id}) => {
+	socket.on("LEAVE", ({ name, id }) => {
 		announce(name + " has left.");
 		removeUser(id);
 	});

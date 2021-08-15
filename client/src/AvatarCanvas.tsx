@@ -1,15 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "./Avatar";
 import AvatarDOM from "./AvatarDOM";
 import { getUsers, updateAvatarPositions } from "./RTCPeerConnector";
 
 function AvatarCanvas(): JSX.Element {
-	const [positions, setPositions] = useState([[0, 0]]);
-	const avatar = new Avatar();
+	const [avatarDOMs, setAvatarDOMs] = useState<JSX.Element[]>([]);
+	const [avatars, setAvatars] = useState<Avatar[]>([]);
 	let offset;
 
+	useEffect(() => {
+		avatars.push(new Avatar());
+		const avatarDOM = <AvatarDOM key={0} onMouseDown={_onMouseDown} pos={avatars[0].getPos()} />;
+		setAvatarDOMs([...avatarDOMs, avatarDOM]);
+	}, []);
+
 	const _onMouseDown = (event) => {
-		offset = [event.clientX - positions[0][0], event.clientY - positions[0][1]];
+		offset = [event.clientX - avatars[0].getPos()[0], event.clientY - avatars[0].getPos()[1]];
 		document.addEventListener("mousemove", _onMouseMove, true);
 		document.addEventListener("mouseup", _onMouseUp, true);
 		event.preventDefault();
@@ -23,19 +29,27 @@ function AvatarCanvas(): JSX.Element {
 	const _onMouseMove = (event) => {
 		// world coordinate
 		const mousePos = [event.clientX, event.clientY];
-		avatar.setPos([mousePos[0] - offset[0], mousePos[1] - offset[1]]);
-		setPositions([avatar.getPos()]);
-		updateAvatarPositions(avatar.getPos());
+		avatars[0].setPos([mousePos[0] - offset[0], mousePos[1] - offset[1]]);
+		console.log(avatars[0].getPos());
+		updateAvatarPositions(avatars[0].getPos());
 	};
 
 	const addAvatar = (user) => {
-		console.log(user);
+		avatars.push(new Avatar());
+		const index = avatars.length;
+		const avatarDOM = (
+			<AvatarDOM
+				key={index}
+				onMouseDown={(e) => {
+					console.log();
+				}}
+				pos={avatars[index].getPos()}
+			/>
+		);
+		setAvatarDOMs([...avatarDOMs, avatarDOM]);
 	};
-	return (
-		<>
-			<AvatarDOM onMouseDown={_onMouseDown} pos={positions[0]} />
-		</>
-	);
+
+	return <>{avatarDOMs}</>;
 }
 
 export default AvatarCanvas;

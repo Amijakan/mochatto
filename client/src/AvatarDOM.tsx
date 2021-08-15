@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 function AvatarDOM({
 	onMouseDown,
@@ -7,6 +7,9 @@ function AvatarDOM({
 	onMouseDown: (MouseEvent) => void;
 	pos: number[];
 }): JSX.Element {
+	useEffect(() => {
+		console.log(pos);
+	}, [pos]);
 	return (
 		<div
 			className="avatar"

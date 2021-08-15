@@ -8,8 +8,8 @@ export const notifyAndRequestNetworkInfo = (socket: Socket, name: string): void 
 
 export const openJoinListener = (
 	socket: Socket,
-	addUser: (string) => void,
-	announce: (string) => void
+	announce: (string) => void,
+	addUser: (string) => void
 ): void => {
 	socket.on("JOIN", ({ name, id }) => {
 		announce(name + " has joined.");

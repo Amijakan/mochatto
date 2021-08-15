@@ -4,6 +4,7 @@ import { DeviceSelector } from "../DeviceSelector";
 import AvatarCanvas from "../AvatarCanvas";
 import {
 	addUser,
+	removeUser,
 	updateAllTracks,
 	sendOffer,
 	openOfferListener,
@@ -30,8 +31,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
 	useEffect(() => {
 		notifyAndRequestNetworkInfo(socket, name);
-		openJoinListener(socket, addUser, setAnnouncement);
-		openLeaveListener(socket, setAnnouncement);
+		openJoinListener(socket, setAnnouncement, addUser);
+		openLeaveListener(socket, setAnnouncement, removeUser);
 		openRequestUsersListener(socket, addUser);
 		openOfferListener(getUsers(), socket);
 		openAnswerListener(getUsers(), socket);

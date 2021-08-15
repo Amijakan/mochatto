@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Avatar from "./Avatar";
+import AvatarDOM from "./AvatarDOM";
 import { getUsers, updateAvatarPositions } from "./RTCPeerConnector";
 
 function AvatarCanvas(): JSX.Element {
@@ -26,20 +27,13 @@ function AvatarCanvas(): JSX.Element {
 		setPositions([avatar.getPos()]);
 		updateAvatarPositions(avatar.getPos());
 	};
+
+	const addAvatar = (user) => {
+		console.log(user);
+	};
 	return (
 		<>
-			<div
-				className="avatar"
-				onMouseDown={_onMouseDown}
-				style={{
-					width: "50px",
-					height: "50px",
-					background: "red",
-					position: "absolute",
-					left: positions[0][0],
-					top: positions[0][1],
-				}}
-			></div>
+			<AvatarDOM onMouseDown={_onMouseDown} pos={positions[0]}/>
 		</>
 	);
 }

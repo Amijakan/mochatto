@@ -33,7 +33,7 @@ function AvatarCanvas(): JSX.Element {
 	};
 	return (
 		<>
-			<AvatarDOM onMouseDown={_onMouseDown} pos={positions[0]}/>
+			<AvatarDOM onMouseDown={_onMouseDown} pos={positions[0]} />
 		</>
 	);
 }

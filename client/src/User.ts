@@ -16,6 +16,14 @@ class User {
 		this.peerConnection = new RTCPeerConnection({
 			iceServers: [{ urls: "stun:iphone-stun.strato-iphone.de:3478" }],
 		});
+		// set the local datachannel on connect
+		this.peerConnection.ondatachannel = (event) => {
+			console.log(event.channel);
+			this.avatarDC = event.channel;
+			this.avatarDC.onopen = this.onAvatarDCOpen.bind(this);
+			this.avatarDC.onclose = this.onAvatarDCClose.bind(this);
+			this.avatarDC.onmessage = this.onAvatarDCMessage.bind(this);
+		};
 		this.stream = new MediaStream();
 		this.player = new Audio();
 		this.avatar = new Avatar();
@@ -33,7 +41,6 @@ class User {
 		console.log("dc close");
 	}
 	onAvatarDCMessage(event): void {
-		console.log("dc message: " + JSON.parse(event.data));
 		this.avatar.setPos(JSON.parse(event.data));
 	}
 

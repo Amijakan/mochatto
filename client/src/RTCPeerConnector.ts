@@ -27,9 +27,10 @@ export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultO
 	users.forEach((user) => {
 		// create data channel for the user as the caller
 		user.avatarDC = user.peerConnection.createDataChannel("avatar");
-		user.avatarDC.onopen = user.onAvatarDCOpen;
-		user.avatarDC.onclose = user.onAvatarDCClose;
-		user.avatarDC.onmessage = user.onAvatarDCMessage;
+		console.log(user.avatarDC);
+		user.avatarDC.onopen = user.onAvatarDCOpen.bind(user);
+		user.avatarDC.onclose = user.onAvatarDCClose.bind(user);
+		user.avatarDC.onmessage = user.onAvatarDCMessage.bind(user);
 
 		// emit an offer to the server to be broadcasted
 		user.peerConnection
@@ -69,14 +70,6 @@ export const openOfferListener = (
 			onOfferReceived(offerPack);
 			// identify and use RTCPeerConnection object for the sender user
 			const peerConnection = sender.peerConnection;
-
-			// set the local datachannel
-			peerConnection.ondatachannel = (event) => {
-				sender.avatarDC = event.channel;
-				sender.avatarDC.onopen = sender.onAvatarDCOpen;
-				sender.avatarDC.onclose = sender.onAvatarDCClose;
-				sender.avatarDC.onmessage = sender.onAvatarDCMessage;
-			};
 
 			peerConnection
 				.setRemoteDescription(offerPack.sdp) // set remote description as the sender's
@@ -155,8 +148,11 @@ export const updateAllTracks = (track: MediaStreamTrack): void => {
 
 export const updateAvatarPositions = (pos: [number, number]): void => {
 	users.forEach((user) => {
-		if (user.avatarDC.readyState === "open") {
-			user.avatarDC.send(JSON.stringify(pos));
+		if (user.avatarDC) {
+			console.log(user.avatarDC.readyState);
+			if (user.avatarDC.readyState === "open") {
+				user.avatarDC.send(JSON.stringify(pos));
+			}
 		}
 	});
 };

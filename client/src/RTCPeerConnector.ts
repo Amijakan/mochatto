@@ -21,25 +21,15 @@ const defaultOn = (p) => {
 	return;
 };
 
-const onDataChannelOpen = () => {
-	console.log("dc open");
-};
-const onDataChannelClose = () => {
-	console.log("dc close");
-};
-const onDataChannelMessage = (event) => {
-	console.log("dc message: " + event.data);
-};
-
 // send out offer to every user on network (exported)
 export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultOn): void => {
 	// for each user
 	users.forEach((user) => {
 		// create data channel for the user as the caller
-		user.dataChannel = user.peerConnection.createDataChannel("avatar");
-		user.dataChannel.onopen = onDataChannelOpen;
-		user.dataChannel.onclose = onDataChannelClose;
-		user.dataChannel.onmessage = onDataChannelMessage;
+		user.avatarDC = user.peerConnection.createDataChannel("avatar");
+		user.avatarDC.onopen = user.onAvatarDCOpen;
+		user.avatarDC.onclose = user.onAvatarDCClose;
+		user.avatarDC.onmessage = user.onAvatarDCMessage;
 
 		// emit an offer to the server to be broadcasted
 		user.peerConnection
@@ -80,13 +70,12 @@ export const openOfferListener = (
 			// identify and use RTCPeerConnection object for the sender user
 			const peerConnection = sender.peerConnection;
 
-			// set the local datachannel as the receiver for the "sender" user
+			// set the local datachannel
 			peerConnection.ondatachannel = (event) => {
-				sender.dataChannel = event.channel;
-				sender.dataChannel.onopen = onDataChannelOpen;
-				sender.dataChannel.onclose = onDataChannelClose;
-				sender.dataChannel.onmessage = onDataChannelMessage;
-				sender.dataChannel.send("hello world from dc receiver");
+				sender.avatarDC = event.channel;
+				sender.avatarDC.onopen = sender.onAvatarDCOpen;
+				sender.avatarDC.onclose = sender.onAvatarDCClose;
+				sender.avatarDC.onmessage = sender.onAvatarDCMessage;
 			};
 
 			peerConnection
@@ -161,5 +150,13 @@ export const findUserById = (users: User[], id: string): User => {
 export const updateAllTracks = (track: MediaStreamTrack): void => {
 	users.forEach((user) => {
 		user.updateRemoteTrack(track);
+	});
+};
+
+export const updateAvatarPositions = (pos: [number, number]): void => {
+	users.forEach((user) => {
+		if (user.avatarDC.readyState === "open") {
+			user.avatarDC.send(JSON.stringify(pos));
+		}
 	});
 };

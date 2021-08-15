@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 import Avatar from "./Avatar";
-import { getUsers } from "./RTCPeerConnector";
+import { getUsers, updateAvatarPositions } from "./RTCPeerConnector";
 
 function AvatarCanvas(): JSX.Element {
-	const [pos, setPos] = useState([0, 0]);
 	const [positions, setPositions] = useState([[0, 0]]);
 	const avatar = new Avatar();
 	let offset;
 
 	const _onMouseDown = (event) => {
-		offset = [event.clientX - pos[0], event.clientY - pos[1]];
+		offset = [event.clientX - positions[0][0], event.clientY - positions[0][1]];
 		document.addEventListener("mousemove", _onMouseMove, true);
 		document.addEventListener("mouseup", _onMouseUp, true);
 		event.preventDefault();
@@ -25,6 +24,7 @@ function AvatarCanvas(): JSX.Element {
 		const mousePos = [event.clientX, event.clientY];
 		avatar.setPos([mousePos[0] - offset[0], mousePos[1] - offset[1]]);
 		setPositions([avatar.getPos()]);
+		updateAvatarPositions(avatar.getPos());
 	};
 	return (
 		<>

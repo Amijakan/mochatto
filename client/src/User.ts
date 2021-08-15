@@ -2,7 +2,7 @@ import Avatar from "./Avatar";
 
 class User {
 	peerConnection: RTCPeerConnection;
-	dataChannel: RTCDataChannel;
+	avatarDC: RTCDataChannel;
 	sender: RTCRtpSender;
 	id: string;
 	stream: MediaStream;
@@ -11,7 +11,7 @@ class User {
 	constructor(id: string) {
 		this.id = id;
 		this.sender = null as unknown as RTCRtpSender;
-		this.dataChannel = null as unknown as RTCDataChannel;
+		this.avatarDC = null as unknown as RTCDataChannel;
 		// initialize with a free public STUN server to find out public ip, NAT type, and internet side port
 		this.peerConnection = new RTCPeerConnection({
 			iceServers: [{ urls: "stun:iphone-stun.strato-iphone.de:3478" }],
@@ -24,7 +24,17 @@ class User {
 		this.peerConnection.ontrack = (event) => {
 			this.updateLocalTrack(event.track);
 		};
+	}
 
+	onAvatarDCOpen(): void {
+		console.log("dc open");
+	}
+	onAvatarDCClose(): void {
+		console.log("dc close");
+	}
+	onAvatarDCMessage(event): void {
+		console.log("dc message: " + JSON.parse(event.data));
+		this.avatar.setPos(JSON.parse(event.data));
 	}
 
 	setSender(s: RTCRtpSender): void {

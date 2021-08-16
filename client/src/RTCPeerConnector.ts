@@ -17,7 +17,7 @@ export const Pack = ({
 
 const users: User[] = [];
 const defaultOn = (p) => {
-	console.log(p);
+	//console.log(p);
 	return;
 };
 
@@ -156,7 +156,6 @@ export const updateAllTracks = (track: MediaStreamTrack): void => {
 export const updateAvatarPositions = (pos: [number, number]): void => {
 	users.forEach((user) => {
 		if (user.avatarDC) {
-			console.log(user.avatarDC.readyState);
 			if (user.avatarDC.readyState === "open") {
 				user.avatarDC.send(JSON.stringify(pos));
 			}

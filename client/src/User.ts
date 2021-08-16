@@ -8,6 +8,7 @@ class User {
 	stream: MediaStream;
 	player: HTMLAudioElement;
 	avatar: Avatar;
+	onAvatarDCMessageCallback: () => void;
 	constructor(id: string) {
 		this.id = id;
 		this.sender = null as unknown as RTCRtpSender;
@@ -27,6 +28,7 @@ class User {
 		this.stream = new MediaStream();
 		this.player = new Audio();
 		this.avatar = new Avatar();
+		this.onAvatarDCMessageCallback = () => {console.log()};
 
 		// listener for when a peer adds a track
 		this.peerConnection.ontrack = (event) => {
@@ -42,6 +44,7 @@ class User {
 	}
 	onAvatarDCMessage(event): void {
 		this.avatar.setPos(JSON.parse(event.data));
+		this.onAvatarDCMessageCallback();
 	}
 
 	setSender(s: RTCRtpSender): void {

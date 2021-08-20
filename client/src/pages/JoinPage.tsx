@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { SocketContext } from "../SocketIOContext";
+import { SocketContext } from "../contexts/SocketIOContext";
 import PropTypes from "prop-types";
 
 const JoinPage = ({

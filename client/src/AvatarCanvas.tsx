@@ -1,12 +1,19 @@
 import React from "react";
-import Avatar from "./Avatar";
 import AvatarDOM from "./AvatarDOM";
 
-function AvatarCanvas({ avatars, setAvatars }: { avatars: Avatar[], setAvatars: (any) => void }): JSX.Element {
+function AvatarCanvas({
+	selfPosition,
+	setSelfPosition,
+	positions,
+}: {
+	selfPosition: [number, number];
+	setSelfPosition: (any) => void;
+	positions: [number, number][];
+}): JSX.Element {
 	let offset;
 
 	const _onMouseDown = (event) => {
-		offset = [event.clientX - avatars[0].getPos()[0], event.clientY - avatars[0].getPos()[1]];
+		offset = [event.clientX - selfPosition[0], event.clientY - selfPosition[1]];
 		document.addEventListener("mousemove", _onMouseMove, true);
 		document.addEventListener("mouseup", _onMouseUp, true);
 		event.preventDefault();
@@ -20,28 +27,24 @@ function AvatarCanvas({ avatars, setAvatars }: { avatars: Avatar[], setAvatars: 
 	const _onMouseMove = (event) => {
 		// world coordinate
 		const mousePos = [event.clientX, event.clientY];
-		const newAvatar = new Avatar();
-		newAvatar.setPos([mousePos[0] - offset[0], mousePos[1] - offset[1]]);
-		setAvatars([newAvatar, ...avatars.slice(1, avatars.length)]);
+		setSelfPosition([mousePos[0] - offset[0], mousePos[1] - offset[1]]);
 	};
 
 	return (
 		<>
-			{avatars.map((avatar, index) => {
-				if (index === 0) {
-					return <AvatarDOM key={index} onMouseDown={_onMouseDown} pos={avatars[index].getPos()} />;
-				} else {
+			<AvatarDOM key={0} onMouseDown={_onMouseDown} pos={selfPosition} isSelf={true}/>;
+			{positions.map((position, index) => {
 					return (
 						<AvatarDOM
-							key={index}
+							key={index + 1}
 							onMouseDown={(e) => {
-								console.log();
+								console.log("not your avatar!");
 							}}
-							pos={avatars[index].getPos()}
+							pos={position}
+							isSelf={false}
 						/>
-					);
-				}
-			})}
+					)
+				})}
 		</>
 	);
 }

@@ -26,7 +26,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 	const [announcement, setAnnouncement] = useState("");
 	const { socket } = useContext(SocketContext);
 	const [selfPosition, setSelfPosition] = useState<[number, number]>([0, 0]);
-	const [peerPositions, setPeerPositions] = useState<[number, number][]>([]);
+	const [peerPositions, setPeerPositions] = useState({});
 
 	// when new input is selected
 	const onSelect = (stream) => {
@@ -45,15 +45,12 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 	// set the user setPosition callback to change the state
 	// add the user
 	const setNewUser = (userId) => {
-		const index = peerPositions.length;
-		peerPositions.push([0, 0]);
 		const user = new User(userId);
 		user.setPosition = (position) => {
-			const positions = [
-				...peerPositions.slice(0, index - 1),
-				position,
-				...peerPositions.slice(index + 1),
-			];
+			const positions = {
+				...peerPositions,
+				userId: position
+			}
 			setPeerPositions(positions);
 		};
 		addUser(user);
@@ -81,7 +78,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 			<AvatarCanvas
 				selfPosition={selfPosition}
 				setSelfPosition={setSelfPosition}
-				positions={peerPositions}
+				positions={Object.values(peerPositions)}
 			/>
 		</>
 	);

@@ -125,8 +125,8 @@ export const openAnswerListener = (
 };
 
 // add user to the network (exported)
-export const addUser = (id: string): void => {
-	users.push(new User(id));
+export const addUser = (user: User): void => {
+	users.push(user);
 };
 
 // remove user to the network (exported)

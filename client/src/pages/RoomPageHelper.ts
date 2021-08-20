@@ -1,4 +1,5 @@
 import { Socket } from "socket.io-client";
+import User from "../User";
 
 export const notifyAndRequestNetworkInfo = (socket: Socket, name: string): void => {
 	// notify server on join
@@ -6,12 +7,9 @@ export const notifyAndRequestNetworkInfo = (socket: Socket, name: string): void 
 	socket.emit("REQUEST_USERS");
 };
 
-export const openJoinListener = (
-	socket: Socket,
-	onJoinCallback: ({name, id}) => void
-): void => {
+export const openJoinListener = (socket: Socket, onJoinCallback: ({ name, id }) => void): void => {
 	socket.on("JOIN", ({ name, id }) => {
-		onJoinCallback({name, id});
+		onJoinCallback({ name, id });
 	});
 };
 
@@ -26,11 +24,17 @@ export const openLeaveListener = (
 	});
 };
 
-export const openRequestUsersListener = (socket: Socket, addUser: (string) => void): void => {
+export const openRequestUsersListener = (
+	socket: Socket,
+	addUser: (User) => void,
+	setNewUser: ({ id }) => void
+): void => {
 	socket.on("REQUEST_USERS", (users) => {
 		users.forEach((user) => {
+			// if the user isn't self and id exists
 			if (user.id !== socket.id && user.id !== undefined) {
-				addUser(user.id);
+				console.log(user.id);
+				setNewUser(user.id);
 			}
 		});
 	});

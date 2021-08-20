@@ -1,5 +1,3 @@
-import Avatar from "./Avatar";
-
 class User {
 	peerConnection: RTCPeerConnection;
 	avatarDC: RTCDataChannel;
@@ -7,8 +5,7 @@ class User {
 	id: string;
 	stream: MediaStream;
 	player: HTMLAudioElement;
-	avatar: Avatar;
-	onAvatarDCMessageCallback: () => void;
+	setPosition: (positionString) => void;
 	constructor(id: string) {
 		this.id = id;
 		this.sender = null as unknown as RTCRtpSender;
@@ -27,8 +24,7 @@ class User {
 		};
 		this.stream = new MediaStream();
 		this.player = new Audio();
-		this.avatar = new Avatar();
-		this.onAvatarDCMessageCallback = () => {console.log()};
+		this.setPosition = (positionString) => console.warn(positionString);
 
 		// listener for when a peer adds a track
 		this.peerConnection.ontrack = (event) => {
@@ -43,8 +39,7 @@ class User {
 		console.log("dc close");
 	}
 	onAvatarDCMessage(event): void {
-		this.avatar.setPos(JSON.parse(event.data));
-		this.onAvatarDCMessageCallback();
+		this.setPosition(JSON.parse(event.data));
 	}
 
 	setSender(s: RTCRtpSender): void {
@@ -68,6 +63,7 @@ class User {
 	}
 
 	updateRemoteTrack(track: MediaStreamTrack): void {
+		console.log("test");
 		if (this.sender) {
 			this.peerConnection.removeTrack(this.sender);
 		}

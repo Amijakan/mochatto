@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, SetStateAction, Dispatch } from "react";
 import { SocketContext } from "../SocketIOContext";
 import { DeviceSelector } from "../DeviceSelector";
-import Avatar from "../Avatar";
 import AvatarCanvas from "../AvatarCanvas";
 import {
 	addUser,
@@ -19,12 +18,15 @@ import {
 	openLeaveListener,
 	openRequestUsersListener,
 } from "./RoomPageHelper";
+import User from "../User";
+
 import PropTypes from "prop-types";
 
 function RoomPage({ name }: { name: string }): JSX.Element {
 	const [announcement, setAnnouncement] = useState("");
 	const { socket } = useContext(SocketContext);
-	const [avatars, setAvatars] = useState<Avatar[]>([new Avatar()]);
+	const [selfPosition, setSelfPosition] = useState<[number, number]>([0, 0]);
+	const [peerPositions, setPeerPositions] = useState<[number, number][]>([]);
 
 	// when new input is selected
 	const onSelect = (stream) => {
@@ -32,48 +34,43 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 		sendOffer(socket);
 	};
 
-	const onJoin = ({name, id}) => {
+	const onJoin = ({ name, id }) => {
 		setAnnouncement(name + " has joined.");
-		if(id != socket.id){
-			addUser(id);
+		if (id != socket.id) {
+			setNewUser(id);
 		}
-		// add a new avatar on join
-		const tempAvatars: Avatar[] = [];
-		getUsers().map((user) => {
-			user.onAvatarDCMessageCallback = onAvatarDCMessageCallback;
-			tempAvatars.push(user.avatar);
-		});
-		setAvatars([avatars[0], ...(tempAvatars.slice(1, tempAvatars.length))]);
 	};
 
-	const onAvatarDCMessageCallback = () => {
-		const tempAvatars: Avatar[] = [];
-		getUsers().map((user) => {
-			tempAvatars.push(user.avatar);
-		});
-		setAvatars([avatars[0], ...(tempAvatars.slice(1, tempAvatars.length))]);
-	}
-
-	// wrapper for setAvatar to be passed to AvatarCanvas
-	const _setAvatars = (_avatars) => {
-		setAvatars(_avatars);
+	// add a new position array in the peerPositions state
+	// set the user setPosition callback to change the state
+	// add the user
+	const setNewUser = (userId) => {
+		const index = peerPositions.length;
+		peerPositions.push([0, 0]);
+		const user = new User(userId);
+		user.setPosition = (position) => {
+			const positions = [
+				...peerPositions.slice(0, index - 1),
+				position,
+				...peerPositions.slice(index + 1),
+			];
+			setPeerPositions(positions);
+		};
+		addUser(user);
 	};
 
 	useEffect(() => {
 		notifyAndRequestNetworkInfo(socket, name);
 		openJoinListener(socket, onJoin);
 		openLeaveListener(socket, setAnnouncement, removeUser);
-		openRequestUsersListener(socket, addUser);
+		openRequestUsersListener(socket, addUser, setNewUser);
 		openOfferListener(getUsers(), socket);
 		openAnswerListener(getUsers(), socket);
 	}, []);
 
 	useEffect(() => {
-		if(avatars[0]){
-			updateAvatarPositions(avatars[0].getPos());
-		}
-	}, [avatars[0]]);
-
+		updateAvatarPositions(selfPosition);
+	}, [selfPosition]);
 
 	return (
 		<>
@@ -81,7 +78,11 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 			<div>Input selector</div>
 			<DeviceSelector onSelect={onSelect} />
 			<div>{announcement}</div>
-			<AvatarCanvas avatars={avatars} setAvatars={_setAvatars} />
+			<AvatarCanvas
+				selfPosition={selfPosition}
+				setSelfPosition={setSelfPosition}
+				positions={peerPositions}
+			/>
 		</>
 	);
 }

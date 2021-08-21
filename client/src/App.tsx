@@ -1,7 +1,7 @@
 import React from "react";
 import Pages from "./pages";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import { SocketProvider } from "./SocketIOContext";
+import { SocketProvider } from "./contexts/SocketIOContext";
 
 const App = (): JSX.Element => {
   return (

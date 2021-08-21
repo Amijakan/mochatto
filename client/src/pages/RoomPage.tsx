@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, SetStateAction, Dispatch } from "react";
-import { SocketContext } from "../SocketIOContext";
+import { SocketContext } from "../contexts/SocketIOContext";
 import { DeviceSelector } from "../DeviceSelector";
 import AvatarCanvas from "../AvatarCanvas";
 import {

@@ -27,7 +27,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const [announcement, setAnnouncement] = useState("");
   const { socket } = useContext(SocketContext);
   const [selfPosition, setSelfPosition] = useState<[number, number]>([0, 0]);
-  const { peerPositions, setPeerPositions, addPositions } = useContext(PositionsContext);
+  const { peerPositions, addPositions } = useContext(PositionsContext);
 
   // when new input is selected
   const onSelect = (stream) => {
@@ -47,7 +47,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   // add the user
   const setNewUser = (userId) => {
     const user = new User(userId);
-    console.log(userId);
     user.setPosition = addPositions(userId);
     addUser(user);
   };

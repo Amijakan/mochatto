@@ -1,10 +1,10 @@
-import React, { createContext, useReducer } from "react";
+import React, { createContext, useReducer, useCallback } from "react";
 
 interface PeerPosition {
   [key: string]: [number, number];
 }
 
-interface ActionType {
+interface Action {
   type: string;
   id: string;
   position: [number, number];
@@ -13,7 +13,7 @@ interface ActionType {
 export const PositionsContext = createContext<any>({});
 
 export const PositionsProvider = ({ children }: { children: any }) => {
-  const reducer = (peerPositions: PeerPosition[], action: ActionType) => {
+  const reducer = (peerPositions: PeerPosition, action: Action) => {
     switch (action.type) {
       case "add":
         return { ...peerPositions, [action.id]: action.position };
@@ -21,10 +21,13 @@ export const PositionsProvider = ({ children }: { children: any }) => {
         return peerPositions;
     }
   };
-  const [peerPositions, dispatch] = useReducer<any>(reducer, {});
-  const addPositions = (userId: string) => (position: [number, number]) => {
-    dispatch({ type: "add", position: position, id: userId });
-  };
+  const [peerPositions, dispatch] = useReducer<React.Reducer<PeerPosition, Action>>(reducer, {});
+  const addPositions = useCallback(
+    (userId: string) => (position: [number, number]) => {
+      dispatch({ type: "add", position: position, id: userId });
+    },
+    []
+  );
   return (
     <PositionsContext.Provider
       value={{

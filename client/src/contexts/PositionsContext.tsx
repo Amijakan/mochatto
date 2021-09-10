@@ -1,11 +1,11 @@
 import React, { createContext, useReducer } from "react";
 
-interface PeerPosition {
+interface PeerPositions {
   [key: string]: [number, number];
 }
 
 interface State {
-  peerPositions: PeerPosition[];
+  peerPositions: PeerPositions;
 }
 
 interface ActionType {

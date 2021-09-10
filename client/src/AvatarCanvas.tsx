@@ -32,7 +32,7 @@ function AvatarCanvas({
 
   return (
     <>
-      <AvatarDOM key={0} onMouseDown={_onMouseDown} pos={selfPosition} isSelf={true} />;
+      <AvatarDOM key={0} onMouseDown={_onMouseDown} pos={selfPosition} isSelf={true} />
       {positions.map((position, index) => {
         return (
           <AvatarDOM

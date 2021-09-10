@@ -52,7 +52,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   useEffect(() => {
-    console.log(peerPositions);
     notifyAndRequestNetworkInfo(socket, name);
     openJoinListener(socket, onJoin);
     openLeaveListener(socket, setAnnouncement, removeUser);
@@ -64,10 +63,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   useEffect(() => {
     updateAvatarPositions(selfPosition);
   }, [selfPosition]);
-
-  useEffect(() => {
-    console.log(peerPositions);
-  }, [peerPositions]);
 
   return (
     <>

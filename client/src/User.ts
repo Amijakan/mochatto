@@ -63,7 +63,6 @@ class User {
   }
 
   updateRemoteTrack(track: MediaStreamTrack): void {
-    console.log("test");
     if (this.sender) {
       this.peerConnection.removeTrack(this.sender);
     }

@@ -17,7 +17,7 @@ export const Pack = ({
 
 const users: User[] = [];
 const defaultOn = (p) => {
-  console.log(p);
+  //console.log(p);
   return;
 };
 
@@ -25,6 +25,12 @@ const defaultOn = (p) => {
 export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultOn): void => {
   // for each user
   users.forEach((user) => {
+    // create data channel for the user as the caller
+    user.avatarDC = user.peerConnection.createDataChannel("avatar");
+    user.avatarDC.onopen = user.onAvatarDCOpen.bind(user);
+    user.avatarDC.onclose = user.onAvatarDCClose.bind(user);
+    user.avatarDC.onmessage = user.onAvatarDCMessage.bind(user);
+
     // emit an offer to the server to be broadcasted
     user.peerConnection
       .createOffer()
@@ -58,11 +64,12 @@ export const openOfferListener = (
   // emit an answer when offer is received
   socket.on("OFFER", (dataString) => {
     const offerPack = JSON.parse(dataString);
-    const sender = findUserById(users, offerPack.senderId);
+    const sender = findUserById(users, offerPack.senderId) as User;
     if (sender) {
       onOfferReceived(offerPack);
       // identify and use RTCPeerConnection object for the sender user
-      const peerConnection = (sender as User).peerConnection;
+      const peerConnection = sender.peerConnection;
+
       peerConnection
         .setRemoteDescription(offerPack.sdp) // set remote description as the sender's
         .then(() => {
@@ -118,8 +125,16 @@ export const openAnswerListener = (
 };
 
 // add user to the network (exported)
-export const addUser = (id: string): void => {
-  users.push(new User(id));
+export const addUser = (user: User): void => {
+  users.push(user);
+};
+
+// remove user to the network (exported)
+export const removeUser = (id: string): void => {
+  const userIndex = users.findIndex((user) => user.id === id);
+  if (users[userIndex]) {
+    users.splice(userIndex, 1);
+  }
 };
 
 export const getUsers = (): User[] => {
@@ -135,5 +150,15 @@ export const findUserById = (users: User[], id: string): User => {
 export const updateAllTracks = (track: MediaStreamTrack): void => {
   users.forEach((user) => {
     user.updateRemoteTrack(track);
+  });
+};
+
+export const updateAvatarPositions = (pos: [number, number]): void => {
+  users.forEach((user) => {
+    if (user.avatarDC) {
+      if (user.avatarDC.readyState === "open") {
+        user.avatarDC.send(JSON.stringify(pos));
+      }
+    }
   });
 };

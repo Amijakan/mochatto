@@ -1,46 +1,55 @@
 import React, { useContext } from "react";
-import { SocketContext } from "../SocketIOContext";
+import { SocketContext } from "../contexts/SocketIOContext";
 import PropTypes from "prop-types";
 
 const JoinPage = ({
-	setName,
-	setJoined,
+  setName,
+  setJoined,
 }: {
-	setName: (string) => void;
-	setJoined: (string) => void;
+  setName: (string) => void;
+  setJoined: (string) => void;
 }): JSX.Element => {
-	const { socket } = useContext(SocketContext);
-	const onJoinClicked = () => {
-		if (socket) {
-			setJoined(true);
-		}
-	};
+  const { socket } = useContext(SocketContext);
+  const onJoinClicked = () => {
+    if (socket) {
+      setJoined(true);
+    }
+  };
 
-	return (
-		<>
-			<div>
-				<label>
-					Name:
-					<input
-						type="text"
-						name="name"
-						onChange={(e) => {
-							setName(e.target.value);
-						}}
-					/>
-				</label>
-			</div>
-			<div>
-				<button onClick={() => onJoinClicked()}>Join</button>
-			</div>
-		</>
-	);
+  const onClearClicked = () => {
+    if (socket) {
+      socket.emit("CLEAR_USERS");
+    }
+  };
+
+  return (
+    <>
+      <div>
+        <label>
+          Name:
+          <input
+            type="text"
+            name="name"
+            onChange={(e) => {
+              setName(e.target.value);
+            }}
+          />
+        </label>
+      </div>
+      <div>
+        <button onClick={() => onJoinClicked()}>Join</button>
+      </div>
+      <div>
+        <button onClick={() => onClearClicked()}>Clear</button>
+      </div>
+    </>
+  );
 };
 
 JoinPage.propTypes = {
-	name: PropTypes.string,
-	setName: PropTypes.func,
-	setJoined: PropTypes.func,
+  name: PropTypes.string,
+  setName: PropTypes.func,
+  setJoined: PropTypes.func,
 };
 
 export default JoinPage;

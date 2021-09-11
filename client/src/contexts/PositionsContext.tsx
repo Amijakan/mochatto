@@ -42,6 +42,7 @@ export const PositionsProvider = ({ children }: { children: any }) => {
       value={{
         peerPositions,
         addAvatar,
+        removeAvatar,
       }}
     >
       {children}

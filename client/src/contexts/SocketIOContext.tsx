@@ -9,8 +9,9 @@ export const SocketContext = createContext<{ socket: Socket; peerConnection: RTC
 
 export const SocketProvider = ({ children }: { children: JSX.Element }): JSX.Element => {
   const ENDPOINT = "http://localhost:4000/";
-  const [socket, setSocket] = useState(socketIOClient(ENDPOINT));
-  const [peerConnection, setPeerConnection] = useState(
+  // Do those socket and peerConnection has to be a state??
+  const [socket, _setSocket] = useState(socketIOClient(ENDPOINT));
+  const [peerConnection, _setPeerConnection] = useState(
     new RTCPeerConnection({
       iceServers: [{ urls: "stun:iphone-stun.strato-iphone.de:3478" }],
     })

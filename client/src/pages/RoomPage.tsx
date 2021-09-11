@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, SetStateAction, Dispatch } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { SocketContext } from "../contexts/SocketIOContext";
 import { PositionsContext } from "../contexts/PositionsContext";
 import { DeviceSelector } from "../DeviceSelector";
@@ -46,7 +46,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   // add a new position array in the peerPositions state
   // set the user setPosition callback to change the state
   // add the user
-  const setNewUser = (userId) => {
+  const setNewUser = (userId: string) => {
     const user = new User(userId);
     user.setPosition = addPositions(userId);
     addUser(user);

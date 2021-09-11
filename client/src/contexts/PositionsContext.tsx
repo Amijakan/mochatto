@@ -10,7 +10,17 @@ interface Action {
   position: [number, number];
 }
 
-export const PositionsContext = createContext<any>({});
+interface IPositionsContext {
+  peerPositions: PeerPosition;
+  addPositions: (userId: string) => (position: [number, number]) => void;
+}
+
+const initialState: IPositionsContext = {
+  peerPositions: {},
+  addPositions: (_userId: string) => (_position: [number, number]) => {},
+};
+
+export const PositionsContext = createContext<IPositionsContext>(initialState);
 
 export const PositionsProvider = ({ children }: { children: any }) => {
   // reducer for adding a avatar position to the list render

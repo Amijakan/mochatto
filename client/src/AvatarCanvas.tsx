@@ -41,7 +41,7 @@ function AvatarCanvas({
         return (
           <AvatarDOM
             key={index + 1}
-            onMouseDown={(e) => {
+            onMouseDown={() => {
               console.log("not your avatar!");
             }}
             pos={position}

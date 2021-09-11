@@ -10,7 +10,7 @@ function DeviceSelector({ onSelect }: { onSelect: (MediaStream) => void }): JSX.
 
   useEffect(() => {
     //triggers microphone permission
-    selectInputDevice(selectedInput.value, (stream) => {
+    selectInputDevice(selectedInput.value, (_stream) => {
       //list options when permission is allowed
       setInputOptions(listInputDevices());
     });

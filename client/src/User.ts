@@ -42,7 +42,7 @@ class User {
   }
 
   // runs when the data channel receives data
-  onAvatarDCMessage(event): void {
+  onAvatarDCMessage(event: { data: any }): void {
     this.setPosition(JSON.parse(event.data));
   }
 

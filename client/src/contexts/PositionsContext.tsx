@@ -18,23 +18,31 @@ export const PositionsProvider = ({ children }: { children: any }) => {
     switch (action.type) {
       case "add":
         return { ...peerPositions, [action.id]: action.position };
+      case "remove": {
+        const { [action.id]: _toRemove, ...removed } = peerPositions;
+        return removed;
+      }
       default:
         return peerPositions;
     }
   };
   const [peerPositions, dispatch] = useReducer<React.Reducer<PeerPosition, Action>>(reducer, {});
   // dispatching the action for adding a position
-  const addPositions = useCallback(
+  const addAvatar = useCallback(
     (userId: string) => (position: [number, number]) => {
       dispatch({ type: "add", position: position, id: userId });
     },
     []
   );
+  const removeAvatar = useCallback((userId: string) => {
+    dispatch({ type: "remove", position: [0, 0], id: userId });
+  }, []);
   return (
     <PositionsContext.Provider
       value={{
-        peerPositions: peerPositions,
-        addPositions: addPositions,
+        peerPositions,
+        addAvatar,
+        removeAvatar,
       }}
     >
       {children}

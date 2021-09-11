@@ -18,26 +18,25 @@ export const openJoinListener = (socket: Socket, onJoinCallback: ({ name, id }) 
 export const openLeaveListener = (
   socket: Socket,
   announce: (string) => void,
-  removeUser: (string) => void
+  onLeave: (string) => void
 ): void => {
   socket.on("LEAVE", ({ name, id }) => {
     announce(name + " has left.");
-    removeUser(id);
+    onLeave(id);
   });
 };
 
 // opens on request users listener
 export const openRequestUsersListener = (
   socket: Socket,
-  addUser: (User) => void,
-  setNewUser: ({ id }) => void
+  onRequest: ({ id }) => void
 ): void => {
   socket.on("REQUEST_USERS", (users) => {
     users.forEach((user) => {
       // if the user isn't self and id exists
       if (user.id !== socket.id && user.id !== undefined) {
         console.log(user.id);
-        setNewUser(user.id);
+        onRequest(user.id);
       }
     });
   });

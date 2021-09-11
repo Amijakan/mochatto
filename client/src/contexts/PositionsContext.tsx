@@ -19,7 +19,9 @@ interface IPositionsContext {
 
 const initialState: IPositionsContext = {
   peerPositions: {},
-  addPositions: (_userId: string) => (_position: [number, number]) => {},
+  addPositions: (_userId: string) => (_position: [number, number]) => {
+    return;
+  },
 };
 
 export const PositionsContext = createContext<IPositionsContext>(initialState);

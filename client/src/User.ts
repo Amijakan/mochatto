@@ -14,9 +14,8 @@ class User {
     this.peerConnection = new RTCPeerConnection({
       iceServers: [{ urls: "stun:iphone-stun.strato-iphone.de:3478" }],
     });
-    // set the local datachannel on connect
+    // set the local datachannel and event handlers on connect
     this.peerConnection.ondatachannel = (event) => {
-      console.log(event.channel);
       this.avatarDC = event.channel;
       this.avatarDC.onopen = this.onAvatarDCOpen.bind(this);
       this.avatarDC.onclose = this.onAvatarDCClose.bind(this);
@@ -32,20 +31,27 @@ class User {
     };
   }
 
+  // runs when the data channel opens
   onAvatarDCOpen(): void {
     console.log("dc open");
   }
+
+  // runs when the data channel closes
   onAvatarDCClose(): void {
     console.log("dc close");
   }
+
+  // runs when the data channel receives data
   onAvatarDCMessage(event): void {
     this.setPosition(JSON.parse(event.data));
   }
 
+  // keeping note of the track to remove later
   setSender(s: RTCRtpSender): void {
     this.sender = s;
   }
 
+  // updates the local track when the peer user (this) adds a new track
   updateLocalTrack(track: MediaStreamTrack): boolean {
     if (!track.readyState) {
       return false;
@@ -54,14 +60,16 @@ class User {
     if (this.stream.getAudioTracks()[0]) {
       this.stream.removeTrack(this.stream.getAudioTracks()[0]);
     }
+    // add the track
     this.stream.addTrack(track);
-    // set the new stream as the audio source
+    // set the new stream as the audio source and play
     this.player.srcObject = this.stream;
     this.player.play();
     this.player.autoplay = true;
     return true;
   }
 
+  // Update the shared mediastream to the new audio input
   updateRemoteTrack(track: MediaStreamTrack): void {
     if (this.sender) {
       this.peerConnection.removeTrack(this.sender);

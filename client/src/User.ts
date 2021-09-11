@@ -1,5 +1,3 @@
-import { setUserVolume } from "./VolumeController";
-
 class User {
   peerConnection: RTCPeerConnection;
   avatarDC: RTCDataChannel;
@@ -46,13 +44,18 @@ class User {
   }
   onAvatarDCMessage(event): void {
     const position = JSON.parse(event.data);
-    this.setVolume(this.getVolume(this.selfPosition, position));
     this.peerPosition = position;
+    this.updateVolume();
     this.setPosition(position);
   }
 
   setSelfPosition(position: [number, number]): void {
     this.selfPosition = position;
+    this.updateVolume();
+  }
+
+  updateVolume(): void {
+    this.setVolume(this.getVolume(this.selfPosition, this.peerPosition));
   }
 
   getVolume(selfPosition: [number, number], peerPosition: [number, number]): number {

@@ -1,0 +1,16 @@
+name: Checks for build
+'on': pull_request
+jobs:
+  build-client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: cd ./client && yarn install && yarn build
+        env: 
+          CI: false # TODO: Make this true at some point
+
+  build-server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: cd ./server && yarn install && yarn build

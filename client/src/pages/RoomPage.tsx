@@ -4,8 +4,8 @@ import { PositionsContext } from "../contexts/PositionsContext";
 import { DeviceSelector } from "../DeviceSelector";
 import AvatarCanvas from "../AvatarCanvas";
 import {
-  addUser,
-  removeUser,
+  addUserToNetwork,
+  removeUserFromNetwork,
   updateAllTracks,
   sendOffer,
   openOfferListener,
@@ -27,7 +27,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const [announcement, setAnnouncement] = useState("");
   const { socket } = useContext(SocketContext);
   const [selfPosition, setSelfPosition] = useState<[number, number]>([0, 0]);
-  const { peerPositions, addPositions } = useContext(PositionsContext);
+  const { peerPositions, addAvatar, removeAvatar } = useContext(PositionsContext);
 
   // when new input is selected update all tracks and send a new offer out
   const onSelect = (stream) => {
@@ -48,16 +48,21 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   // add the user
   const setNewUser = (userId) => {
     const user = new User(userId);
-    user.setPosition = addPositions(userId);
-    addUser(user);
+    user.setPosition = addAvatar(userId);
+    addUserToNetwork(user);
+  };
+
+  const onLeave = (id: string) => {
+    removeUserFromNetwork(id);
+    removeAvatar(id);
   };
 
   // open all listeners on render
   useEffect(() => {
     notifyAndRequestNetworkInfo(socket, name);
     openJoinListener(socket, onJoin);
-    openLeaveListener(socket, setAnnouncement, removeUser);
-    openRequestUsersListener(socket, addUser, setNewUser);
+    openLeaveListener(socket, setAnnouncement, onLeave);
+    openRequestUsersListener(socket, setNewUser);
     openOfferListener(getUsers(), socket);
     openAnswerListener(getUsers(), socket);
   }, []);

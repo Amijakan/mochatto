@@ -129,12 +129,12 @@ export const openAnswerListener = (
 };
 
 // add user to the network
-export const addUser = (user: User): void => {
+export const addUserToNetwork = (user: User): void => {
   users.push(user);
 };
 
 // remove user to the network
-export const removeUser = (id: string): void => {
+export const removeUserFromNetwork = (id: string): void => {
   const userIndex = users.findIndex((user) => user.id === id);
   if (users[userIndex]) {
     users.splice(userIndex, 1);

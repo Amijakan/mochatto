@@ -1,0 +1,26 @@
+name: Feature Request
+description: Additional Features
+title: "[Feature]: "
+labels: [feature, enhancements]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the feature request!
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Details
+      description: How can we get in touch with you if we need more info?
+      placeholder: ex. email@example.com
+    validations:
+      required: false
+  - type: textarea
+    id: request
+    attributes:
+      label: What feature?
+      description: What feature do you think could improve this product?
+      placeholder: Tell us what you would like to see!
+      value: "Feature"
+    validations:
+      required: true

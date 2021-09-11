@@ -29,12 +29,13 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const [selfPosition, setSelfPosition] = useState<[number, number]>([0, 0]);
   const { peerPositions, addPositions } = useContext(PositionsContext);
 
-  // when new input is selected
+  // when new input is selected update all tracks and send a new offer out
   const onSelect = (stream) => {
     updateAllTracks(stream.getAudioTracks()[0]);
     sendOffer(socket);
   };
 
+  // announce and set a new user on join
   const onJoin = ({ name, id }) => {
     setAnnouncement(name + " has joined.");
     if (id != socket.id) {
@@ -51,6 +52,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     addUser(user);
   };
 
+  // open all listeners on render
   useEffect(() => {
     notifyAndRequestNetworkInfo(socket, name);
     openJoinListener(socket, onJoin);
@@ -60,6 +62,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     openAnswerListener(getUsers(), socket);
   }, []);
 
+  // update remote position when avatar is dragged
   useEffect(() => {
     updateAvatarPositions(selfPosition);
   }, [selfPosition]);

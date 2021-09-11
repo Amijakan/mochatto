@@ -7,12 +7,14 @@ export const notifyAndRequestNetworkInfo = (socket: Socket, name: string): void 
   socket.emit("REQUEST_USERS");
 };
 
+// opens join listener
 export const openJoinListener = (socket: Socket, onJoinCallback: ({ name, id }) => void): void => {
   socket.on("JOIN", ({ name, id }) => {
     onJoinCallback({ name, id });
   });
 };
 
+// opens on leave listener
 export const openLeaveListener = (
   socket: Socket,
   announce: (string) => void,
@@ -24,6 +26,7 @@ export const openLeaveListener = (
   });
 };
 
+// opens on request users listener
 export const openRequestUsersListener = (
   socket: Socket,
   addUser: (User) => void,

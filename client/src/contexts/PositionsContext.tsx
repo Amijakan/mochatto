@@ -13,6 +13,7 @@ interface Action {
 export const PositionsContext = createContext<any>({});
 
 export const PositionsProvider = ({ children }: { children: any }) => {
+  // reducer for adding a avatar position to the list render
   const reducer = (peerPositions: PeerPosition, action: Action) => {
     switch (action.type) {
       case "add":
@@ -22,6 +23,7 @@ export const PositionsProvider = ({ children }: { children: any }) => {
     }
   };
   const [peerPositions, dispatch] = useReducer<React.Reducer<PeerPosition, Action>>(reducer, {});
+  // dispatching the action for adding a position
   const addPositions = useCallback(
     (userId: string) => (position: [number, number]) => {
       dispatch({ type: "add", position: position, id: userId });

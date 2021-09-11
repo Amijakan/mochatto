@@ -1,6 +1,7 @@
 import React from "react";
 import AvatarDOM from "./AvatarDOM";
 
+// for dragging and rendering avatars
 function AvatarCanvas({
   selfPosition,
   setSelfPosition,
@@ -12,6 +13,7 @@ function AvatarCanvas({
 }): JSX.Element {
   let offset;
 
+  // on mouse down, add listeners for moving and mouse up
   const _onMouseDown = (event) => {
     offset = [event.clientX - selfPosition[0], event.clientY - selfPosition[1]];
     document.addEventListener("mousemove", _onMouseMove, true);
@@ -19,11 +21,13 @@ function AvatarCanvas({
     event.preventDefault();
   };
 
+  // remove listeners on mouse up
   const _onMouseUp = () => {
     document.removeEventListener("mousemove", _onMouseMove, true);
     document.removeEventListener("mouseup", _onMouseUp, true);
   };
 
+  // update mouse position on move
   const _onMouseMove = (event) => {
     // world coordinate
     const mousePos = [event.clientX, event.clientY];

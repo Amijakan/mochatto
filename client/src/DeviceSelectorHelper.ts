@@ -9,6 +9,7 @@ const defaultOnError = (e: MediaStreamError): void => {
   return;
 };
 
+// return a list of available input audio devices
 export const listInputDevices = (
   onError: (MediaStreamError) => void = defaultOnError
 ): { value: string; label: string }[] => {
@@ -32,6 +33,7 @@ export const listInputDevices = (
   return inputs;
 };
 
+// select a device as the input device
 export const selectInputDevice = (
   id: string,
   useStream: (MediaStream) => void,

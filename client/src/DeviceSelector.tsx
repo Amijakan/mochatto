@@ -3,6 +3,7 @@ import Select from "react-select";
 import PropTypes from "prop-types";
 import { Device, listInputDevices, selectInputDevice } from "./DeviceSelectorHelper";
 
+// drop down menu for selecting an input device
 function DeviceSelector({ onSelect }: { onSelect: (MediaStream) => void }): JSX.Element {
   const [inputOptions, setInputOptions] = useState([{}]);
   const [selectedInput, setSelectedInput] = useState(Device());
@@ -14,6 +15,7 @@ function DeviceSelector({ onSelect }: { onSelect: (MediaStream) => void }): JSX.
       setInputOptions(listInputDevices());
     });
   }, []);
+
   //when new option is selected
   useEffect(() => {
     selectInputDevice(selectedInput.value, (stream) => {

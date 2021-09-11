@@ -21,7 +21,7 @@ const defaultOn = (p) => {
   return;
 };
 
-// send out offer to every user on network (exported)
+// send out offer to every user on network
 export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultOn): void => {
   // for each user
   users.forEach((user) => {
@@ -55,6 +55,7 @@ export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultO
   });
 };
 
+// open socketio listener for receiving WebRTC offers and sending answer
 export const openOfferListener = (
   users: User[],
   socket: Socket,
@@ -80,12 +81,14 @@ export const openOfferListener = (
             })
             .then(() => {
               if (peerConnection.localDescription) {
+                // create the answer
                 const answerPack = Pack({
                   sdp: peerConnection.localDescription,
                   senderId: socket.id,
                   receiverId: offerPack.senderId,
                   kind: "answer",
                 });
+                // send the answer
                 socket.emit("ANSWER", JSON.stringify(answerPack));
                 onAnswerEmitted(answerPack);
               }
@@ -103,6 +106,7 @@ export const openOfferListener = (
   });
 };
 
+// open socketio listener for receiving WebRTC answers
 export const openAnswerListener = (
   users: User[],
   socket: Socket,
@@ -124,12 +128,12 @@ export const openAnswerListener = (
   });
 };
 
-// add user to the network (exported)
+// add user to the network
 export const addUser = (user: User): void => {
   users.push(user);
 };
 
-// remove user to the network (exported)
+// remove user to the network
 export const removeUser = (id: string): void => {
   const userIndex = users.findIndex((user) => user.id === id);
   if (users[userIndex]) {
@@ -137,22 +141,25 @@ export const removeUser = (id: string): void => {
   }
 };
 
+// return user list
 export const getUsers = (): User[] => {
   return users;
 };
 
+// find user by its socketid
 export const findUserById = (users: User[], id: string): User => {
   const user = users.find((usr) => usr.id === id);
   return user as User;
 };
 
-// update tracks for all peer connections (exported)
+// update tracks for all peer connections
 export const updateAllTracks = (track: MediaStreamTrack): void => {
   users.forEach((user) => {
     user.updateRemoteTrack(track);
   });
 };
 
+// update avatar positions for all peer connections
 export const updateAvatarPositions = (pos: [number, number]): void => {
   users.forEach((user) => {
     if (user.avatarDC) {

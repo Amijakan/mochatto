@@ -162,6 +162,7 @@ export const updateAllTracks = (track: MediaStreamTrack): void => {
 // update avatar positions for all peer connections
 export const updateAvatarPositions = (pos: [number, number]): void => {
   users.forEach((user) => {
+    user.setSelfPosition(pos);
     if (user.avatarDC) {
       if (user.avatarDC.readyState === "open") {
         user.avatarDC.send(JSON.stringify(pos));

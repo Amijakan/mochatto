@@ -155,6 +155,7 @@ export const updateAllTracks = (track: MediaStreamTrack): void => {
 
 export const updateAvatarPositions = (pos: [number, number]): void => {
   users.forEach((user) => {
+    user.setVolume(user.getVolume(pos, user.peerPosition));
     if (user.avatarDC) {
       if (user.avatarDC.readyState === "open") {
         user.avatarDC.send(JSON.stringify(pos));

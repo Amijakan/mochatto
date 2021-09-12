@@ -1,5 +1,5 @@
 import React, { createContext, useState } from "react";
-import socketIOClient, { Socket } from "socket.io-client";
+import io, { Socket } from "socket.io-client";
 import PropTypes from "prop-types";
 
 export const SocketContext = createContext<{ socket: Socket; peerConnection: RTCPeerConnection }>({
@@ -8,8 +8,9 @@ export const SocketContext = createContext<{ socket: Socket; peerConnection: RTC
 });
 
 export const SocketProvider = ({ children }: { children: JSX.Element }): JSX.Element => {
-  const ENDPOINT = "http://localhost:4000/";
-  const [socket, setSocket] = useState(socketIOClient(ENDPOINT));
+  const pathname = window.location.pathname;
+  const ENDPOINT = "http://localhost:4000" + pathname;
+  const [socket, setSocket] = useState(io(ENDPOINT));
   const [peerConnection, setPeerConnection] = useState(
     new RTCPeerConnection({
       iceServers: [{ urls: "stun:iphone-stun.strato-iphone.de:3478" }],

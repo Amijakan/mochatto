@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import socketIOClient, { Socket } from "socket.io-client";
 import PropTypes from "prop-types";
 
@@ -8,11 +8,13 @@ export const SocketContext = createContext<{ socket: Socket }>({
 
 export const SocketProvider = ({ children }: { children: JSX.Element }): JSX.Element => {
   const ENDPOINT = "http://localhost:4000/";
-  const [socket, setSocket] = useState(socketIOClient(ENDPOINT));
+  const [socket, setSocket] = useState(null as unknown as Socket);
 
-  return (
-    <SocketContext.Provider value={{ socket }}>{children}</SocketContext.Provider>
-  );
+  useEffect(() => {
+    setSocket(socketIOClient(ENDPOINT));
+  }, []);
+
+  return <SocketContext.Provider value={{ socket }}>{children}</SocketContext.Provider>;
 };
 
 SocketProvider.propTypes = {

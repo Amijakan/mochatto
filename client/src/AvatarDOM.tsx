@@ -4,16 +4,16 @@ function AvatarDOM({
   onMouseDown,
   pos,
   isSelf,
+  color,
 }: {
   onMouseDown: (MouseEvent) => void;
   pos: [number, number];
   isSelf: boolean;
+  color: string;
 }): JSX.Element {
   useEffect(() => {
-    const randomColor = Math.floor(Math.random() * 16777215).toString(16);
     const avatardom = document.querySelector(".avatar");
     if (avatardom) {
-      (avatardom as HTMLElement).style.backgroundColor = "#" + randomColor;
       if (isSelf) {
         (avatardom as HTMLElement).style.zIndex = "1";
       }
@@ -26,7 +26,7 @@ function AvatarDOM({
       style={{
         width: "50px",
         height: "50px",
-        background: "black",
+        background: color,
         position: "absolute",
         left: pos[0],
         top: pos[1],

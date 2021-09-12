@@ -43,7 +43,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       setNewUser(id);
       sendOffer(socket, printPack);
     }
-    // if it was self, send out offers and and print socketid
+    // if it was self, print socketid
     else {
       console.debug(socket.id);
     }

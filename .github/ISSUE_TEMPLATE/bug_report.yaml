@@ -7,33 +7,33 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report!
-  - type: input
-    id: contact
-    attributes:
-      label: Contact Details
-      description: How can we get in touch with you if we need more info?
-      placeholder: ex. email@example.com
-    validations:
-      required: false
   - type: textarea
-    id: what-happened
+    id: expected
     attributes:
-      label: What happened?
-      description: Also tell us, what did you expect to happen?
-      placeholder: Tell us what you see!
-      value: "A bug happened!"
+      label: expected
+      description: What did you expect to happen?
+      placeholder: Tell us about the expected behaviour
+      value: ""
     validations:
       required: true
-  - type: dropdown
-    id: browsers
+  - type: textarea
+    id: what-actually-happened
     attributes:
-      label: What browsers are you seeing the problem on?
-      multiple: true
-      options:
-        - Firefox
-        - Chrome
-        - Safari
-        - Microsoft Edge
+      label: actual
+      description: What actually happened?
+      placeholder: Tell us about what you did and what happened?
+      value: ""
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: additional-info
+      description: Any additional info? (Any way to reproduce the bug, which version/commit hash it happened? OS)
+      placeholder: Give us any additional info.
+      value: ""
+    validations:
+      required: false
   - type: textarea
     id: logs
     attributes:

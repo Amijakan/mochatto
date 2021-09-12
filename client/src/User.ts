@@ -38,6 +38,7 @@ class User {
   // runs when the data channel opens
   onAvatarDCOpen(): void {
     console.log("dc open");
+    this.avatarDC.send(JSON.stringify(this.selfPosition));
   }
 
   // runs when the data channel closes

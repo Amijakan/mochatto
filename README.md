@@ -1,7 +1,10 @@
+# Spatial Chat Clone
+Aims to create an open source replicate of https://spatial.chat/
 
-# Try it out
 
-## Dev
+## Try it out
+
+### Dev
 1. `make`
 1. `make dev`
 
@@ -11,7 +14,7 @@ or
 
 Start client via "http://localhost:4500/ROOMID"
 
-## Prod
+### Prod
 1. `make`
 1. `make prod`
 

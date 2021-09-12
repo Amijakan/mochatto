@@ -25,6 +25,13 @@ const defaultOn = (p) => {
 export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultOn): void => {
   // for each user
   users.forEach((user) => {
+    // if a datachannel is already open, close it
+    if (user.avatarDC) {
+      if (user.avatarDC.readyState == "open") {
+        console.debug(user.avatarDC);
+        user.avatarDC.close();
+      }
+    }
     // create data channel for the user as the caller
     user.avatarDC = user.peerConnection.createDataChannel("avatar");
     user.avatarDC.onopen = user.onAvatarDCOpen.bind(user);
@@ -67,6 +74,13 @@ export const openOfferListener = (
     const offerPack = JSON.parse(dataString);
     const sender = findUserById(users, offerPack.senderId) as User;
     if (sender) {
+      // set the local datachannel and event handlers on connect
+      sender.peerConnection.ondatachannel = (event) => {
+        sender.avatarDC = event.channel;
+        sender.avatarDC.onopen = sender.onAvatarDCOpen.bind(sender);
+        sender.avatarDC.onclose = sender.onAvatarDCClose.bind(sender);
+        sender.avatarDC.onmessage = sender.onAvatarDCMessage.bind(sender);
+      };
       onOfferReceived(offerPack);
       // identify and use RTCPeerConnection object for the sender user
       const peerConnection = sender.peerConnection;

@@ -7,6 +7,7 @@ class User {
   player: HTMLAudioElement;
   selfPosition: [number, number];
   peerPosition: [number, number];
+  // a function to update the positions array context
   setPosition: (positionString) => void;
   constructor(id: string) {
     this.id = id;
@@ -27,6 +28,7 @@ class User {
     this.player = new Audio();
     this.selfPosition = [0, 0];
     this.peerPosition = [0, 0];
+    // the function is re-assigned during the user's initialization
     this.setPosition = (positionString) => console.warn(positionString);
 
     // listener for when a peer adds a track

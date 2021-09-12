@@ -55,6 +55,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const setNewUser = (userId) => {
     const user = new User(userId);
     user.setPosition = addAvatar(userId);
+    console.debug(selfPosition);
+    user.setSelfPosition(selfPosition);
     addUserToNetwork(user);
   };
 
@@ -79,6 +81,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // update remote position when avatar is dragged
   useEffect(() => {
+    console.debug(selfPosition);
     updateAvatarPositions(selfPosition);
   }, [selfPosition]);
 

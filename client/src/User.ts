@@ -16,13 +16,6 @@ class User {
     this.peerConnection = new RTCPeerConnection({
       iceServers: [{ urls: "stun:iphone-stun.strato-iphone.de:3478" }],
     });
-    // set the local datachannel and event handlers on connect
-    this.peerConnection.ondatachannel = (event) => {
-      this.avatarDC = event.channel;
-      this.avatarDC.onopen = this.onAvatarDCOpen.bind(this);
-      this.avatarDC.onclose = this.onAvatarDCClose.bind(this);
-      this.avatarDC.onmessage = this.onAvatarDCMessage.bind(this);
-    };
     this.stream = new MediaStream();
     this.player = new Audio();
     this.selfPosition = [0, 0];

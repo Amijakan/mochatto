@@ -20,13 +20,31 @@ app.get("/", (req, res) => {
 });
 
 const users: object[] = [];
-io.on("connection", (socket) => {
+io.of((nsp, query, next) => {
+  const { token } = query;
+  console.log(nsp);
+  console.log(query);
+
+  // authentication
+
+  // If success
+  next(null, true);
+}).on("connection", (socket) => {
   console.log("new client: " + socket.id);
   socket.on("JOIN", (name) => {
     const user = { name, id: socket.id };
     users.push(user);
-    console.log(socket.id + " has joined room. There are currently " + users.length + " users.");
-    io.emit("JOIN", user);
+    console.log(
+      name +
+        " (" +
+        socket.id +
+        ") has joined namespace " +
+        socket.nsp.name +
+        ". There are currently " +
+        users.length +
+        " users total."
+    );
+    io.of(socket.nsp.name).emit("JOIN", user);
   });
   socket.on("REQUEST_USERS", () => {
     socket.emit("REQUEST_USERS", users);

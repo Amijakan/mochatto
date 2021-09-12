@@ -73,8 +73,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     openJoinListener(socket, onNewJoin);
     openLeaveListener(socket, setAnnouncement, onLeave);
     openRequestUsersListener(socket, setNewUser);
-    openOfferListener(getUsers(), socket, printPack, printPack);
-    openAnswerListener(getUsers(), socket, printPack);
+    openOfferListener(getUsers(), socket);
+    openAnswerListener(getUsers(), socket);
   }, []);
 
   // update remote position when avatar is dragged

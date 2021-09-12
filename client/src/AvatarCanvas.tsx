@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import AvatarDOM from "./AvatarDOM";
 
 // for dragging and rendering avatars
@@ -11,6 +11,7 @@ function AvatarCanvas({
   setSelfPosition: (any) => void;
   positions: [number, number][];
 }): JSX.Element {
+  const [avatarColor, setAvatarColor] = useState(Math.floor(Math.random() * 16777215).toString(16));
   let offset;
 
   // on mouse down, add listeners for moving and mouse up
@@ -36,7 +37,13 @@ function AvatarCanvas({
 
   return (
     <>
-      <AvatarDOM key={0} onMouseDown={_onMouseDown} pos={selfPosition} isSelf={true} />
+      <AvatarDOM
+        key={0}
+        onMouseDown={_onMouseDown}
+        color={"#"+avatarColor}
+        pos={selfPosition}
+        isSelf={true}
+      />
       {positions.map((position, index) => {
         return (
           <AvatarDOM
@@ -44,6 +51,7 @@ function AvatarCanvas({
             onMouseDown={(e) => {
               console.log("not your avatar!");
             }}
+            color="black"
             pos={position}
             isSelf={false}
           />

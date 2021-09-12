@@ -1,4 +1,4 @@
-#Spatial Chat Clone
+# Spatial Chat Clone
 Aims to create an open source replicate of https://spatial.chat/
 
 

@@ -36,10 +36,16 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   // announce and set a new user on join
-  const onJoin = ({ name, id }) => {
+  const onNewJoin = ({ name, id }) => {
     setAnnouncement(name + " has joined.");
+    // if the id is not self, configure the new user and send offer
     if (id != socket.id) {
       setNewUser(id);
+      sendOffer(socket, printPack);
+    }
+    // if it was self, send out offers and and print socketid
+    else {
+      console.debug(socket.id);
     }
   };
 
@@ -57,14 +63,18 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     removeAvatar(id);
   };
 
+  const printPack = (pack) => {
+    console.debug(pack);
+  };
+
   // open all listeners on render
   useEffect(() => {
     notifyAndRequestNetworkInfo(socket, name);
-    openJoinListener(socket, onJoin);
+    openJoinListener(socket, onNewJoin);
     openLeaveListener(socket, setAnnouncement, onLeave);
     openRequestUsersListener(socket, setNewUser);
-    openOfferListener(getUsers(), socket);
-    openAnswerListener(getUsers(), socket);
+    openOfferListener(getUsers(), socket, printPack, printPack);
+    openAnswerListener(getUsers(), socket, printPack);
   }, []);
 
   // update remote position when avatar is dragged

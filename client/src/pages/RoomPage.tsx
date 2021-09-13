@@ -43,6 +43,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const onSelect = (stream) => {
     updateAllTracks(stream.getAudioTracks()[0]);
     sendOffer(socket);
+    console.debug(selfPosition);
   };
 
   const updateSelfUserInfo = (info) => {
@@ -51,10 +52,16 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   // announce and set a new user on join
-  const onJoin = ({ name, id }) => {
+  const onNewJoin = ({ name, id }) => {
     setAnnouncement(name + " has joined.");
+    // if the id is not self, configure the new user and send offer
     if (id != socket.id) {
       setNewUser(id);
+      sendOffer(socket, printPack);
+    }
+    // if it was self, print socketid
+    else {
+      console.debug(socket.id);
     }
   };
 
@@ -75,10 +82,14 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     removeUserInfo(id);
   };
 
+  const printPack = (pack) => {
+    console.debug(pack);
+  };
+
   // open all listeners on render
   useEffect(() => {
     notifyAndRequestNetworkInfo(socket, name);
-    openJoinListener(socket, onJoin);
+    openJoinListener(socket, onNewJoin);
     openLeaveListener(socket, setAnnouncement, onLeave);
     openRequestUsersListener(socket, setNewUser);
     openOfferListener(getUsers(), socket);
@@ -87,7 +98,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // update remote position when avatar is dragged
   useEffect(() => {
-    updateAvatarPositions(selfPosition);
+    console.debug(selfPosition);
+    updateAvatarPositions(selfPositionRef.current);
   }, [selfPosition]);
 
   useEffect(() => {

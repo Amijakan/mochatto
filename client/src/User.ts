@@ -1,6 +1,7 @@
 class User {
   peerConnection: RTCPeerConnection;
   avatarDC: RTCDataChannel;
+  userInfoDC: RTCDataChannel;
   sender: RTCRtpSender;
   id: string;
   stream: MediaStream;
@@ -8,10 +9,13 @@ class User {
   selfPosition: [number, number];
   peerPosition: [number, number];
   setPosition: (positionString) => void;
+  name: string;
+  color: string;
   constructor(id: string) {
     this.id = id;
     this.sender = null as unknown as RTCRtpSender;
     this.avatarDC = null as unknown as RTCDataChannel;
+    this.userInfoDC = null as unknown as RTCDataChannel;
     // initialize with a free public STUN server to find out public ip, NAT type, and internet side port
     this.peerConnection = new RTCPeerConnection({
       iceServers: [{ urls: "stun:iphone-stun.strato-iphone.de:3478" }],
@@ -21,11 +25,27 @@ class User {
     this.selfPosition = [0, 0];
     this.peerPosition = [0, 0];
     this.setPosition = (positionString) => console.warn(positionString);
+    this.name = "";
+    this.color = "black";
 
     // listener for when a peer adds a track
     this.peerConnection.ontrack = (event) => {
       this.updateLocalTrack(event.track);
     };
+  }
+
+  onUserInfoDCOpen(): void {
+    console.debug("dc open");
+  }
+
+  onUserInfoDCClose(): void {
+    console.debug("dc close");
+  }
+
+  onUserInfoDCMessage(event): void {
+    const info = JSON.parse(event.data);
+    this.color = info.color;
+    this.name = info.name;
   }
 
   // runs when the data channel opens

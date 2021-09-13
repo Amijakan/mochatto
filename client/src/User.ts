@@ -1,6 +1,9 @@
+import { UserInfo } from "./contexts/UserInfoContext";
+
 class User {
   peerConnection: RTCPeerConnection;
   avatarDC: RTCDataChannel;
+  userInfoDC: RTCDataChannel;
   sender: RTCRtpSender;
   id: string;
   stream: MediaStream;
@@ -9,10 +12,13 @@ class User {
   peerPosition: [number, number];
   // a function to update the positions array context
   setPosition: (positionString) => void;
+  setUserInfo: (info) => void;
+  userInfo: UserInfo;
   constructor(id: string) {
     this.id = id;
     this.sender = null as unknown as RTCRtpSender;
     this.avatarDC = null as unknown as RTCDataChannel;
+    this.userInfoDC = null as unknown as RTCDataChannel;
     // initialize with a free public STUN server to find out public ip, NAT type, and internet side port
     this.peerConnection = new RTCPeerConnection({
       iceServers: [{ urls: "stun:iphone-stun.strato-iphone.de:3478" }],
@@ -23,11 +29,28 @@ class User {
     this.peerPosition = [0, 0];
     // the function is re-assigned during the user's initialization
     this.setPosition = (positionString) => console.warn(positionString);
+    this.setUserInfo = (info) => console.warn(info);
+    this.userInfo = { name: "", avatarColor: { background: "gray", border: "black" } };
 
     // listener for when a peer adds a track
     this.peerConnection.ontrack = (event) => {
       this.updateLocalTrack(event.track);
     };
+  }
+
+  onUserInfoDCOpen(): void {
+    console.debug("dc open");
+    this.userInfoDC.send(JSON.stringify(this.userInfo));
+  }
+
+  onUserInfoDCClose(): void {
+    console.debug("dc close");
+  }
+
+  onUserInfoDCMessage(event: MessageEvent): void {
+    const info = JSON.parse(event.data) as UserInfo;
+    console.debug(info);
+    this.setUserInfo(info);
   }
 
   // runs when the data channel opens
@@ -43,7 +66,7 @@ class User {
   }
 
   // runs when the data channel receives data
-  onAvatarDCMessage(event): void {
+  onAvatarDCMessage(event: MessageEvent): void {
     const position = JSON.parse(event.data);
     this.peerPosition = position;
     this.updateVolume();

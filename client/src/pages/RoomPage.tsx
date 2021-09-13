@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect, useContext} from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { SocketContext } from "../contexts/SocketIOContext";
 import { PositionsContext } from "../contexts/PositionsContext";
+import { UserInfoContext } from "../contexts/UserInfoContext";
 import { DeviceSelector } from "../DeviceSelector";
 import AvatarCanvas from "../AvatarCanvas";
 import {
@@ -12,6 +13,7 @@ import {
   openAnswerListener,
   getUsers,
   updateAvatarPositions,
+  updateUserInfo,
 } from "../RTCPeerConnector";
 import {
   notifyAndRequestNetworkInfo,
@@ -20,15 +22,22 @@ import {
   openRequestUsersListener,
 } from "./RoomPageHelper";
 import User from "../User";
+import { UserInfo } from "../contexts/UserInfoContext";
 
 import PropTypes from "prop-types";
 
 function RoomPage({ name }: { name: string }): JSX.Element {
   const [announcement, setAnnouncement] = useState("");
   const { socket } = useContext(SocketContext);
-  const { selfPosition, setSelfPosition, peerPositions, addAvatar, removeAvatar } =
-    useContext(PositionsContext);
-  const selfPositionRef = useRef(selfPosition);
+  const [selfPosition, setSelfPosition] = useState<[number, number]>([0, 0]);
+  const { peerPositions, addAvatar, removeAvatar } = useContext(PositionsContext);
+  const [avatarColor, setAvatarColor] = useState<{ background: string; border: string }>({
+    background: "black",
+    border: "grey",
+  });
+  const [selfUserInfo, setSelfUserInfo] = useState<UserInfo>({ name, avatarColor });
+  const selfUserInfoRef = useRef(selfUserInfo);
+  const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
 
   // when new input is selected update all tracks and send a new offer out
   const onSelect = (stream) => {
@@ -37,10 +46,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     console.debug(selfPosition);
   };
 
-  const updateSelfPosition = (pos) => {
-    selfPositionRef.current = pos;
-    setSelfPosition(pos);
-  }
+  const updateSelfUserInfo = (info) => {
+    selfUserInfoRef.current = info;
+    setSelfUserInfo(info);
+  };
 
   // announce and set a new user on join
   const onNewJoin = ({ name, id }) => {
@@ -62,13 +71,15 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const setNewUser = (userId) => {
     const user = new User(userId);
     user.setPosition = addAvatar(userId);
-    user.setSelfPosition(selfPositionRef.current);
+    user.setUserInfo = addUserInfo(userId);
+    user.userInfo = selfUserInfoRef.current;
     addUserToNetwork(user);
   };
 
   const onLeave = (id: string) => {
     removeUserFromNetwork(id);
     removeAvatar(id);
+    removeUserInfo(id);
   };
 
   const printPack = (pack) => {
@@ -87,9 +98,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // update remote position when avatar is dragged
   useEffect(() => {
-    console.debug(selfPosition);
-    updateAvatarPositions(selfPositionRef.current);
-  }, [selfPosition]);
+    updateUserInfo(selfUserInfoRef.current);
+  }, [selfUserInfo]);
 
   return (
     <>
@@ -98,8 +108,11 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       <DeviceSelector onSelect={onSelect} />
       <div>{announcement}</div>
       <AvatarCanvas
-        selfPosition={selfPositionRef.current}
-        setSelfPosition={updateSelfPosition}
+        selfUserInfo={selfUserInfoRef.current}
+        setSelfUserInfo={updateSelfUserInfo}
+        userInfos={Object.values(userInfos)}
+        selfPosition={selfPosition}
+        setSelfPosition={setSelfPosition}
         positions={Object.values(peerPositions)}
       />
     </>

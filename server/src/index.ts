@@ -67,7 +67,7 @@ io.of((nsp, query, next) => {
   socket.on("disconnect", () => {
     const userIndex = users.findIndex((usr) => (usr as any).id === socket.id);
     if (users[userIndex]) {
-      io.emit("LEAVE", { name: (users[userIndex] as any).name, id: socket.id });
+      io.of(socket.nsp.name).emit("LEAVE", { name: (users[userIndex] as any).name, id: socket.id });
       users.splice(userIndex, 1);
       console.log(socket.id + " has disconnected. There are currently " + users.length + " users.");
     }

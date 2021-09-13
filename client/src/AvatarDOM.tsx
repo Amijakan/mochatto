@@ -5,7 +5,7 @@ function AvatarDOM({
   pos,
   isSelf,
   _backgroundColor,
-  _borderColor
+  _borderColor,
 }: {
   onMouseDown: (MouseEvent) => void;
   pos: [number, number];
@@ -33,10 +33,25 @@ function AvatarDOM({
         borderStyle: "solid",
         background: _backgroundColor,
         position: "absolute",
+        display: "table",
         left: pos[0],
         top: pos[1],
       }}
-    ></div>
+    >
+      <div
+        style={{
+          color: "white",
+          verticalAlign: "middle",
+          textAlign: "center",
+          display: "table-cell",
+          fontFamily: "helvetica",
+          fontSize: "30px",
+          cursor: "default"
+        }}
+      >
+        A
+      </div>
+    </div>
   );
 }
 

@@ -26,13 +26,14 @@ import PropTypes from "prop-types";
 function RoomPage({ name }: { name: string }): JSX.Element {
   const [announcement, setAnnouncement] = useState("");
   const { socket } = useContext(SocketContext);
-  const [selfPosition, setSelfPosition] = useState<[number, number]>([0, 0]);
-  const { peerPositions, addAvatar, removeAvatar } = useContext(PositionsContext);
+  const { selfPosition, setSelfPosition, peerPositions, addAvatar, removeAvatar } =
+    useContext(PositionsContext);
 
   // when new input is selected update all tracks and send a new offer out
   const onSelect = (stream) => {
     updateAllTracks(stream.getAudioTracks()[0]);
     sendOffer(socket);
+    console.debug(selfPosition);
   };
 
   // announce and set a new user on join

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import socketIOClient, { Socket } from "socket.io-client";
+import io, { Socket } from "socket.io-client";
 import PropTypes from "prop-types";
 
 export const SocketContext = createContext<{ socket: Socket }>({
@@ -7,11 +7,12 @@ export const SocketContext = createContext<{ socket: Socket }>({
 });
 
 export const SocketProvider = ({ children }: { children: JSX.Element }): JSX.Element => {
-  const ENDPOINT = "http://localhost:4000/";
   const [socket, setSocket] = useState(null as unknown as Socket);
 
   useEffect(() => {
-    setSocket(socketIOClient(ENDPOINT));
+    const pathname = window.location.pathname;
+    const ENDPOINT = "http://localhost:4000" + pathname;
+    setSocket(io(ENDPOINT));
   }, []);
 
   return <SocketContext.Provider value={{ socket }}>{children}</SocketContext.Provider>;

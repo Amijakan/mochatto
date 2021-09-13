@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, SetStateAction, Dispatch } from "react";
 import { SocketContext } from "../contexts/SocketIOContext";
 import { PositionsContext } from "../contexts/PositionsContext";
+import { UserInfoContext } from "../contexts/UserInfoContext";
 import { DeviceSelector } from "../DeviceSelector";
 import AvatarCanvas from "../AvatarCanvas";
 import {
@@ -12,6 +13,7 @@ import {
   openAnswerListener,
   getUsers,
   updateAvatarPositions,
+  updateUserInfo,
 } from "../RTCPeerConnector";
 import {
   notifyAndRequestNetworkInfo,
@@ -20,6 +22,7 @@ import {
   openRequestUsersListener,
 } from "./RoomPageHelper";
 import User from "../User";
+import { UserInfo } from "../contexts/UserInfoContext";
 
 import PropTypes from "prop-types";
 
@@ -28,6 +31,12 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const { socket } = useContext(SocketContext);
   const [selfPosition, setSelfPosition] = useState<[number, number]>([0, 0]);
   const { peerPositions, addAvatar, removeAvatar } = useContext(PositionsContext);
+  const [avatarColor, setAvatarColor] = useState<{ background: string; border: string }>({
+    background: "black",
+    border: "grey",
+  });
+  const [selfUserInfo, setSelfUserInfo] = useState<UserInfo>({ name, avatarColor });
+  const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
 
   // when new input is selected update all tracks and send a new offer out
   const onSelect = (stream) => {
@@ -49,12 +58,14 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const setNewUser = (userId) => {
     const user = new User(userId);
     user.setPosition = addAvatar(userId);
+    user.setUserInfo = addUserInfo(userId);
     addUserToNetwork(user);
   };
 
   const onLeave = (id: string) => {
     removeUserFromNetwork(id);
     removeAvatar(id);
+    removeUserInfo(id);
   };
 
   // open all listeners on render
@@ -72,6 +83,15 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     updateAvatarPositions(selfPosition);
   }, [selfPosition]);
 
+  useEffect(() => {
+    console.debug(selfUserInfo);
+    updateUserInfo(selfUserInfo);
+  }, [selfUserInfo]);
+
+  useEffect(() => {
+    console.debug(userInfos);
+  }, [userInfos]);
+
   return (
     <>
       <div>Room page</div>
@@ -79,6 +99,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       <DeviceSelector onSelect={onSelect} />
       <div>{announcement}</div>
       <AvatarCanvas
+        selfUserInfo={selfUserInfo}
+        setSelfUserInfo={setSelfUserInfo}
+        userInfos={Object.values(userInfos)}
         selfPosition={selfPosition}
         setSelfPosition={setSelfPosition}
         positions={Object.values(peerPositions)}

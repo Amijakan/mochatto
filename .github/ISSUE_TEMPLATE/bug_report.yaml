@@ -28,7 +28,7 @@ body:
   - type: textarea
     id: additional
     attributes:
-      label: additional-info
+      label: Additional Info
       description: Any additional info? (Any way to reproduce the bug, which version/commit hash it happened? OS)
       placeholder: Give us any additional info.
       value: "Additional Info?"

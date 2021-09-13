@@ -1,3 +1,5 @@
+import { UserInfo } from "./contexts/UserInfoContext";
+
 class User {
   peerConnection: RTCPeerConnection;
   avatarDC: RTCDataChannel;
@@ -9,8 +11,7 @@ class User {
   selfPosition: [number, number];
   peerPosition: [number, number];
   setPosition: (positionString) => void;
-  name: string;
-  color: string;
+  setUserInfo: (info) => void;
   constructor(id: string) {
     this.id = id;
     this.sender = null as unknown as RTCRtpSender;
@@ -25,8 +26,7 @@ class User {
     this.selfPosition = [0, 0];
     this.peerPosition = [0, 0];
     this.setPosition = (positionString) => console.warn(positionString);
-    this.name = "";
-    this.color = "black";
+    this.setUserInfo = (info) => console.warn(info);
 
     // listener for when a peer adds a track
     this.peerConnection.ontrack = (event) => {
@@ -42,10 +42,10 @@ class User {
     console.debug("dc close");
   }
 
-  onUserInfoDCMessage(event): void {
-    const info = JSON.parse(event.data);
-    this.color = info.color;
-    this.name = info.name;
+  onUserInfoDCMessage(event: MessageEvent): void {
+    const info = JSON.parse(event.data) as UserInfo;
+    console.debug(info);
+    this.setUserInfo(info);
   }
 
   // runs when the data channel opens
@@ -59,7 +59,7 @@ class User {
   }
 
   // runs when the data channel receives data
-  onAvatarDCMessage(event): void {
+  onAvatarDCMessage(event: MessageEvent): void {
     const position = JSON.parse(event.data);
     this.peerPosition = position;
     this.updateVolume();

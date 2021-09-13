@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from "react";
 import AvatarDOM from "./AvatarDOM";
+import { UserInfo } from "./contexts/UserInfoContext";
 
 // for dragging and rendering avatars
 function AvatarCanvas({
   selfPosition,
   setSelfPosition,
   positions,
+  userInfos,
+  selfUserInfo,
+  setSelfUserInfo,
 }: {
   selfPosition: [number, number];
   setSelfPosition: (any) => void;
   positions: [number, number][];
+  userInfos: UserInfo[];
+  selfUserInfo: UserInfo;
+  setSelfUserInfo: (any) => void;
 }): JSX.Element {
-  const [avatarColor, setAvatarColor] = useState("gray");
-  const [borderColor, setBorderColor] = useState("black");
   let offset;
 
   // on mouse down, add listeners for moving and mouse up
@@ -43,10 +48,9 @@ function AvatarCanvas({
 
   useEffect(() => {
     const random = Math.random();
-    const avatarColor = getColor(random, 1);
-    const borderColor = getColor(random, 1.2);
-    setAvatarColor(avatarColor);
-    setBorderColor(borderColor);
+    const background = getColor(random, 1);
+    const border = getColor(random, 1.2);
+    setSelfUserInfo({...selfUserInfo, avatarColor: { background, border }});
   }, []);
 
   return (
@@ -54,22 +58,28 @@ function AvatarCanvas({
       <AvatarDOM
         key={0}
         onMouseDown={_onMouseDown}
-        _backgroundColor={avatarColor}
-        _borderColor={borderColor}
+        _backgroundColor={selfUserInfo.avatarColor.background}
+        _borderColor={selfUserInfo.avatarColor.border}
         pos={selfPosition}
         isSelf={true}
+        initial={selfUserInfo.name[0]}
       />
       {positions.map((position, index) => {
+        let info = userInfos[index];
+        if (!info) {
+          info = { name: "default", avatarColor: { background: "black", border: "gray" } };
+        }
         return (
           <AvatarDOM
             key={index + 1}
             onMouseDown={(e) => {
               console.log("not your avatar!");
             }}
-            _backgroundColor="black"
-            _borderColor="grey"
+            _backgroundColor={info.avatarColor.background}
+            _borderColor={info.avatarColor.border}
             pos={position}
             isSelf={false}
+            initial={info.name[0]}
           />
         );
       })}

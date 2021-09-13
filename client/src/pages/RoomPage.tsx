@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, SetStateAction, Dispatch } from "react";
+import React, { useState, useRef, useEffect, useContext} from "react";
 import { SocketContext } from "../contexts/SocketIOContext";
 import { PositionsContext } from "../contexts/PositionsContext";
 import { DeviceSelector } from "../DeviceSelector";
@@ -28,6 +28,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const { socket } = useContext(SocketContext);
   const { selfPosition, setSelfPosition, peerPositions, addAvatar, removeAvatar } =
     useContext(PositionsContext);
+  const selfPositionRef = useRef(selfPosition);
 
   // when new input is selected update all tracks and send a new offer out
   const onSelect = (stream) => {
@@ -35,6 +36,11 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     sendOffer(socket);
     console.debug(selfPosition);
   };
+
+  const updateSelfPosition = (pos) => {
+    selfPositionRef.current = pos;
+    setSelfPosition(pos);
+  }
 
   // announce and set a new user on join
   const onNewJoin = ({ name, id }) => {
@@ -56,8 +62,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const setNewUser = (userId) => {
     const user = new User(userId);
     user.setPosition = addAvatar(userId);
-    console.debug(selfPosition);
-    user.setSelfPosition(selfPosition);
+    user.setSelfPosition(selfPositionRef.current);
     addUserToNetwork(user);
   };
 
@@ -83,7 +88,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   // update remote position when avatar is dragged
   useEffect(() => {
     console.debug(selfPosition);
-    updateAvatarPositions(selfPosition);
+    updateAvatarPositions(selfPositionRef.current);
   }, [selfPosition]);
 
   return (
@@ -93,8 +98,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       <DeviceSelector onSelect={onSelect} />
       <div>{announcement}</div>
       <AvatarCanvas
-        selfPosition={selfPosition}
-        setSelfPosition={setSelfPosition}
+        selfPosition={selfPositionRef.current}
+        setSelfPosition={updateSelfPosition}
         positions={Object.values(peerPositions)}
       />
     </>

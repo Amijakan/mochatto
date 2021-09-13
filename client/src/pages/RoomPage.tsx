@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, SetStateAction, Dispatch } from "react";
+import React, { useState, useRef, useEffect, useContext} from "react";
 import { SocketContext } from "../contexts/SocketIOContext";
 import { PositionsContext } from "../contexts/PositionsContext";
 import { DeviceSelector } from "../DeviceSelector";
@@ -26,20 +26,33 @@ import PropTypes from "prop-types";
 function RoomPage({ name }: { name: string }): JSX.Element {
   const [announcement, setAnnouncement] = useState("");
   const { socket } = useContext(SocketContext);
-  const [selfPosition, setSelfPosition] = useState<[number, number]>([0, 0]);
-  const { peerPositions, addAvatar, removeAvatar } = useContext(PositionsContext);
+  const { selfPosition, setSelfPosition, peerPositions, addAvatar, removeAvatar } =
+    useContext(PositionsContext);
+  const selfPositionRef = useRef(selfPosition);
 
   // when new input is selected update all tracks and send a new offer out
   const onSelect = (stream) => {
     updateAllTracks(stream.getAudioTracks()[0]);
     sendOffer(socket);
+    console.debug(selfPosition);
   };
 
+  const updateSelfPosition = (pos) => {
+    selfPositionRef.current = pos;
+    setSelfPosition(pos);
+  }
+
   // announce and set a new user on join
-  const onJoin = ({ name, id }) => {
+  const onNewJoin = ({ name, id }) => {
     setAnnouncement(name + " has joined.");
+    // if the id is not self, configure the new user and send offer
     if (id != socket.id) {
       setNewUser(id);
+      sendOffer(socket, printPack);
+    }
+    // if it was self, print socketid
+    else {
+      console.debug(socket.id);
     }
   };
 
@@ -49,6 +62,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const setNewUser = (userId) => {
     const user = new User(userId);
     user.setPosition = addAvatar(userId);
+    user.setSelfPosition(selfPositionRef.current);
     addUserToNetwork(user);
   };
 
@@ -57,10 +71,14 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     removeAvatar(id);
   };
 
+  const printPack = (pack) => {
+    console.debug(pack);
+  };
+
   // open all listeners on render
   useEffect(() => {
     notifyAndRequestNetworkInfo(socket, name);
-    openJoinListener(socket, onJoin);
+    openJoinListener(socket, onNewJoin);
     openLeaveListener(socket, setAnnouncement, onLeave);
     openRequestUsersListener(socket, setNewUser);
     openOfferListener(getUsers(), socket);
@@ -69,7 +87,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // update remote position when avatar is dragged
   useEffect(() => {
-    updateAvatarPositions(selfPosition);
+    console.debug(selfPosition);
+    updateAvatarPositions(selfPositionRef.current);
   }, [selfPosition]);
 
   return (
@@ -79,8 +98,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       <DeviceSelector onSelect={onSelect} />
       <div>{announcement}</div>
       <AvatarCanvas
-        selfPosition={selfPosition}
-        setSelfPosition={setSelfPosition}
+        selfPosition={selfPositionRef.current}
+        setSelfPosition={updateSelfPosition}
         positions={Object.values(peerPositions)}
       />
     </>

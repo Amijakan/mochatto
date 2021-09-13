@@ -2,3 +2,9 @@
 ROOT="$(git rev-parse --show-toplevel)"
 sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $ROOT/server/selfsigned.key -out $ROOT/server/selfsigned.crt \
   -subj "/C=US/ST=CO/L=Colorado Spings/O=Amijakan /OU=Test /CN=jimanaka.com"
+
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $ROOT/client/selfsigned.key -out $ROOT/client/selfsigned.crt \
+  -subj "/C=US/ST=CO/L=Colorado Spings/O=Amijakan /OU=Test /CN=jimanaka.com"
+
+sudo chown $USER $ROOT/server/selfsigned.*
+sudo chown $USER $ROOT/client/selfsigned.*

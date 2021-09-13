@@ -21,7 +21,6 @@ export const UserInfoProvider = ({ children }: { children: JSX.Element }): JSX.E
   const reducer = (userInfos: { [key: string]: UserInfo }, action: Action) => {
     switch (action.type) {
       case "add":
-        console.debug(action);
         return { ...userInfos, [action.id]: action.userInfo };
       case "remove": {
         const { [action.id]: _toRemove, ...removed } = userInfos;

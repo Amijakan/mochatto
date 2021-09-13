@@ -6,12 +6,14 @@ function AvatarDOM({
   isSelf,
   _backgroundColor,
   _borderColor,
+  initial
 }: {
   onMouseDown: (MouseEvent) => void;
   pos: [number, number];
   isSelf: boolean;
   _backgroundColor: string;
   _borderColor: string;
+  initial: string
 }): JSX.Element {
   useEffect(() => {
     const avatardom = document.querySelector(".avatar");
@@ -46,10 +48,10 @@ function AvatarDOM({
           display: "table-cell",
           fontFamily: "helvetica",
           fontSize: "30px",
-          cursor: "default"
+          cursor: "default",
         }}
       >
-        A
+        {initial}
       </div>
     </div>
   );

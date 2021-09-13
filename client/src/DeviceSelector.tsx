@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Select from "react-select";
 import PropTypes from "prop-types";
 import { Device, listInputDevices, selectInputDevice } from "./DeviceSelectorHelper";
+import { DeviceContext } from "./contexts/DeviceContext";
 
 // drop down menu for selecting an input device
 function DeviceSelector({ onSelect }: { onSelect: (MediaStream) => void }): JSX.Element {
-  const [inputOptions, setInputOptions] = useState([{}]);
-  const [selectedInput, setSelectedInput] = useState(Device());
+  const { inputOptions, setInputOptions, selectedInput, setSelectedInput } =
+    useContext(DeviceContext);
 
   useEffect(() => {
     //triggers microphone permission

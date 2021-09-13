@@ -54,7 +54,8 @@ function AvatarCanvas({
       <AvatarDOM
         key={0}
         onMouseDown={_onMouseDown}
-        color={"#" + avatarColor}
+        _backgroundColor={avatarColor}
+        _borderColor={borderColor}
         pos={selfPosition}
         isSelf={true}
       />
@@ -65,7 +66,8 @@ function AvatarCanvas({
             onMouseDown={(e) => {
               console.log("not your avatar!");
             }}
-            color="black"
+            _backgroundColor="black"
+            _borderColor="grey"
             pos={position}
             isSelf={false}
           />

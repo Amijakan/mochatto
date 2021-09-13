@@ -67,6 +67,7 @@ class User {
 
   // runs when the data channel receives data
   onAvatarDCMessage(event: MessageEvent): void {
+    console.log(event.data);
     const position = JSON.parse(event.data);
     this.peerPosition = position;
     this.updateVolume();

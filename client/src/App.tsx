@@ -12,14 +12,14 @@ const App = (): JSX.Element => {
       <SocketProvider>
         <PositionsProvider>
           <DeviceProvider>
-          <UserInfoProvider>
-          <BrowserRouter>
-            <Switch>
-              <Route path="/:room_id" component={Pages} />
-            </Switch>
-          </BrowserRouter>
+            <UserInfoProvider>
+              <BrowserRouter>
+                <Switch>
+                  <Route path="/:room_id" component={Pages} />
+                </Switch>
+              </BrowserRouter>
+            </UserInfoProvider>
           </DeviceProvider>
-          </UserInfoProvider>
         </PositionsProvider>
       </SocketProvider>
     </div>

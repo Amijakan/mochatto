@@ -35,7 +35,6 @@ export const openRequestUsersListener = (
     users.forEach((user) => {
       // if the user isn't self and id exists
       if (user.id !== socket.id && user.id !== undefined) {
-        console.log(user.id);
         onRequest(user.id);
       }
     });

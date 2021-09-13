@@ -4,12 +4,16 @@ function AvatarDOM({
   onMouseDown,
   pos,
   isSelf,
-  color,
+  _backgroundColor,
+  _borderColor,
+  initial
 }: {
   onMouseDown: (MouseEvent) => void;
   pos: [number, number];
   isSelf: boolean;
-  color: string;
+  _backgroundColor: string;
+  _borderColor: string;
+  initial: string
 }): JSX.Element {
   useEffect(() => {
     const avatardom = document.querySelector(".avatar");
@@ -24,14 +28,32 @@ function AvatarDOM({
       className="avatar"
       onMouseDown={onMouseDown}
       style={{
-        width: "50px",
-        height: "50px",
-        background: color,
+        width: "65px",
+        height: "65px",
+        borderRadius: "100%",
+        borderColor: _borderColor,
+        borderStyle: "solid",
+        background: _backgroundColor,
         position: "absolute",
+        display: "table",
         left: pos[0],
         top: pos[1],
       }}
-    ></div>
+    >
+      <div
+        style={{
+          color: "white",
+          verticalAlign: "middle",
+          textAlign: "center",
+          display: "table-cell",
+          fontFamily: "helvetica",
+          fontSize: "30px",
+          cursor: "default",
+        }}
+      >
+        {initial}
+      </div>
+    </div>
   );
 }
 

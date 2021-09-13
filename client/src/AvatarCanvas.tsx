@@ -1,17 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AvatarDOM from "./AvatarDOM";
+import { UserInfo } from "./contexts/UserInfoContext";
 
 // for dragging and rendering avatars
 function AvatarCanvas({
   selfPosition,
   setSelfPosition,
   positions,
+  userInfos,
+  selfUserInfo,
+  setSelfUserInfo,
 }: {
   selfPosition: [number, number];
   setSelfPosition: (any) => void;
   positions: [number, number][];
+  userInfos: UserInfo[];
+  selfUserInfo: UserInfo;
+  setSelfUserInfo: (any) => void;
 }): JSX.Element {
-  const [avatarColor, setAvatarColor] = useState(Math.floor(Math.random() * 16777215).toString(16));
   let offset;
 
   // on mouse down, add listeners for moving and mouse up
@@ -35,25 +41,45 @@ function AvatarCanvas({
     setSelfPosition([mousePos[0] - offset[0], mousePos[1] - offset[1]]);
   };
 
+  // returns a randomly generated pastel color
+  const getColor = (random: number, lighteness: number) => {
+    return "hsl(" + 360 * random + "," + (30 + 70 * random) + "%," + 70 * lighteness + "%)";
+  };
+
+  useEffect(() => {
+    const random = Math.random();
+    const background = getColor(random, 1);
+    const border = getColor(random, 1.2);
+    setSelfUserInfo({ ...selfUserInfo, avatarColor: { background, border } });
+  }, []);
+
   return (
     <>
       <AvatarDOM
         key={0}
         onMouseDown={_onMouseDown}
-        color={"#"+avatarColor}
+        _backgroundColor={selfUserInfo.avatarColor.background}
+        _borderColor={selfUserInfo.avatarColor.border}
         pos={selfPosition}
         isSelf={true}
+        initial={selfUserInfo.name[0]}
       />
       {positions.map((position, index) => {
+        let info = userInfos[index];
+        if (!info) {
+          info = { name: "default", avatarColor: { background: "black", border: "gray" } };
+        }
         return (
           <AvatarDOM
             key={index + 1}
             onMouseDown={(e) => {
               console.log("not your avatar!");
             }}
-            color="black"
+            _backgroundColor={info.avatarColor.background}
+            _borderColor={info.avatarColor.border}
             pos={position}
             isSelf={false}
+            initial={info.name[0]}
           />
         );
       })}

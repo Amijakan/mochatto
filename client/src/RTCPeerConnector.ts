@@ -1,5 +1,6 @@
 import User from "./User";
 import { Socket } from "socket.io-client";
+import { UserInfo } from "./contexts/UserInfoContext";
 
 export const Pack = ({
   sdp,
@@ -21,22 +22,31 @@ const defaultOn = (p) => {
   return;
 };
 
+const avatarChannelLabel = "AVATAR_DC";
+const userInfoChannelLabel = "USER_INFO_DC";
+
 // send out offer to every user on network
 export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultOn): void => {
   // for each user
   users.forEach((user) => {
     // if a datachannel is already open, close it
     if (user.avatarDC) {
-      console.debug(user.avatarDC.readyState);
       user.avatarDC.close();
+    }
+    if(user.userInfoDC){
+      user.userInfoDC.close()
     }
 
     // create data channel for the user as the caller
-    user.avatarDC = user.peerConnection.createDataChannel("avatar");
-    console.debug(user.avatarDC);
+    user.avatarDC = user.peerConnection.createDataChannel(avatarChannelLabel);
     user.avatarDC.onopen = user.onAvatarDCOpen.bind(user);
     user.avatarDC.onclose = user.onAvatarDCClose.bind(user);
     user.avatarDC.onmessage = user.onAvatarDCMessage.bind(user);
+
+    user.userInfoDC = user.peerConnection.createDataChannel(userInfoChannelLabel);
+    user.userInfoDC.onopen = user.onUserInfoDCOpen.bind(user);
+    user.userInfoDC.onclose = user.onUserInfoDCClose.bind(user);
+    user.userInfoDC.onmessage = user.onUserInfoDCMessage.bind(user);
 
     // emit an offer to the server to be broadcasted
     user.peerConnection
@@ -76,10 +86,25 @@ export const openOfferListener = (
     if (sender) {
       // set the local datachannel and event handlers on connect
       sender.peerConnection.ondatachannel = (event) => {
-        sender.avatarDC = event.channel;
-        sender.avatarDC.onopen = sender.onAvatarDCOpen.bind(sender);
-        sender.avatarDC.onclose = sender.onAvatarDCClose.bind(sender);
-        sender.avatarDC.onmessage = sender.onAvatarDCMessage.bind(sender);
+        const dc = event.channel;
+        switch (dc.label) {
+          case avatarChannelLabel: {
+            sender.avatarDC = dc;
+            sender.avatarDC.onopen = sender.onAvatarDCOpen.bind(sender);
+            sender.avatarDC.onclose = sender.onAvatarDCClose.bind(sender);
+            sender.avatarDC.onmessage = sender.onAvatarDCMessage.bind(sender);
+            break;
+          }
+          case userInfoChannelLabel: {
+            sender.userInfoDC = dc;
+            sender.userInfoDC.onopen = sender.onUserInfoDCOpen.bind(sender);
+            sender.userInfoDC.onclose = sender.onUserInfoDCClose.bind(sender);
+            sender.userInfoDC.onmessage = sender.onUserInfoDCMessage.bind(sender);
+            break;
+          }
+          default:
+            break;
+        }
       };
       onOfferReceived(offerPack);
       // identify and use RTCPeerConnection object for the sender user
@@ -170,6 +195,17 @@ export const findUserById = (users: User[], id: string): User => {
 export const updateAllTracks = (track: MediaStreamTrack): void => {
   users.forEach((user) => {
     user.updateRemoteTrack(track);
+  });
+};
+
+// update information about the user such as avatar color, name, etc.
+export const updateUserInfo = (info: UserInfo): void => {
+  users.forEach((user) => {
+    if (user.userInfoDC) {
+      if (user.userInfoDC.readyState === "open") {
+        user.userInfoDC.send(JSON.stringify(info));
+      }
+    }
   });
 };
 

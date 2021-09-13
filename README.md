@@ -1,4 +1,9 @@
+[![issues](https://img.shields.io/github/issues/Amijakan/spatialchatclone)](https://github.com/Amijakan/spatialchatclone/issues)
+[![PRs](https://img.shields.io/github/issues-pr/amijakan/spatialchatclone)](https://github.com/Amijakan/spatialchatclone/pulls)
+![language](https://img.shields.io/github/languages/top/amijakan/spatialchatclone)
 # Spatial Chat Clone
+
+
 Aims to create an open source replicate of https://spatial.chat/
 
 

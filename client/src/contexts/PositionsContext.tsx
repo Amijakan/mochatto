@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useCallback } from "react";
+import React, { createContext, useState, useReducer, useCallback } from "react";
 
 interface PeerPosition {
   [key: string]: [number, number];
@@ -37,12 +37,16 @@ export const PositionsProvider = ({ children }: { children: any }) => {
   const removeAvatar = useCallback((userId: string) => {
     dispatch({ type: "remove", position: [0, 0], id: userId });
   }, []);
+
+  const [selfPosition, setSelfPosition] = useState([0, 0]);
   return (
     <PositionsContext.Provider
       value={{
         peerPositions,
         addAvatar,
         removeAvatar,
+        selfPosition,
+        setSelfPosition
       }}
     >
       {children}

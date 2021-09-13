@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, SetStateAction, Dispatch } from "react";
 import { SocketContext } from "../contexts/SocketIOContext";
 import { PositionsContext } from "../contexts/PositionsContext";
+import { DeviceContext } from "../contexts/DeviceContext";
 import { DeviceSelector } from "../DeviceSelector";
 import AvatarCanvas from "../AvatarCanvas";
 import {
@@ -26,13 +27,13 @@ import PropTypes from "prop-types";
 function RoomPage({ name }: { name: string }): JSX.Element {
   const [announcement, setAnnouncement] = useState("");
   const { socket } = useContext(SocketContext);
+  const { stream, setStream } = useContext(DeviceContext);
   const [selfPosition, setSelfPosition] = useState<[number, number]>([0, 0]);
   const { peerPositions, addAvatar, removeAvatar } = useContext(PositionsContext);
 
   // when new input is selected update all tracks and send a new offer out
-  const onSelect = (stream) => {
-    updateAllTracks(stream.getAudioTracks()[0]);
-    sendOffer(socket);
+  const onSelect = (_stream) => {
+    setStream(_stream);
   };
 
   // announce and set a new user on join
@@ -40,8 +41,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     setAnnouncement(name + " has joined.");
     if (id != socket.id) {
       setNewUser(id);
-    }
-  };
+      updateAllTracks(stream.getAudioTracks()[0]);
+      sendOffer(socket);
+    }   };
 
   // add a new position array in the peerPositions state
   // set the user setPosition callback to change the state
@@ -66,6 +68,11 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     openOfferListener(getUsers(), socket);
     openAnswerListener(getUsers(), socket);
   }, []);
+
+  useEffect(() => {
+    updateAllTracks(stream.getAudioTracks()[0]);
+    sendOffer(socket);
+  }, [stream]);
 
   // update remote position when avatar is dragged
   useEffect(() => {

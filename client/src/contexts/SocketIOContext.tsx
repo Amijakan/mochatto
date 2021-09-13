@@ -11,7 +11,7 @@ export const SocketProvider = ({ children }: { children: JSX.Element }): JSX.Ele
 
   useEffect(() => {
     const pathname = window.location.pathname;
-    const ENDPOINT = "http://localhost:4000" + pathname;
+    const ENDPOINT = "https://localhost:4000" + pathname;
     setSocket(io(ENDPOINT));
   }, []);
 

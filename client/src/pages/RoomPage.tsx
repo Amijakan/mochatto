@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, SetStateAction, Dispatch } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { SocketContext } from "../contexts/SocketIOContext";
 import { PositionsContext } from "../contexts/PositionsContext";
 import { UserInfoContext } from "../contexts/UserInfoContext";
@@ -36,12 +36,18 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     border: "grey",
   });
   const [selfUserInfo, setSelfUserInfo] = useState<UserInfo>({ name, avatarColor });
+  const selfUserInfoRef = useRef(selfUserInfo);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
 
   // when new input is selected update all tracks and send a new offer out
   const onSelect = (stream) => {
     updateAllTracks(stream.getAudioTracks()[0]);
     sendOffer(socket);
+  };
+
+  const updateSelfUserInfo = (info) => {
+    selfUserInfoRef.current = info;
+    setSelfUserInfo(info);
   };
 
   // announce and set a new user on join
@@ -59,8 +65,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     const user = new User(userId);
     user.setPosition = addAvatar(userId);
     user.setUserInfo = addUserInfo(userId);
-    console.debug(selfUserInfo);
-    user.userInfo = selfUserInfo;
+    user.userInfo = selfUserInfoRef.current;
     addUserToNetwork(user);
   };
 
@@ -86,8 +91,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, [selfPosition]);
 
   useEffect(() => {
-    console.debug(selfUserInfo);
-    updateUserInfo(selfUserInfo);
+    updateUserInfo(selfUserInfoRef.current);
   }, [selfUserInfo]);
 
   return (
@@ -97,8 +101,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       <DeviceSelector onSelect={onSelect} />
       <div>{announcement}</div>
       <AvatarCanvas
-        selfUserInfo={selfUserInfo}
-        setSelfUserInfo={setSelfUserInfo}
+        selfUserInfo={selfUserInfoRef.current}
+        setSelfUserInfo={updateSelfUserInfo}
         userInfos={Object.values(userInfos)}
         selfPosition={selfPosition}
         setSelfPosition={setSelfPosition}

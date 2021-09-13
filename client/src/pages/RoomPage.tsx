@@ -29,8 +29,9 @@ import PropTypes from "prop-types";
 function RoomPage({ name }: { name: string }): JSX.Element {
   const [announcement, setAnnouncement] = useState("");
   const { socket } = useContext(SocketContext);
-  const [selfPosition, setSelfPosition] = useState<[number, number]>([0, 0]);
-  const { peerPositions, addAvatar, removeAvatar } = useContext(PositionsContext);
+  const { selfPosition, setSelfPosition, peerPositions, addAvatar, removeAvatar } =
+    useContext(PositionsContext);
+  const selfPositionRef = useRef(selfPosition);
   const [avatarColor, setAvatarColor] = useState<{ background: string; border: string }>({
     background: "black",
     border: "grey",
@@ -44,6 +45,11 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     updateAllTracks(stream.getAudioTracks()[0]);
     sendOffer(socket);
     console.debug(selfPosition);
+  };
+
+  const updateSelfPosition = (pos) => {
+    selfPositionRef.current = pos;
+    setSelfPosition(pos);
   };
 
   const updateSelfUserInfo = (info) => {
@@ -72,6 +78,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     const user = new User(userId);
     user.setPosition = addAvatar(userId);
     user.setUserInfo = addUserInfo(userId);
+    user.setSelfPosition(selfPositionRef.current);
     user.userInfo = selfUserInfoRef.current;
     addUserToNetwork(user);
   };
@@ -98,6 +105,11 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // update remote position when avatar is dragged
   useEffect(() => {
+    console.debug(selfPosition);
+    updateAvatarPositions(selfPositionRef.current);
+  }, [selfPosition]);
+
+  useEffect(() => {
     updateUserInfo(selfUserInfoRef.current);
   }, [selfUserInfo]);
 
@@ -111,8 +123,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         selfUserInfo={selfUserInfoRef.current}
         setSelfUserInfo={updateSelfUserInfo}
         userInfos={Object.values(userInfos)}
-        selfPosition={selfPosition}
-        setSelfPosition={setSelfPosition}
+        selfPosition={selfPositionRef.current}
+        setSelfPosition={updateSelfPosition}
         positions={Object.values(peerPositions)}
       />
     </>

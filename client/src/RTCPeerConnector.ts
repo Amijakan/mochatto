@@ -17,8 +17,7 @@ export const Pack = ({
 };
 
 const users: User[] = [];
-const defaultOn = (p) => {
-  //console.log(p);
+const defaultOn = () => {
   return;
 };
 

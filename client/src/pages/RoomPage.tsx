@@ -34,6 +34,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const { selfPosition, setSelfPosition, peerPositions, addAvatar, removeAvatar } =
     useContext(PositionsContext);
   const selfPositionRef = useRef(selfPosition);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [avatarColor, setAvatarColor] = useState<{ background: string; border: string }>({
     background: "black",
     border: "grey",
@@ -84,10 +85,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     removeUserFromNetwork(id);
     removeAvatar(id);
     removeUserInfo(id);
-  };
-
-  const printPack = (pack) => {
-    console.debug(pack);
   };
 
   // open all listeners on render

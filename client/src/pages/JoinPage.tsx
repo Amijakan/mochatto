@@ -53,7 +53,7 @@ const JoinPage = ({
           analyser.getByteFrequencyData(array);
 
           let sum = 0;
-          array.forEach((e, i) => {
+          array.forEach((e) => {
             sum += e * 4;
           });
           const average = sum / array.length;

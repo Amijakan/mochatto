@@ -12,6 +12,7 @@ class User {
   peerPosition: [number, number];
   setPosition: (positionString) => void;
   setUserInfo: (info) => void;
+  userInfo: UserInfo;
   constructor(id: string) {
     this.id = id;
     this.sender = null as unknown as RTCRtpSender;
@@ -27,6 +28,7 @@ class User {
     this.peerPosition = [0, 0];
     this.setPosition = (positionString) => console.warn(positionString);
     this.setUserInfo = (info) => console.warn(info);
+    this.userInfo = { name: "", avatarColor: { background: "gray", border: "black" } };
 
     // listener for when a peer adds a track
     this.peerConnection.ontrack = (event) => {
@@ -36,6 +38,7 @@ class User {
 
   onUserInfoDCOpen(): void {
     console.debug("dc open");
+    this.userInfoDC.send(JSON.stringify(this.userInfo));
   }
 
   onUserInfoDCClose(): void {

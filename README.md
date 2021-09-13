@@ -4,6 +4,9 @@ Aims to create an open source replicate of https://spatial.chat/
 
 ## Try it out
 
+### Generate Selfsigned certificates
+`create-selfsigned-key`
+
 ### Dev
 1. `make`
 1. `make dev`

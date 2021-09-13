@@ -1,13 +1,22 @@
 import express from "express";
 import { Server } from "socket.io";
-import { createServer } from "http";
 import cors from "cors";
+import https from "https";
+import fs from "fs";
 
 const app = express();
 const port = 4000;
-const server = app.listen(port, () => {
-  return console.log(`server is listening on ${port}`);
-});
+const server = https
+  .createServer(
+    {
+      key: fs.readFileSync("./selfsigned.key"),
+      cert: fs.readFileSync("./selfsigned.crt"),
+    },
+    app
+  )
+  .listen(port, () => {
+    return console.log(`server is listening on ${port}`);
+  });
 
 const io = new Server(server, {
   cors: {

@@ -59,6 +59,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     const user = new User(userId);
     user.setPosition = addAvatar(userId);
     user.setUserInfo = addUserInfo(userId);
+    console.debug(selfUserInfo);
+    user.userInfo = selfUserInfo;
     addUserToNetwork(user);
   };
 
@@ -87,10 +89,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     console.debug(selfUserInfo);
     updateUserInfo(selfUserInfo);
   }, [selfUserInfo]);
-
-  useEffect(() => {
-    console.debug(userInfos);
-  }, [userInfos]);
 
   return (
     <>

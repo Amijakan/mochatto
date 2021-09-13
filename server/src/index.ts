@@ -6,20 +6,23 @@ import fs from "fs";
 
 const app = express();
 const port = 4000;
-const server = https
-  .createServer(
-    {
-      key: fs.readFileSync("./selfsigned.key"),
-      cert: fs.readFileSync("./selfsigned.crt"),
-    },
-    app
-  )
-  .listen(port, () => {
-    return console.log(`server is listening on ${port}`);
-  });
+let server = (
+  process.env.HTTPS
+    ? https.createServer(
+        {
+          key: fs.readFileSync("./selfsigned.key"),
+          cert: fs.readFileSync("./selfsigned.crt"),
+        },
+        app
+      )
+    : app
+).listen(port, () => {
+  return console.log(`server is listening on ${port}`);
+});
 
 const io = new Server(server, {
   cors: {
+    // TODO make this suitable for deploy
     origin: ["http://localhost:4500", "http://localhost:4600"],
   },
 });

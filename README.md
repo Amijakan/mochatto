@@ -1,4 +1,4 @@
-![issues](https://img.shields.io/github/issues/Amijakan/spatialchatclone)
+[![issues](https://img.shields.io/github/issues/Amijakan/spatialchatclone)](https://github.com/Amijakan/spatialchatclone/issues)
 ![main status](https://img.shields.io/github/checks-status/amijakan/spatialchatclone/main)
 # Spatial Chat Clone
 

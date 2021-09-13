@@ -50,7 +50,7 @@ function AvatarCanvas({
     const random = Math.random();
     const background = getColor(random, 1);
     const border = getColor(random, 1.2);
-    setSelfUserInfo({...selfUserInfo, avatarColor: { background, border }});
+    setSelfUserInfo({ ...selfUserInfo, avatarColor: { background, border } });
   }, []);
 
   return (

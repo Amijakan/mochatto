@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AvatarDOM from "./AvatarDOM";
 
 // for dragging and rendering avatars
@@ -11,7 +11,8 @@ function AvatarCanvas({
   setSelfPosition: (any) => void;
   positions: [number, number][];
 }): JSX.Element {
-  const [avatarColor, setAvatarColor] = useState(Math.floor(Math.random() * 16777215).toString(16));
+  const [avatarColor, setAvatarColor] = useState("gray");
+  const [borderColor, setBorderColor] = useState("black");
   let offset;
 
   // on mouse down, add listeners for moving and mouse up
@@ -35,12 +36,25 @@ function AvatarCanvas({
     setSelfPosition([mousePos[0] - offset[0], mousePos[1] - offset[1]]);
   };
 
+  // returns a randomly generated pastel color
+  const getColor = (random: number, lighteness: number) => {
+    return "hsl(" + 360 * random + "," + (30 + 70 * random) + "%," + 70 * lighteness + "%)";
+  };
+
+  useEffect(() => {
+    const random = Math.random();
+    const avatarColor = getColor(random, 1);
+    const borderColor = getColor(random, 1.2);
+    setAvatarColor(avatarColor);
+    setBorderColor(borderColor);
+  }, []);
+
   return (
     <>
       <AvatarDOM
         key={0}
         onMouseDown={_onMouseDown}
-        color={"#"+avatarColor}
+        color={"#" + avatarColor}
         pos={selfPosition}
         isSelf={true}
       />

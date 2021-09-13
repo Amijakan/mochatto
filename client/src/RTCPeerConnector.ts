@@ -31,8 +31,10 @@ export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultO
   users.forEach((user) => {
     // if a datachannel is already open, close it
     if (user.avatarDC) {
-      console.debug(user.avatarDC.readyState);
       user.avatarDC.close();
+    }
+    if(user.userInfoDC){
+      user.userInfoDC.close()
     }
 
     // create data channel for the user as the caller
@@ -40,6 +42,7 @@ export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultO
     user.avatarDC.onopen = user.onAvatarDCOpen.bind(user);
     user.avatarDC.onclose = user.onAvatarDCClose.bind(user);
     user.avatarDC.onmessage = user.onAvatarDCMessage.bind(user);
+
     user.userInfoDC = user.peerConnection.createDataChannel(userInfoChannelLabel);
     user.userInfoDC.onopen = user.onUserInfoDCOpen.bind(user);
     user.userInfoDC.onclose = user.onUserInfoDCClose.bind(user);

@@ -1,5 +1,7 @@
 import React, { useContext } from "react";
 import { SocketContext } from "../contexts/SocketIOContext";
+import { DeviceContext } from "../contexts/DeviceContext";
+import { DeviceSelector } from "../DeviceSelector";
 import PropTypes from "prop-types";
 
 const JoinPage = ({
@@ -10,6 +12,7 @@ const JoinPage = ({
   setJoined: (string) => void;
 }): JSX.Element => {
   const { socket } = useContext(SocketContext);
+  const { stream, setStream } = useContext(DeviceContext);
   const onJoinClicked = () => {
     if (socket) {
       setJoined(true);
@@ -20,6 +23,11 @@ const JoinPage = ({
     if (socket) {
       socket.emit("CLEAR_USERS");
     }
+  };
+
+  const onSelect = (_stream) => {
+    console.debug(_stream);
+    setStream(_stream);
   };
 
   return (
@@ -36,6 +44,7 @@ const JoinPage = ({
           />
         </label>
       </div>
+      <DeviceSelector onSelect={onSelect} />
       <div>
         <button onClick={() => onJoinClicked()}>Join</button>
       </div>

@@ -1,5 +1,7 @@
 [![issues](https://img.shields.io/github/issues/Amijakan/spatialchatclone)](https://github.com/Amijakan/spatialchatclone/issues)
-![main status](https://img.shields.io/github/checks-status/amijakan/spatialchatclone/main)
+[![PRs](https://img.shields.io/github/issues-pr/amijakan/spatialchatclone)](https://github.com/Amijakan/spatialchatclone/pulls)
+![language](https://img.shields.io/github/languages/top/amijakan/spatialchatclone)
+![totallines](https://img.shields.io/tokei/lines/github/amijakan/spatialchatclone)
 # Spatial Chat Clone
 
 

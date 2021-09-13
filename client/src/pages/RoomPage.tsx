@@ -123,7 +123,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         selfUserInfo={selfUserInfoRef.current}
         setSelfUserInfo={updateSelfUserInfo}
         userInfos={Object.values(userInfos)}
-        selfPosition={selfPosition}
+        selfPosition={selfPositionRef.current}
         setSelfPosition={updateSelfPosition}
         positions={Object.values(peerPositions)}
       />

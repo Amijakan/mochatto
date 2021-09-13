@@ -2,5 +2,7 @@ node_modules/
 dist/
 
 *.sw[n-r]
+*.crt
+*.key
 
 

@@ -8,5 +8,11 @@ export const DeviceProvider = ({ children }: { children: JSX.Element }): JSX.Ele
   const [inputOptions, setInputOptions] = useState([{}]);
   const [selectedInput, setSelectedInput] = useState(Device());
 
-  return <DeviceContext.Provider value={{ stream, setStream, inputOptions, setInputOptions, selectedInput, setSelectedInput }}>{children}</DeviceContext.Provider>;
+  return (
+    <DeviceContext.Provider
+      value={{ stream, setStream, inputOptions, setInputOptions, selectedInput, setSelectedInput }}
+    >
+      {children}
+    </DeviceContext.Provider>
+  );
 };

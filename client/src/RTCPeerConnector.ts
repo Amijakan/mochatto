@@ -1,5 +1,6 @@
 import User from "./User";
 import { Socket } from "socket.io-client";
+import { UserInfo } from "./contexts/UserInfoContext";
 
 export const Pack = ({
   sdp,
@@ -195,7 +196,7 @@ export const updateAllTracks = (track: MediaStreamTrack): void => {
 };
 
 // update information about the user such as avatar color, name, etc.
-export const updateUserInfo = (info: any): void => {
+export const updateUserInfo = (info: UserInfo): void => {
   users.forEach((user) => {
     if (user.userInfoDC) {
       if (user.userInfoDC.readyState === "open") {

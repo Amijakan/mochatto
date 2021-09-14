@@ -6,7 +6,14 @@ export interface UserInfo {
     background: string;
     border: string;
   };
+  multiplier;
 }
+
+export const defaultUserInfo = {
+  name: "",
+  avatarColor: { background: "gray", border: "black" },
+  multiplier: 0,
+};
 
 interface Action {
   type: string;

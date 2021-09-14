@@ -6,8 +6,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: cd ./client && yarn install && yarn build
-        env: 
-          CI: false # TODO: Make this true at some point
 
   build-server:
     runs-on: ubuntu-latest

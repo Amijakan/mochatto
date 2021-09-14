@@ -25,16 +25,16 @@ function AvatarDOM({
       }
     }
   }, []);
+
   return (
     <div
       className="avatar"
       onMouseDown={onMouseDown}
       style={{
-        width: (multiplier * 65).toString() + "px",
-        height: (multiplier * 65).toString() + "px",
+        width: "65px",
+        height: "65px",
         borderRadius: "100%",
-        borderColor: _borderColor,
-        borderStyle: "solid",
+        boxShadow: "0 0 0 " + (1 + multiplier * 10).toString() + "px " + _borderColor,
         background: _backgroundColor,
         position: "absolute",
         display: "table",

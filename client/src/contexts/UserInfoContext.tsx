@@ -26,13 +26,14 @@ export const UserInfoContext = createContext<any>({});
 export const UserInfoProvider = ({ children }: { children: JSX.Element }): JSX.Element => {
   // reducer for adding a avatar position to the list render
   const reducer = (userInfos: { [key: string]: UserInfo }, action: Action) => {
-    let newInfo = userInfos[action.id];
-    Object.keys(action.data).forEach((key) => {
-      newInfo = { ...newInfo, [key]: action.data[key] };
-    });
     switch (action.type) {
-      case "add":
+      case "add": {
+        let newInfo = userInfos[action.id];
+        Object.keys(action.data).forEach((key) => {
+          newInfo = { ...newInfo, [key]: action.data[key] };
+        });
         return { ...userInfos, [action.id]: newInfo };
+      }
       case "remove": {
         const { [action.id]: _toRemove, ...removed } = userInfos;
         console.log(_toRemove);

@@ -48,7 +48,7 @@ export const PositionsProvider = ({ children }: { children: JSX.Element }): JSX.
         addAvatar,
         removeAvatar,
         selfPosition,
-        setSelfPosition
+        setSelfPosition,
       }}
     >
       {children}

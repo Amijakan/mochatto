@@ -1,8 +1,8 @@
 import React, { useEffect, useContext } from "react";
 import Select from "react-select";
 import PropTypes from "prop-types";
-import { Device, listInputDevices, selectInputDevice } from "../DeviceSelectorHelper";
-import { DeviceContext } from "../contexts/DeviceContext";
+import { Device, listInputDevices, selectInputDevice } from "./DeviceSelectorHelper";
+import { DeviceContext } from "../contexts";
 
 // drop down menu for selecting an input device
 function DeviceSelector({ onSelect }: { onSelect: (MediaStream) => void }): JSX.Element {

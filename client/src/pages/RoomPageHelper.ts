@@ -1,5 +1,4 @@
 import { Socket } from "socket.io-client";
-import User from "../User";
 
 export const notifyAndRequestNetworkInfo = (socket: Socket, name: string): void => {
   // notify server on join

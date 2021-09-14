@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import AvatarDOM from "./AvatarDOM";
 import { UserInfo } from "./contexts/UserInfoContext";
 
@@ -72,7 +72,7 @@ function AvatarCanvas({
         return (
           <AvatarDOM
             key={index + 1}
-            onMouseDown={(e) => {
+            onMouseDown={() => {
               console.log("not your avatar!");
             }}
             _backgroundColor={info.avatarColor.background}

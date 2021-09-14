@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { SocketContext } from "../contexts/SocketIOContext";
 import { DeviceContext } from "../contexts/DeviceContext";
 import { DeviceSelector } from "../DeviceSelector";
-import AudioVisualizer from "../AudioVisualizer";
+import { AudioVisualizer } from "../AudioVisualizer";
 
 import PropTypes from "prop-types";
 
@@ -22,6 +22,7 @@ const JoinPage = ({
   const onJoinClicked = () => {
     if (socket) {
       setJoined(true);
+      visualizer.stop();
     }
   };
 
@@ -41,7 +42,7 @@ const JoinPage = ({
   }, []);
 
   useEffect(() => {
-    if(visualizer){
+    if (visualizer) {
       visualizer.setStream(stream);
     }
   }, [stream]);

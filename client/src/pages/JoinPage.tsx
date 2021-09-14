@@ -33,7 +33,6 @@ const JoinPage = ({
   };
 
   const onSelect = (_stream) => {
-    console.debug(_stream);
     setStream(_stream);
   };
 

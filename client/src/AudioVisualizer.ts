@@ -1,9 +1,13 @@
-class AudioVisualizer {
+export class AudioVisualizer {
   intervalId: number;
   onAudioActivity: (gain: number) => void;
   constructor(_onAudioActivity) {
     this.intervalId = 0;
     this.onAudioActivity = _onAudioActivity;
+  }
+
+  stop(): void {
+    window.clearInterval(this.intervalId);
   }
 
   setStream(stream) {
@@ -40,5 +44,13 @@ class AudioVisualizer {
     }
   }
 }
-
-export default AudioVisualizer;
+export const gainToMultiplier = (gain: number): number => {
+  const max = 150;
+  let _multiplier = 0;
+  if (gain < max) {
+    _multiplier = gain / max;
+  } else {
+    _multiplier = 1;
+  }
+  return _multiplier;
+};

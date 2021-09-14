@@ -1,6 +1,6 @@
 import User from "./User";
 import { Socket } from "socket.io-client";
-import { UserInfo } from "./contexts/UserInfoContext";
+import { UserInfo } from "../contexts/UserInfoContext";
 
 export const Pack = ({
   sdp,
@@ -32,8 +32,8 @@ export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultO
     if (user.avatarDC) {
       user.avatarDC.close();
     }
-    if(user.userInfoDC){
-      user.userInfoDC.close()
+    if (user.userInfoDC) {
+      user.userInfoDC.close();
     }
 
     // create data channel for the user as the caller

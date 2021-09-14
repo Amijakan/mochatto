@@ -1,10 +1,10 @@
-import { ReactElement } from "react";
+import React, { ReactElement } from "react";
 import { SocketContext, SocketProvider } from "./SocketIOContext";
 import { DeviceContext, DeviceProvider } from "./DeviceContext";
 import { UserInfoContext, UserInfoProvider } from "./UserInfoContext";
 import { PositionsContext, PositionsProvider } from "./PositionsContext";
 
-const Providers = ({ children }: { children: ReactElement<any> }) => (
+const Providers = ({ children }: { children: ReactElement }): JSX.Element => (
   <SocketProvider>
     <PositionsProvider>
       <DeviceProvider>
@@ -15,5 +15,4 @@ const Providers = ({ children }: { children: ReactElement<any> }) => (
 );
 
 export { DeviceContext, PositionsContext, UserInfoContext, SocketContext };
-
 export default Providers;

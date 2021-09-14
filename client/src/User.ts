@@ -61,7 +61,6 @@ class User {
 
   onUserInfoDCMessage(event: MessageEvent): void {
     const info = JSON.parse(event.data) as UserInfo;
-    console.debug(info);
     this.setUserInfo(info);
   }
 

@@ -1,8 +1,5 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import { SocketContext } from "../contexts/SocketIOContext";
-import { PositionsContext } from "../contexts/PositionsContext";
-import { DeviceContext } from "../contexts/DeviceContext";
-import { UserInfoContext } from "../contexts/UserInfoContext";
+import { SocketContext, PositionsContext, DeviceContext, UserInfoContext } from "../contexts";
 import { DeviceSelector } from "../components/DeviceSelector";
 import AvatarCanvas from "../components/AvatarCanvas";
 import {

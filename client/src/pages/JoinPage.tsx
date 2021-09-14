@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-import { SocketContext } from "../contexts/SocketIOContext";
-import { DeviceContext } from "../contexts/DeviceContext";
-import { DeviceSelector } from "../DeviceSelector";
+import { SocketContext, DeviceContext } from "../contexts";
+import { DeviceSelector } from "../components/DeviceSelector";
 import PropTypes from "prop-types";
 
 const JoinPage = ({

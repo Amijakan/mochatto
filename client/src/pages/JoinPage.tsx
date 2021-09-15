@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
+import { useParams } from "react-router-dom";
 import { SocketContext, DeviceContext } from "../contexts";
 import { DeviceSelector } from "../components/DeviceSelector";
 import { AudioVisualizer } from "../classes/AudioVisualizer";
 import PropTypes from "prop-types";
-import { Input } from "atomize";
-import { Div, Button } from "atomize";
-import { colors } from "../constants/colors";
+import { Input } from "../components/atomize_wrapper";
+import { Div } from "atomize";
+import { Button, Card, Text } from "../components/atomize_wrapper";
 import { BaseTemplate } from "../templates";
 
 const JoinPage = ({
@@ -17,6 +18,7 @@ const JoinPage = ({
 }): JSX.Element => {
   const { socket } = useContext(SocketContext);
   const { stream, setStream } = useContext(DeviceContext);
+  const { room_id } = useParams<{ room_id: string }>();
 
   const [gain, setGain] = useState(0);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
@@ -54,51 +56,43 @@ const JoinPage = ({
 
   return (
     <BaseTemplate>
-      <Div d="flex" justify="center">
-        <Div w="50%" p={{ x: "1.25rem", y: "1.25rem" }}>
-          <Div>
-            <Input
-              placeholder="Name"
-              type="text"
-              name="name"
-              onChange={(e) => {
-                setName(e.target.value);
-              }}
-            />
+      <Div d="flex" justify="space-around" p={{ t: "100px" }}>
+        <Card m={{ l: "10%", r: "10%" }}>
+          <Div w="80%" p={{ x: "1.25rem", y: "1.25rem" }}>
+            <Div textSize="20px" m={{ b: "20px" }}>
+              Room ID: <b>{room_id}</b>
+            </Div>
+            <Div>
+              <Input
+                placeholder="Name"
+                type="text"
+                name="name"
+                onChange={(e) => {
+                  setName(e.target.value);
+                }}
+              />
+            </Div>
+            <Div m={{ t: "20px" }}>
+              <Div>Select audio device:</Div>
+              <DeviceSelector onSelect={onSelect} />
+              <Div
+                style={{
+                  width: gain.toString() + "px",
+                  height: "10px",
+                  background: "black",
+                }}
+              ></Div>
+            </Div>
+            <Div d="flex" justify="space-around" w="100%" m={{ t: "20px" }}>
+              <Button w="45%" onClick={() => onJoinClicked()}>
+                Join
+              </Button>
+              <Button w="45%" onClick={() => onClearClicked()} bg="lightgray">
+                Clear
+              </Button>
+            </Div>
           </Div>
-          <Div>
-            <Div>Select audio device:</Div>
-            <DeviceSelector onSelect={onSelect} />
-            <Div
-              style={{
-                width: gain.toString() + "px",
-                height: "10px",
-                background: "black",
-              }}
-            ></Div>
-          </Div>
-          <Div d="flex" justify="space-around">
-            <Button
-              h="3rem"
-              p={{ x: "1.25rem" }}
-              m={{ r: "0.5rem" }}
-              textSize="body"
-              onClick={() => onJoinClicked()}
-              bg={colors.fg}
-            >
-              Join
-            </Button>
-            <Button
-              h="3rem"
-              p={{ x: "1.25rem" }}
-              m={{ r: "0.5rem" }}
-              textSize="body"
-              onClick={() => onClearClicked()}
-            >
-              Clear
-            </Button>
-          </Div>
-        </Div>
+        </Card>
       </Div>
     </BaseTemplate>
   );

@@ -25,10 +25,10 @@ const RoomTemplate = ({
   const [showSideDrawer, setShowSideDrawer] = useState(false);
   return (
     <Div
-      bgImg="https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v996-009_1-kroir4dk.jpg?w=1000&dpr=1&fit=default&crop=default&q=65&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=ba3f968c1105ef0dda324e348b112cc7"
+      bgImg="https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v996-010-kroiqxy3.jpg?w=1000&dpr=1&fit=default&crop=default&q=65&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=4b9ae16977c89089d08b6061c9456e2c"
+      bgSize="cover"
       position="fixed"
-      bgSize="contain"
-      h="100vh"
+      h="98vh"
     >
       <SideDrawer isOpen={showSideDrawer} onClose={() => setShowSideDrawer(false)} h="100%">
         {sideDrawerComponent}
@@ -50,13 +50,13 @@ const RoomTemplate = ({
               <Logo />
             </Div>
           </Col>
-          <Col p="1rem" offset="9" size="1">
+          <Col p="1rem" offset="8" size="1">
             <Div
               bg="black"
               d="flex"
               align="center"
               justify="center"
-              m={{ r: "0.5rem", l: "0.5rem", t: "1rem", b: "1rem" }}
+              m={{ r: 0, l: "0.5rem", t: "1rem", b: "1rem" }}
               p="0.5rem"
               rounded="xl"
               cursor="pointer"

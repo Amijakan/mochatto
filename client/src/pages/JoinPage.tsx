@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { SocketContext, DeviceContext } from "../contexts";
 import { DeviceSelector } from "../components/DeviceSelector";
-import { AudioVisualizer } from "../AudioVisualizer";
+import { AudioVisualizer } from "../classes/AudioVisualizer";
 import PropTypes from "prop-types";
 
 const JoinPage = ({

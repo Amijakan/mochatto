@@ -20,7 +20,7 @@ import {
 } from "./RoomPageHelper";
 import User from "../classes/User";
 import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
-import { AudioVisualizer, gainToMultiplier } from "../AudioVisualizer";
+import { AudioVisualizer, gainToMultiplier } from "../classes/AudioVisualizer";
 
 import PropTypes from "prop-types";
 

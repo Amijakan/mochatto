@@ -8,7 +8,7 @@ const Logo = () => {
     <Div p="1rem" d="flex" align="center">
       <Icon size="30px" name="Location" h="1rem" m={{ r: "1rem" }} color={colors.fg} />
       <Text textSize="15px" textWeight="700" textColor={colors.fg}>
-        Mochatto
+        mochatto
       </Text>
     </Div>
   );

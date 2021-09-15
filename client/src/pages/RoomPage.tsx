@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { SocketContext, PositionsContext, DeviceContext, UserInfoContext } from "../contexts";
 import { DeviceSelector } from "../components/DeviceSelector";
-import { Div, Notification, Icon } from "atomize";
+import { Div, Notification, Icon, Text } from "atomize";
 import AvatarCanvas from "../components/AvatarCanvas";
 import {
   addUserToNetwork,
@@ -22,6 +22,7 @@ import {
 import User from "../classes/User";
 import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "../classes/AudioVisualizer";
+import RoomTemplate from "../templates/RoomTemplate";
 
 import PropTypes from "prop-types";
 
@@ -67,7 +68,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // announce and set a new user on join
   const onNewJoin = ({ name, id }) => {
-    setAnnouncement(name + " has joined.");
+    setAnnouncement(name + " has joined the room!");
     setNotificationTheme("join");
     // if the id is not self, configure the new user and send offer
     setShowNotification(true);
@@ -130,34 +131,43 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   return (
     <>
-      <Div w="50%" p={{ x: "1.25rem", y: "1.25rem" }}>
-        <DeviceSelector onSelect={onSelect} />
-        <Div>{announcement}</Div>
-        <AvatarCanvas
-          selfUserInfo={selfUserInfoRef.current}
-          setSelfUserInfo={updateSelfUserInfo}
-          userInfos={Object.values(userInfos)}
-          selfPosition={selfPositionRef.current}
-          setSelfPosition={updateSelfPosition}
-          positions={Object.values(peerPositions)}
-        />
-      </Div>
-      <Notification
-        isOpen={showNotification}
-        bg={`${notificationColors[notificationTheme].color}100`}
-        textColor={`${notificationColors[notificationTheme].color}800`}
-        onClose={() => setShowNotification(false)}
-        prefix={
-          <Icon
-            name={notificationColors[notificationTheme].icon}
-            color={`${notificationColors[notificationTheme].color}800`}
-            size="18px"
-            m={{ r: "0.5rem" }}
-          />
+      <RoomTemplate
+        sideDrawerComponent={
+          <Div>
+            <Text>Choose your audio input source.</Text>
+            <DeviceSelector onSelect={onSelect} />
+          </Div>
         }
       >
-        {announcement}
-      </Notification>
+        <>
+          <Div w="50%" p={{ x: "1.25rem", y: "1.25rem" }}>
+            <AvatarCanvas
+              selfUserInfo={selfUserInfoRef.current}
+              setSelfUserInfo={updateSelfUserInfo}
+              userInfos={Object.values(userInfos)}
+              selfPosition={selfPositionRef.current}
+              setSelfPosition={updateSelfPosition}
+              positions={Object.values(peerPositions)}
+            />
+          </Div>
+          <Notification
+            isOpen={showNotification}
+            bg={`${notificationColors[notificationTheme].color}100`}
+            textColor={`${notificationColors[notificationTheme].color}800`}
+            onClose={() => setShowNotification(false)}
+            prefix={
+              <Icon
+                name={notificationColors[notificationTheme].icon}
+                color={`${notificationColors[notificationTheme].color}800`}
+                size="18px"
+                m={{ r: "0.5rem" }}
+              />
+            }
+          >
+            {announcement}
+          </Notification>
+        </>
+      </RoomTemplate>
     </>
   );
 }

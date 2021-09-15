@@ -1,4 +1,4 @@
 export const colors = {
-  bg: "warning400",
-  fg: "warning900",
+  bg: "#FFCAC6", // "brand400",
+  fg: "brand900",
 };

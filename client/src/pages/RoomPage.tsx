@@ -11,7 +11,6 @@ import {
   openAnswerListener,
   getUsers,
   updateAvatarPositions,
-  updateUserInfo,
 } from "../classes/RTCPeerConnector";
 import {
   requestNetworkInfo,

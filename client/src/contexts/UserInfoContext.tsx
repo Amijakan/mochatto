@@ -18,7 +18,7 @@ export const defaultUserInfo = {
 interface Action {
   type: string;
   id: string;
-  data: any;
+  data: { any };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -50,13 +50,13 @@ export const UserInfoProvider = ({ children }: { children: JSX.Element }): JSX.E
   );
   // dispatching the action for adding a position
   const addUserInfo = useCallback(
-    (userId: string) => (data: any) => {
+    (userId: string) => (data: {any}) => {
       dispatch({ type: "add", data, id: userId });
     },
     []
   );
   const removeUserInfo = useCallback((userId: string) => {
-    dispatch({ type: "remove", data: null, id: userId });
+    dispatch({ type: "remove", data: null as unknown as {any}, id: userId });
   }, []);
   return (
     <UserInfoContext.Provider value={{ userInfos, addUserInfo, removeUserInfo }}>

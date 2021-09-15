@@ -1,7 +1,7 @@
 export class AudioVisualizer {
   intervalId: number;
   onAudioActivity: (gain: number) => void;
-  constructor(_onAudioActivity) {
+  constructor(_onAudioActivity: (gain: number) => void) {
     this.intervalId = 0;
     this.onAudioActivity = _onAudioActivity;
   }
@@ -10,7 +10,7 @@ export class AudioVisualizer {
     window.clearInterval(this.intervalId);
   }
 
-  setStream(stream) {
+  setStream(stream: MediaStream): void {
     if (stream) {
       if (stream.active) {
         const context = new AudioContext();
@@ -31,7 +31,7 @@ export class AudioVisualizer {
           analyser.getByteFrequencyData(array);
 
           let sum = 0;
-          array.forEach((e, i) => {
+          array.forEach((e) => {
             sum += e * 4;
           });
           const average = sum / array.length;
@@ -54,3 +54,4 @@ export const gainToMultiplier = (gain: number): number => {
   }
   return _multiplier;
 };
+

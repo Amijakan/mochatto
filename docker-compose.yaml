@@ -17,5 +17,7 @@ services:
       - '4500:4500'
     volumes:
       - './client:/app'
+    environment:
+      REACT_APP_SERVER_URL: "https://jimanaka.com:4000"
 
       

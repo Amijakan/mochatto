@@ -14,7 +14,7 @@ const Logo = () => {
   );
 };
 
-const BaseTemplate = ({ children }: { children: JSX.Element }) => {
+const BaseTemplate = ({ children }: { children: JSX.Element }): JSX.Element => {
   const history = useHistory();
   return (
     <Div>

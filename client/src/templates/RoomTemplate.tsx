@@ -20,7 +20,7 @@ const RoomTemplate = ({
 }: {
   children: JSX.Element;
   sideDrawerComponent: JSX.Element;
-}) => {
+}): JSX.Element => {
   const history = useHistory();
   const [showSideDrawer, setShowSideDrawer] = useState(false);
   return (

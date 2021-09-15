@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import AvatarDOM from "./AvatarDOM";
-import { UserInfo } from "../contexts/UserInfoContext";
+import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
 
 // for dragging and rendering avatars
 function AvatarCanvas({
@@ -57,6 +57,7 @@ function AvatarCanvas({
     <>
       <AvatarDOM
         key={0}
+        multiplier={selfUserInfo.multiplier}
         onMouseDown={_onMouseDown}
         _backgroundColor={selfUserInfo.avatarColor.background}
         _borderColor={selfUserInfo.avatarColor.border}
@@ -67,11 +68,12 @@ function AvatarCanvas({
       {positions.map((position, index) => {
         let info = userInfos[index];
         if (!info) {
-          info = { name: "default", avatarColor: { background: "black", border: "gray" } };
+          info = defaultUserInfo;
         }
         return (
           <AvatarDOM
             key={index + 1}
+            multiplier={info.multiplier}
             onMouseDown={() => {
               console.log("not your avatar!");
             }}

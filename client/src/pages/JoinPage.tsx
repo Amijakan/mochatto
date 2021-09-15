@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { SocketContext, DeviceContext } from "../contexts";
 import { DeviceSelector } from "../components/DeviceSelector";
+import { AudioVisualizer } from "../classes/AudioVisualizer";
 import PropTypes from "prop-types";
 import { Input } from "atomize";
 import { Div, Button } from "atomize";
@@ -14,11 +15,14 @@ const JoinPage = ({
 }): JSX.Element => {
   const { socket } = useContext(SocketContext);
   const { stream, setStream } = useContext(DeviceContext);
+
   const [gain, setGain] = useState(0);
-  const [drawInterval, setDrawInterval] = useState(0);
+  const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
+
   const onJoinClicked = () => {
     if (socket) {
       setJoined(true);
+      visualizer.stop();
     }
   };
 
@@ -33,38 +37,18 @@ const JoinPage = ({
   };
 
   useEffect(() => {
-    if (stream) {
-      if (stream.active) {
-        const context = new AudioContext();
-        const source = context.createMediaStreamSource(stream);
-        const analyser = context.createAnalyser();
-        analyser.smoothingTimeConstant = 0.3;
-        analyser.fftSize = 1024;
+    setVisualizer(new AudioVisualizer(onAudioActivity));
+  }, []);
 
-        // chain mic -> analyser -> processor -> context
-        source.connect(analyser); // feed mic audio into analyser
-
-        if (drawInterval) {
-          window.clearInterval(drawInterval);
-          setGain(0);
-        }
-        const draw = () => {
-          const array = new Uint8Array(analyser.fftSize);
-          analyser.getByteFrequencyData(array);
-
-          let sum = 0;
-          array.forEach((e) => {
-            sum += e * 4;
-          });
-          const average = sum / array.length;
-          if (average != 0) {
-            setGain(average);
-          }
-        };
-        setDrawInterval(window.setInterval(draw, 50));
-      }
+  useEffect(() => {
+    if (visualizer) {
+      visualizer.setStream(stream);
     }
   }, [stream]);
+
+  const onAudioActivity = (_gain: number) => {
+    setGain(_gain);
+  };
 
   return (
     <>

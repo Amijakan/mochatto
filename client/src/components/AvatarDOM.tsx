@@ -4,16 +4,18 @@ function AvatarDOM({
   onMouseDown,
   pos,
   isSelf,
+  multiplier = 1,
   _backgroundColor,
   _borderColor,
-  initial
+  initial,
 }: {
   onMouseDown: (MouseEvent) => void;
   pos: [number, number];
   isSelf: boolean;
+  multiplier?: number;
   _backgroundColor: string;
   _borderColor: string;
-  initial: string
+  initial: string;
 }): JSX.Element {
   useEffect(() => {
     const avatardom = document.querySelector(".avatar");
@@ -23,6 +25,7 @@ function AvatarDOM({
       }
     }
   }, []);
+
   return (
     <div
       className="avatar"
@@ -31,8 +34,7 @@ function AvatarDOM({
         width: "65px",
         height: "65px",
         borderRadius: "100%",
-        borderColor: _borderColor,
-        borderStyle: "solid",
+        boxShadow: "0 0 0 " + (1 + multiplier * 10).toString() + "px " + _borderColor,
         background: _backgroundColor,
         position: "absolute",
         display: "table",

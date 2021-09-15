@@ -8,6 +8,7 @@ import { Input } from "../components/atomize_wrapper";
 import { Div } from "atomize";
 import { Button, Card, Text } from "../components/atomize_wrapper";
 import { BaseTemplate } from "../templates";
+import { colors } from "../constants/colors";
 
 const JoinPage = ({
   setName,
@@ -59,9 +60,9 @@ const JoinPage = ({
       <Div d="flex" justify="space-around" p={{ t: "100px" }}>
         <Card m={{ l: "10%", r: "10%" }}>
           <Div w="80%" p={{ x: "1.25rem", y: "1.25rem" }}>
-            <Div textSize="20px" m={{ b: "20px" }}>
+            <Text textSize="20px" m={{ b: "20px" }}>
               Room ID: <b>{room_id}</b>
-            </Div>
+            </Text>
             <Div>
               <Input
                 placeholder="Name"
@@ -79,7 +80,7 @@ const JoinPage = ({
                 style={{
                   width: gain.toString() + "px",
                   height: "10px",
-                  background: "black",
+                  background: colors.bg,
                 }}
               ></Div>
             </Div>

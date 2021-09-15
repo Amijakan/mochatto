@@ -24,10 +24,15 @@ const RoomTemplate = ({
   const history = useHistory();
   const [showSideDrawer, setShowSideDrawer] = useState(false);
   return (
-    <Div>
-      <SideDrawer isOpen={showSideDrawer} onClose={() => setShowSideDrawer(false)}>
+    <Div
+      bgImg="https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v996-009_1-kroir4dk.jpg?w=1000&dpr=1&fit=default&crop=default&q=65&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=ba3f968c1105ef0dda324e348b112cc7"
+      position="fixed"
+      bgSize="contain"
+      h="100vh"
+    >
+      <SideDrawer isOpen={showSideDrawer} onClose={() => setShowSideDrawer(false)} h="100%">
         {sideDrawerComponent}
-        <Div d="flex" justify="flex-end">
+        <Div d="flex" justify="flex-end" align="flex-end" m={{ t: "2rem" }}>
           <Button onClick={() => setShowSideDrawer(false)}>Close</Button>
         </Div>
       </SideDrawer>

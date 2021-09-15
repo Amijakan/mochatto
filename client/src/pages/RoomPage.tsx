@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import { SocketContext } from "../contexts/SocketIOContext";
-import { PositionsContext } from "../contexts/PositionsContext";
-import { UserInfoContext } from "../contexts/UserInfoContext";
-import { DeviceSelector } from "../DeviceSelector";
-import AvatarCanvas from "../AvatarCanvas";
+import { SocketContext, PositionsContext, DeviceContext, UserInfoContext } from "../contexts";
+import { DeviceSelector } from "../components/DeviceSelector";
+import AvatarCanvas from "../components/AvatarCanvas";
 import {
   addUserToNetwork,
   removeUserFromNetwork,
@@ -13,38 +11,35 @@ import {
   openAnswerListener,
   getUsers,
   updateAvatarPositions,
-  updateUserInfo,
-} from "../RTCPeerConnector";
+} from "../classes/RTCPeerConnector";
 import {
-  notifyAndRequestNetworkInfo,
+  requestNetworkInfo,
   openJoinListener,
   openLeaveListener,
   openRequestUsersListener,
 } from "./RoomPageHelper";
-import User from "../User";
-import { UserInfo } from "../contexts/UserInfoContext";
+import User from "../classes/User";
+import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
+import { AudioVisualizer, gainToMultiplier } from "../classes/AudioVisualizer";
 
 import PropTypes from "prop-types";
 
 function RoomPage({ name }: { name: string }): JSX.Element {
   const [announcement, setAnnouncement] = useState("");
   const { socket } = useContext(SocketContext);
+  const { stream, setStream } = useContext(DeviceContext);
   const { selfPosition, setSelfPosition, peerPositions, addAvatar, removeAvatar } =
     useContext(PositionsContext);
   const selfPositionRef = useRef(selfPosition);
-  const [avatarColor, setAvatarColor] = useState<{ background: string; border: string }>({
-    background: "black",
-    border: "grey",
-  });
-  const [selfUserInfo, setSelfUserInfo] = useState<UserInfo>({ name, avatarColor });
+  const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
+  const visualizerRef = useRef(visualizer);
+  const [selfUserInfo, setSelfUserInfo] = useState<UserInfo>({ ...defaultUserInfo, name });
   const selfUserInfoRef = useRef(selfUserInfo);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
 
   // when new input is selected update all tracks and send a new offer out
-  const onSelect = (stream) => {
-    updateAllTracks(stream.getAudioTracks()[0]);
-    sendOffer(socket);
-    console.debug(selfPosition);
+  const onSelect = (_stream) => {
+    setStream(_stream);
   };
 
   const updateSelfPosition = (pos) => {
@@ -57,17 +52,19 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     setSelfUserInfo(info);
   };
 
+  const updateVisualizer = (_visualizer) => {
+    visualizerRef.current = _visualizer;
+    setVisualizer(_visualizer);
+  };
+
   // announce and set a new user on join
   const onNewJoin = ({ name, id }) => {
     setAnnouncement(name + " has joined.");
     // if the id is not self, configure the new user and send offer
     if (id != socket.id) {
       setNewUser(id);
-      sendOffer(socket, printPack);
-    }
-    // if it was self, print socketid
-    else {
-      console.debug(socket.id);
+      updateAllTracks(stream.getAudioTracks()[0]);
+      sendOffer(socket);
     }
   };
 
@@ -80,6 +77,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     user.setUserInfo = addUserInfo(userId);
     user.setSelfPosition(selfPositionRef.current);
     user.userInfo = selfUserInfoRef.current;
+    user.visualizer = new AudioVisualizer(user.onAudioActivity.bind(user));
     addUserToNetwork(user);
   };
 
@@ -89,29 +87,34 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     removeUserInfo(id);
   };
 
-  const printPack = (pack) => {
-    console.debug(pack);
+  const onAudioActivity = (gain: number) => {
+    const newMultiplier = gainToMultiplier(gain);
+    updateSelfUserInfo({ ...selfUserInfoRef.current, multiplier: newMultiplier });
   };
 
   // open all listeners on render
   useEffect(() => {
-    notifyAndRequestNetworkInfo(socket, name);
+    requestNetworkInfo(socket);
     openJoinListener(socket, onNewJoin);
     openLeaveListener(socket, setAnnouncement, onLeave);
-    openRequestUsersListener(socket, setNewUser);
+    openRequestUsersListener(name, socket, setNewUser);
     openOfferListener(getUsers(), socket);
     openAnswerListener(getUsers(), socket);
+    updateVisualizer(new AudioVisualizer(onAudioActivity));
   }, []);
+
+  useEffect(() => {
+    updateAllTracks(stream.getAudioTracks()[0]);
+    sendOffer(socket);
+    if (visualizerRef.current) {
+      visualizerRef.current.setStream(stream);
+    }
+  }, [stream]);
 
   // update remote position when avatar is dragged
   useEffect(() => {
-    console.debug(selfPosition);
     updateAvatarPositions(selfPositionRef.current);
   }, [selfPosition]);
-
-  useEffect(() => {
-    updateUserInfo(selfUserInfoRef.current);
-  }, [selfUserInfo]);
 
   return (
     <>

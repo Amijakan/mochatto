@@ -69,12 +69,12 @@ io.of((nsp, query, next) => {
   socket.on("OFFER", (dataString) => {
     const targetId = JSON.parse(dataString).receiverId;
     console.log(socket.id + " has sent offer to " + targetId);
-    socket.broadcast.to(targetId).emit("OFFER", dataString);
+    io.of(socket.nsp.name).to(targetId).emit("OFFER", dataString);
   });
   socket.on("ANSWER", (dataString) => {
     const targetId = JSON.parse(dataString).receiverId;
     console.log(socket.id + " has sent answer to " + targetId);
-    socket.broadcast.to(targetId).emit("ANSWER", dataString);
+    io.of(socket.nsp.name).to(targetId).emit("ANSWER", dataString);
   });
   socket.on("disconnect", () => {
     const userIndex = users.findIndex((usr) => (usr as any).id === socket.id);

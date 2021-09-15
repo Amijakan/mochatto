@@ -1,4 +1,5 @@
-import { UserInfo } from "./contexts/UserInfoContext";
+import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
+import { AudioVisualizer, gainToMultiplier } from "./AudioVisualizer";
 
 class User {
   peerConnection: RTCPeerConnection;
@@ -10,6 +11,8 @@ class User {
   player: HTMLAudioElement;
   selfPosition: [number, number];
   peerPosition: [number, number];
+  visualizer: AudioVisualizer;
+  multiplier: number;
   // a function to update the positions array context
   setPosition: (positionString) => void;
   setUserInfo: (info) => void;
@@ -23,19 +26,27 @@ class User {
     this.peerConnection = new RTCPeerConnection({
       iceServers: [{ urls: "stun:iphone-stun.strato-iphone.de:3478" }],
     });
+    this.multiplier = 0;
     this.stream = new MediaStream();
+    this.visualizer = null as unknown as AudioVisualizer;
     this.player = new Audio();
     this.selfPosition = [0, 0];
     this.peerPosition = [0, 0];
     // the function is re-assigned during the user's initialization
     this.setPosition = (positionString) => console.warn(positionString);
     this.setUserInfo = (info) => console.warn(info);
-    this.userInfo = { name: "", avatarColor: { background: "gray", border: "black" } };
+    this.userInfo = defaultUserInfo;
 
     // listener for when a peer adds a track
     this.peerConnection.ontrack = (event) => {
       this.updateLocalTrack(event.track);
     };
+  }
+
+  onAudioActivity(gain: number): void {
+    this.multiplier = gainToMultiplier(gain);
+    const newInfo = { multiplier: this.multiplier };
+    this.setUserInfo(newInfo);
   }
 
   onUserInfoDCOpen(): void {
@@ -45,11 +56,11 @@ class User {
 
   onUserInfoDCClose(): void {
     console.debug("dc close");
+    this.visualizer.stop();
   }
 
   onUserInfoDCMessage(event: MessageEvent): void {
     const info = JSON.parse(event.data) as UserInfo;
-    console.debug(info);
     this.setUserInfo(info);
   }
 
@@ -120,6 +131,11 @@ class User {
     }
     // add the track
     this.stream.addTrack(track);
+
+    if (this.visualizer) {
+      this.visualizer.setStream(this.stream);
+    }
+
     // set the new stream as the audio source and play
     this.player.srcObject = this.stream;
     this.player.play();

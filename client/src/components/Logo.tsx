@@ -1,8 +1,14 @@
 import React from "react";
 // Icon from https://icons8.com/icons/set/m
-import { Div, Text, Icon } from "atomize";
+import { Div, Text } from "atomize";
 import { colors } from "../constants/colors";
-const Logo = ({ width = "30", height = "30" }: { width?: string; height?: string }) => {
+const Logo = ({
+  width = "30",
+  height = "30",
+}: {
+  width?: string;
+  height?: string;
+}): JSX.Element => {
   return (
     <Div p="1rem" d="flex" align="center">
       <svg

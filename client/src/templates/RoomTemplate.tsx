@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Div, Row, Col, Text, Icon, SideDrawer, Button } from "atomize";
-import Logo from "../components/Logo";
+import { Div, Row, Col, Icon, SideDrawer, Button } from "atomize";
+import { Logo } from "../components";
 import { colors } from "../constants/colors";
 
 const RoomTemplate = ({

@@ -7,3 +7,5 @@ prod:
 	docker-compose -f ./docker-compose.prod.yaml build
 	docker-compose -f ./docker-compose.prod.yaml up -d
 
+clean:
+	docker-compose rm -s

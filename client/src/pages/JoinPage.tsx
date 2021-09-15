@@ -5,6 +5,7 @@ import { AudioVisualizer } from "../classes/AudioVisualizer";
 import PropTypes from "prop-types";
 import { Input } from "atomize";
 import { Div, Button } from "atomize";
+import { colors } from "../constants/colors";
 
 const JoinPage = ({
   setName,
@@ -51,7 +52,7 @@ const JoinPage = ({
   };
 
   return (
-    <>
+    <Div d="flex" justify="center">
       <Div w="50%" p={{ x: "1.25rem", y: "1.25rem" }}>
         <Div>
           <Input
@@ -74,13 +75,14 @@ const JoinPage = ({
             }}
           ></Div>
         </Div>
-        <Div d="flex">
+        <Div d="flex" justify="space-around">
           <Button
             h="3rem"
             p={{ x: "1.25rem" }}
             m={{ r: "0.5rem" }}
             textSize="body"
             onClick={() => onJoinClicked()}
+            bg={colors.fg}
           >
             Join
           </Button>
@@ -95,7 +97,7 @@ const JoinPage = ({
           </Button>
         </Div>
       </Div>
-    </>
+    </Div>
   );
 };
 

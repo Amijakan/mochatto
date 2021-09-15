@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { SocketContext, PositionsContext, DeviceContext, UserInfoContext } from "../contexts";
 import { DeviceSelector } from "../components/DeviceSelector";
-import { Div } from "atomize";
+import { Div, Notification, Icon } from "atomize";
 import AvatarCanvas from "../components/AvatarCanvas";
 import {
   addUserToNetwork,
@@ -25,8 +25,15 @@ import { AudioVisualizer, gainToMultiplier } from "../classes/AudioVisualizer";
 
 import PropTypes from "prop-types";
 
+const notificationColors = {
+  join: { color: "success", icon: "Success" },
+  leave: { color: "dange", icon: "Info" },
+};
+
 function RoomPage({ name }: { name: string }): JSX.Element {
   const [announcement, setAnnouncement] = useState("");
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationTheme, setNotificationTheme] = useState("join");
   const { socket } = useContext(SocketContext);
   const { stream, setStream } = useContext(DeviceContext);
   const { selfPosition, setSelfPosition, peerPositions, addAvatar, removeAvatar } =
@@ -61,7 +68,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   // announce and set a new user on join
   const onNewJoin = ({ name, id }) => {
     setAnnouncement(name + " has joined.");
+    setNotificationTheme("join");
     // if the id is not self, configure the new user and send offer
+    setShowNotification(true);
     if (id != socket.id) {
       setNewUser(id);
       updateAllTracks(stream.getAudioTracks()[0]);
@@ -86,6 +95,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     removeUserFromNetwork(id);
     removeAvatar(id);
     removeUserInfo(id);
+    setNotificationTheme("leave");
+    setShowNotification(true);
   };
 
   const onAudioActivity = (gain: number) => {
@@ -131,6 +142,22 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           positions={Object.values(peerPositions)}
         />
       </Div>
+      <Notification
+        isOpen={showNotification}
+        bg={`${notificationColors[notificationTheme].color}100`}
+        textColor={`${notificationColors[notificationTheme].color}800`}
+        onClose={() => setShowNotification(false)}
+        prefix={
+          <Icon
+            name={notificationColors[notificationTheme].icon}
+            color={`${notificationColors[notificationTheme].color}800`}
+            size="18px"
+            m={{ r: "0.5rem" }}
+          />
+        }
+      >
+        {announcement}
+      </Notification>
     </>
   );
 }

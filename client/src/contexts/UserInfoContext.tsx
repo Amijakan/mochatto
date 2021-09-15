@@ -6,12 +6,19 @@ export interface UserInfo {
     background: string;
     border: string;
   };
+  multiplier;
 }
+
+export const defaultUserInfo = {
+  name: "",
+  avatarColor: { background: "gray", border: "black" },
+  multiplier: 0,
+};
 
 interface Action {
   type: string;
   id: string;
-  userInfo: UserInfo;
+  data: { any };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,8 +28,13 @@ export const UserInfoProvider = ({ children }: { children: JSX.Element }): JSX.E
   // reducer for adding a avatar position to the list render
   const reducer = (userInfos: { [key: string]: UserInfo }, action: Action) => {
     switch (action.type) {
-      case "add":
-        return { ...userInfos, [action.id]: action.userInfo };
+      case "add": {
+        let newInfo = userInfos[action.id];
+        Object.keys(action.data).forEach((key) => {
+          newInfo = { ...newInfo, [key]: action.data[key] };
+        });
+        return { ...userInfos, [action.id]: newInfo };
+      }
       case "remove": {
         const { [action.id]: _toRemove, ...removed } = userInfos;
         console.log(_toRemove);
@@ -38,13 +50,13 @@ export const UserInfoProvider = ({ children }: { children: JSX.Element }): JSX.E
   );
   // dispatching the action for adding a position
   const addUserInfo = useCallback(
-    (userId: string) => (userInfo: UserInfo) => {
-      dispatch({ type: "add", userInfo, id: userId });
+    (userId: string) => (data: {any}) => {
+      dispatch({ type: "add", data, id: userId });
     },
     []
   );
   const removeUserInfo = useCallback((userId: string) => {
-    dispatch({ type: "remove", userInfo: null as unknown as UserInfo, id: userId });
+    dispatch({ type: "remove", data: null as unknown as {any}, id: userId });
   }, []);
   return (
     <UserInfoContext.Provider value={{ userInfos, addUserInfo, removeUserInfo }}>

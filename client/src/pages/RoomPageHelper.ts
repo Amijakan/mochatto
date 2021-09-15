@@ -1,8 +1,7 @@
 import { Socket } from "socket.io-client";
 
-export const notifyAndRequestNetworkInfo = (socket: Socket, name: string): void => {
-  // notify server on join
-  socket.emit("JOIN", name);
+export const requestNetworkInfo = (socket: Socket): void => {
+  // request users after loading the room page
   socket.emit("REQUEST_USERS");
 };
 
@@ -27,6 +26,7 @@ export const openLeaveListener = (
 
 // opens on request users listener
 export const openRequestUsersListener = (
+  name: string,
   socket: Socket,
   onRequest: ({ id }) => void
 ): void => {
@@ -37,5 +37,6 @@ export const openRequestUsersListener = (
         onRequest(user.id);
       }
     });
+    socket.emit("JOIN", name);
   });
 };

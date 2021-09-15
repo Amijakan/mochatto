@@ -5,5 +5,7 @@ dev:
 
 prod:
 	docker-compose -f ./docker-compose.prod.yaml build
-	docker-compose -f ./docker-compose.prod.yaml up -d
+
+prod-up:
+	docker-compose -f ./docker-compose.prod.yaml up
 

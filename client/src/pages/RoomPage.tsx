@@ -73,6 +73,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     // if the id is not self, configure the new user and send offer
     setShowNotification(true);
     if (id != socket.id) {
+      console.log("HELLO");
       setNewUser(id);
       updateAllTracks(stream.getAudioTracks()[0]);
       sendOffer(socket);
@@ -131,14 +132,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   return (
     <>
-      <RoomTemplate
-        sideDrawerComponent={
-          <Div>
-            <Text>Choose your audio input source.</Text>
-            <DeviceSelector onSelect={onSelect} />
-          </Div>
-        }
-      >
+      <RoomTemplate sideDrawerComponent={<>Hello</>}>
         <>
           <Div w="50%" p={{ x: "1.25rem", y: "1.25rem" }}>
             <AvatarCanvas
@@ -166,6 +160,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           >
             {announcement}
           </Notification>
+          <Div>
+            <Text>Choose your audio input source.</Text>
+            <DeviceSelector onSelect={onSelect} />
+          </Div>
         </>
       </RoomTemplate>
     </>

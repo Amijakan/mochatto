@@ -2,9 +2,8 @@ FROM node:14.17.3
 EXPOSE 4500
 ENV PORT=4500
 
-COPY . /app
+COPY . /
 
-WORKDIR /app
 RUN yarn && yarn build
 
 ENTRYPOINT ["yarn", "serve"]

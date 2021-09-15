@@ -10,8 +10,8 @@ let server = (
   process.env.HTTPS
     ? https.createServer(
         {
-          key: fs.readFileSync("./selfsigned.key"),
-          cert: fs.readFileSync("./selfsigned.crt"),
+          key: fs.readFileSync(process.env.SSL_KEY_FILE || "./selfsigned.key"),
+          cert: fs.readFileSync(process.env.SSL_CRT_FILE || "./selfsigned.crt"),
         },
         app
       )

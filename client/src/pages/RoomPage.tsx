@@ -28,7 +28,7 @@ import PropTypes from "prop-types";
 
 const notificationColors = {
   join: { color: "success", icon: "Success" },
-  leave: { color: "dange", icon: "Info" },
+  leave: { color: "danger", icon: "Info" },
 };
 
 function RoomPage({ name }: { name: string }): JSX.Element {

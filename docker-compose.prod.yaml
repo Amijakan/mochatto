@@ -22,5 +22,6 @@ services:
       SSL_CRT_FILE: "/selfsigned.crt"
       SSL_KEY_FILE: "/selfsigned.key"
       SSL_CA_FILE: "/chain.pem"
+      REACT_APP_SERVER_URL: 'https://jimanaka.com:4000'
 
       

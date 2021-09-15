@@ -13,7 +13,10 @@ function DeviceSelector({ onSelect }: { onSelect: (MediaStream) => void }): JSX.
     //triggers microphone permission
     selectInputDevice(selectedInput.value, () => {
       //list options when permission is allowed
-      setInputOptions(listInputDevices());
+      listInputDevices().then((devices) => {
+        setInputOptions(devices);
+        setSelectedInput(devices[0]);
+      });
     });
   }, []);
 

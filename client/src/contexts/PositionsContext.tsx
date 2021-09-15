@@ -10,15 +10,17 @@ interface Action {
   position: [number, number];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const PositionsContext = createContext<any>({});
 
-export const PositionsProvider = ({ children }: { children: any }) => {
+export const PositionsProvider = ({ children }: { children: JSX.Element }): JSX.Element => {
   // reducer for adding a avatar position to the list render
   const reducer = (peerPositions: PeerPosition, action: Action) => {
     switch (action.type) {
       case "add":
         return { ...peerPositions, [action.id]: action.position };
       case "remove": {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { [action.id]: _toRemove, ...removed } = peerPositions;
         return removed;
       }
@@ -46,7 +48,7 @@ export const PositionsProvider = ({ children }: { children: any }) => {
         addAvatar,
         removeAvatar,
         selfPosition,
-        setSelfPosition
+        setSelfPosition,
       }}
     >
       {children}

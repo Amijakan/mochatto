@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import Select from "react-select";
 import PropTypes from "prop-types";
 import { Device, listInputDevices, selectInputDevice } from "./DeviceSelectorHelper";
-import { DeviceContext } from "./contexts/DeviceContext";
+import { DeviceContext } from "../contexts";
 
 // drop down menu for selecting an input device
 function DeviceSelector({ onSelect }: { onSelect: (MediaStream) => void }): JSX.Element {
@@ -11,7 +11,7 @@ function DeviceSelector({ onSelect }: { onSelect: (MediaStream) => void }): JSX.
 
   useEffect(() => {
     //triggers microphone permission
-    selectInputDevice(selectedInput.value, (stream) => {
+    selectInputDevice(selectedInput.value, () => {
       //list options when permission is allowed
       setInputOptions(listInputDevices());
     });

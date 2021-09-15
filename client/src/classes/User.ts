@@ -1,5 +1,5 @@
-import { UserInfo, defaultUserInfo } from "./contexts/UserInfoContext";
-import { AudioVisualizer, gainToMultiplier } from "./AudioVisualizer";
+import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
+import { AudioVisualizer, gainToMultiplier } from "../AudioVisualizer";
 
 class User {
   peerConnection: RTCPeerConnection;

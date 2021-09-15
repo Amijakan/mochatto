@@ -44,6 +44,7 @@ function AvatarDOM({
     >
       <div
         style={{
+          userSelect: "none",
           color: "white",
           verticalAlign: "middle",
           textAlign: "center",

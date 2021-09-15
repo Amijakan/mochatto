@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { Input } from "atomize";
 import { Div, Button } from "atomize";
 import { colors } from "../constants/colors";
-import BaseTemplate from "../templates/BaseTemplate";
+import { BaseTemplate } from "../templates";
 
 const JoinPage = ({
   setName,

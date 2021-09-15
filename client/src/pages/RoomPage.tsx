@@ -22,7 +22,7 @@ import {
 import User from "../classes/User";
 import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "../classes/AudioVisualizer";
-import RoomTemplate from "../templates/RoomTemplate";
+import { RoomTemplate } from "../templates";
 
 import PropTypes from "prop-types";
 

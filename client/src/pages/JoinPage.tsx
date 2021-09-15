@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from "react";
 import { SocketContext, DeviceContext } from "../contexts";
 import { DeviceSelector } from "../components/DeviceSelector";
 import PropTypes from "prop-types";
+import { Input } from "atomize";
+import { Div, Button } from "atomize";
 
 const JoinPage = ({
   setName,
@@ -27,7 +29,6 @@ const JoinPage = ({
   };
 
   const onSelect = (_stream) => {
-    console.debug(_stream);
     setStream(_stream);
   };
 
@@ -67,35 +68,49 @@ const JoinPage = ({
 
   return (
     <>
-      <div>
-        <label>
-          <div>Name:</div>
-          <input
+      <Div w="50%" p={{ x: "1.25rem", y: "1.25rem" }}>
+        <Div>
+          <Input
+            placeholder="Name"
             type="text"
             name="name"
             onChange={(e) => {
               setName(e.target.value);
             }}
           />
-        </label>
-      </div>
-      <div>
-        <div>Select audio device:</div>
-        <DeviceSelector onSelect={onSelect} />
-        <div
-          style={{
-            width: gain.toString() + "px",
-            height: "10px",
-            background: "black",
-          }}
-        ></div>
-      </div>
-      <div>
-        <button onClick={() => onJoinClicked()}>Join</button>
-      </div>
-      <div>
-        <button onClick={() => onClearClicked()}>Clear</button>
-      </div>
+        </Div>
+        <Div>
+          <Div>Select audio device:</Div>
+          <DeviceSelector onSelect={onSelect} />
+          <Div
+            style={{
+              width: gain.toString() + "px",
+              height: "10px",
+              background: "black",
+            }}
+          ></Div>
+        </Div>
+        <Div d="flex">
+          <Button
+            h="3rem"
+            p={{ x: "1.25rem" }}
+            m={{ r: "0.5rem" }}
+            textSize="body"
+            onClick={() => onJoinClicked()}
+          >
+            Join
+          </Button>
+          <Button
+            h="3rem"
+            p={{ x: "1.25rem" }}
+            m={{ r: "0.5rem" }}
+            textSize="body"
+            onClick={() => onClearClicked()}
+          >
+            Clear
+          </Button>
+        </Div>
+      </Div>
     </>
   );
 };

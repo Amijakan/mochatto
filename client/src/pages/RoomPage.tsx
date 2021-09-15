@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { SocketContext, PositionsContext, DeviceContext, UserInfoContext } from "../contexts";
 import { DeviceSelector } from "../components/DeviceSelector";
+import { Div } from "atomize";
 import AvatarCanvas from "../components/AvatarCanvas";
 import {
   addUserToNetwork,
@@ -101,7 +102,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // update remote position when avatar is dragged
   useEffect(() => {
-    console.debug(selfPosition);
     updateAvatarPositions(selfPositionRef.current);
   }, [selfPosition]);
 
@@ -111,18 +111,18 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   return (
     <>
-      <div>Room page</div>
-      <div>Input selector</div>
-      <DeviceSelector onSelect={onSelect} />
-      <div>{announcement}</div>
-      <AvatarCanvas
-        selfUserInfo={selfUserInfoRef.current}
-        setSelfUserInfo={updateSelfUserInfo}
-        userInfos={Object.values(userInfos)}
-        selfPosition={selfPositionRef.current}
-        setSelfPosition={updateSelfPosition}
-        positions={Object.values(peerPositions)}
-      />
+      <Div w="50%" p={{ x: "1.25rem", y: "1.25rem" }}>
+        <DeviceSelector onSelect={onSelect} />
+        <Div>{announcement}</Div>
+        <AvatarCanvas
+          selfUserInfo={selfUserInfoRef.current}
+          setSelfUserInfo={updateSelfUserInfo}
+          userInfos={Object.values(userInfos)}
+          selfPosition={selfPositionRef.current}
+          setSelfPosition={updateSelfPosition}
+          positions={Object.values(peerPositions)}
+        />
+      </Div>
     </>
   );
 }

@@ -1,10 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import { SocketContext } from "../contexts/SocketIOContext";
-import { PositionsContext } from "../contexts/PositionsContext";
-import { DeviceContext } from "../contexts/DeviceContext";
-import { UserInfoContext } from "../contexts/UserInfoContext";
-import { DeviceSelector } from "../DeviceSelector";
-import AvatarCanvas from "../AvatarCanvas";
+import { SocketContext, PositionsContext, DeviceContext, UserInfoContext } from "../contexts";
+import { DeviceSelector } from "../components/DeviceSelector";
+import AvatarCanvas from "../components/AvatarCanvas";
 import {
   addUserToNetwork,
   removeUserFromNetwork,
@@ -15,14 +12,14 @@ import {
   getUsers,
   updateAvatarPositions,
   updateUserInfo,
-} from "../RTCPeerConnector";
+} from "../classes/RTCPeerConnector";
 import {
   notifyAndRequestNetworkInfo,
   openJoinListener,
   openLeaveListener,
   openRequestUsersListener,
 } from "./RoomPageHelper";
-import User from "../User";
+import User from "../classes/User";
 import { UserInfo } from "../contexts/UserInfoContext";
 
 import PropTypes from "prop-types";

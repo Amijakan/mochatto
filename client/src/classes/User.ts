@@ -1,4 +1,4 @@
-import { UserInfo } from "./contexts/UserInfoContext";
+import { UserInfo } from "../contexts/UserInfoContext";
 
 class User {
   peerConnection: RTCPeerConnection;

@@ -14,7 +14,7 @@ import {
   updateUserInfo,
 } from "../classes/RTCPeerConnector";
 import {
-  notifyAndRequestNetworkInfo,
+  requestNetworkInfo,
   openJoinListener,
   openLeaveListener,
   openRequestUsersListener,
@@ -95,10 +95,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // open all listeners on render
   useEffect(() => {
-    notifyAndRequestNetworkInfo(socket, name);
+    requestNetworkInfo(socket);
     openJoinListener(socket, onNewJoin);
     openLeaveListener(socket, setAnnouncement, onLeave);
-    openRequestUsersListener(socket, setNewUser);
+    openRequestUsersListener(name, socket, setNewUser);
     openOfferListener(getUsers(), socket);
     openAnswerListener(getUsers(), socket);
     updateVisualizer(new AudioVisualizer(onAudioActivity));

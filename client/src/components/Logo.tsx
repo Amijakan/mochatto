@@ -126,7 +126,7 @@ const Logo = ({ width = "30", height = "30" }: { width?: string; height?: string
           </g>
         </g>
       </svg>
-      <Text textSize="15px" textWeight="700" textColor={colors.fg}>
+      <Text textSize="15px" textWeight="700" textColor={colors.fg} m={{ l: "10px" }}>
         mochatto
       </Text>
     </Div>

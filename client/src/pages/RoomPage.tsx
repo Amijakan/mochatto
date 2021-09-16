@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { SocketContext, PositionsContext, DeviceContext, UserInfoContext } from "../contexts";
 import { DeviceSelector } from "../components/DeviceSelector";
+import { Div, Notification, Icon, Text } from "atomize";
 import AvatarCanvas from "../components/AvatarCanvas";
 import {
   addUserToNetwork,
@@ -21,11 +22,19 @@ import {
 import User from "../classes/User";
 import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "../classes/AudioVisualizer";
+import { RoomTemplate } from "../templates";
 
 import PropTypes from "prop-types";
 
+const notificationColors = {
+  join: { color: "success", icon: "Success" },
+  leave: { color: "danger", icon: "Info" },
+};
+
 function RoomPage({ name }: { name: string }): JSX.Element {
   const [announcement, setAnnouncement] = useState("");
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationTheme, setNotificationTheme] = useState("join");
   const { socket } = useContext(SocketContext);
   const { stream, setStream } = useContext(DeviceContext);
   const { selfPosition, setSelfPosition, peerPositions, addAvatar, removeAvatar } =
@@ -59,9 +68,12 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // announce and set a new user on join
   const onNewJoin = ({ name, id }) => {
-    setAnnouncement(name + " has joined.");
+    setAnnouncement(name + " has joined the room!");
+    setNotificationTheme("join");
     // if the id is not self, configure the new user and send offer
+    setShowNotification(true);
     if (id != socket.id) {
+      console.log("HELLO");
       setNewUser(id);
       updateAllTracks(stream.getAudioTracks()[0]);
       sendOffer(socket);
@@ -85,6 +97,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     removeUserFromNetwork(id);
     removeAvatar(id);
     removeUserInfo(id);
+    setNotificationTheme("leave");
+    setShowNotification(true);
   };
 
   const onAudioActivity = (gain: number) => {
@@ -117,20 +131,43 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, [selfPosition]);
 
   return (
-    <>
-      <div>Room page</div>
-      <div>Input selector</div>
-      <DeviceSelector onSelect={onSelect} />
-      <div>{announcement}</div>
-      <AvatarCanvas
-        selfUserInfo={selfUserInfoRef.current}
-        setSelfUserInfo={updateSelfUserInfo}
-        userInfos={Object.values(userInfos)}
-        selfPosition={selfPositionRef.current}
-        setSelfPosition={updateSelfPosition}
-        positions={Object.values(peerPositions)}
-      />
-    </>
+    <RoomTemplate
+      sideDrawerComponent={
+        <Div>
+          <Text>Choose your audio input source.</Text>
+          <DeviceSelector onSelect={onSelect} />
+        </Div>
+      }
+    >
+      <>
+        <Notification
+          isOpen={showNotification}
+          bg={`${notificationColors[notificationTheme].color}100`}
+          textColor={`${notificationColors[notificationTheme].color}800`}
+          onClose={() => setShowNotification(false)}
+          prefix={
+            <Icon
+              name={notificationColors[notificationTheme].icon}
+              color={`${notificationColors[notificationTheme].color}800`}
+              size="18px"
+              m={{ r: "0.5rem" }}
+            />
+          }
+        >
+          {announcement}
+        </Notification>
+        <Div w="50%" p={{ x: "1.25rem", y: "1.25rem" }}>
+          <AvatarCanvas
+            selfUserInfo={selfUserInfoRef.current}
+            setSelfUserInfo={updateSelfUserInfo}
+            userInfos={Object.values(userInfos)}
+            selfPosition={selfPositionRef.current}
+            setSelfPosition={updateSelfPosition}
+            positions={Object.values(peerPositions)}
+          />
+        </Div>
+      </>
+    </RoomTemplate>
   );
 }
 

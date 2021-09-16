@@ -12,6 +12,7 @@ let server = (
         {
           key: fs.readFileSync(process.env.SSL_KEY_FILE || "./selfsigned.key"),
           cert: fs.readFileSync(process.env.SSL_CRT_FILE || "./selfsigned.crt"),
+          // ca: fs.readFileSync(process.env.SSL_CA_FILE || "./chain.pem"),
         },
         app
       )
@@ -22,8 +23,7 @@ let server = (
 
 const io = new Server(server, {
   cors: {
-    // TODO make this suitable for deploy
-    origin: ["http://localhost:4500", "http://localhost:4600"],
+    origin: "*",
   },
 });
 

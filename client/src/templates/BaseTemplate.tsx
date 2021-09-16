@@ -8,7 +8,7 @@ const BaseTemplate = ({ children }: { children: JSX.Element }): JSX.Element => {
   const history = useHistory();
   return (
     <Div>
-      <Div bg={colors.bg}>
+      <Div>
         <Row>
           <Col
             size="2"

@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/Amijakan/mochatto/logo/logo/logo_dark.png" style="color: var(--color-header-logo);" width="70%">
+<img src="https://user-images.githubusercontent.com/34047281/133655323-715f4c16-368b-4266-947a-485e2bd3b211.png" width="70%">
 
 [![issues](https://img.shields.io/github/issues/Amijakan/mochatto)](https://github.com/Amijakan/mochatto/issues)
 [![PRs](https://img.shields.io/github/issues-pr/amijakan/mochatto)](https://github.com/Amijakan/mochatto/pulls)

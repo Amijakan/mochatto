@@ -76,7 +76,7 @@ export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultO
               candidates.push(event.candidate);
             }
           };
-          user.peerConnection.onicegatheringstatechange = (event) => {
+          user.peerConnection.onicegatheringstatechange = () => {
             if (user.peerConnection.iceGatheringState === "complete") {
               offerPack.candidates = candidates;
               socket.emit("OFFER", JSON.stringify(offerPack));
@@ -158,7 +158,7 @@ export const openOfferListener = (
                   }
                 };
                 // send the answer
-                peerConnection.onicegatheringstatechange = (event) => {
+                peerConnection.onicegatheringstatechange = () => {
                   if (peerConnection.iceGatheringState === "complete") {
                     answerPack.candidates = candidates;
                     socket.emit("ANSWER", JSON.stringify(answerPack));

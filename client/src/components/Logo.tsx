@@ -1,14 +1,7 @@
 import React from "react";
 // Icon from https://icons8.com/icons/set/m
-import { Div, Text } from "atomize";
-import { colors } from "../constants/colors";
-const Logo = ({
-  width = "50",
-  height = "50",
-}: {
-  width?: string;
-  height?: string;
-}): JSX.Element => {
+import { Div } from "atomize";
+const Logo = ({ height = "50" }: { width?: string; height?: string }): JSX.Element => {
   return (
     <Div d="flex" align="center">
       <img

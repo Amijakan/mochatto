@@ -15,6 +15,7 @@ export const PositionsContext = createContext<any>({});
 
 export const PositionsProvider = ({ children }: { children: JSX.Element }): JSX.Element => {
   // reducer for adding a avatar position to the list render
+  const [spawnPoint, setSpawnPoint] = useState<[number, number]>([100, 100]);
   const reducer = (peerPositions: PeerPosition, action: Action) => {
     switch (action.type) {
       case "add":
@@ -40,7 +41,7 @@ export const PositionsProvider = ({ children }: { children: JSX.Element }): JSX.
     dispatch({ type: "remove", position: [0, 0], id: userId });
   }, []);
 
-  const [selfPosition, setSelfPosition] = useState([0, 0]);
+  const [selfPosition, setSelfPosition] = useState(spawnPoint);
   return (
     <PositionsContext.Provider
       value={{
@@ -49,6 +50,8 @@ export const PositionsProvider = ({ children }: { children: JSX.Element }): JSX.
         removeAvatar,
         selfPosition,
         setSelfPosition,
+        spawnPoint,
+        setSpawnPoint,
       }}
     >
       {children}

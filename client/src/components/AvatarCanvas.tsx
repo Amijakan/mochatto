@@ -67,6 +67,7 @@ function AvatarCanvas({
       />
       {positions.map((position, index) => {
         let info = userInfos[index];
+        console.log("Info", info);
         if (!info) {
           info = defaultUserInfo;
         }
@@ -81,7 +82,7 @@ function AvatarCanvas({
             _borderColor={info.avatarColor?.border || "gray"}
             pos={position}
             isSelf={false}
-            initial={info.name[0]}
+            initial={info.name ? info.name[0] : ""}
           />
         );
       })}

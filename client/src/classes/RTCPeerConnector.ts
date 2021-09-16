@@ -6,14 +6,22 @@ export const Pack = ({
   sdp,
   senderId,
   receiverId,
+  candidates,
   kind,
 }: {
   sdp: RTCSessionDescription;
   senderId: string;
   receiverId: string;
+  candidates: RTCIceCandidate[];
   kind: string;
-}): { sdp: RTCSessionDescription; senderId: string; receiverId: string; kind: string } => {
-  return { sdp, senderId, receiverId, kind };
+}): {
+  sdp: RTCSessionDescription;
+  senderId: string;
+  receiverId: string;
+  candidates: RTCIceCandidate[];
+  kind: string;
+} => {
+  return { sdp, senderId, receiverId, candidates, kind };
 };
 
 const users: User[] = [];
@@ -59,10 +67,22 @@ export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultO
             sdp: user.peerConnection.localDescription,
             senderId: socket.id,
             receiverId: user.id,
+            candidates: [],
             kind: "offer",
           });
-          socket.emit("OFFER", JSON.stringify(offerPack));
-          onOfferSent(offerPack);
+          const candidates: RTCIceCandidate[] = [];
+          user.peerConnection.onicecandidate = (event) => {
+            if (event.candidate) {
+              candidates.push(event.candidate);
+            }
+          };
+          user.peerConnection.onicegatheringstatechange = () => {
+            if (user.peerConnection.iceGatheringState === "complete") {
+              offerPack.candidates = candidates;
+              socket.emit("OFFER", JSON.stringify(offerPack));
+              onOfferSent(offerPack);
+            }
+          };
         }
       })
       .catch((e) => {
@@ -112,6 +132,9 @@ export const openOfferListener = (
       peerConnection
         .setRemoteDescription(offerPack.sdp) // set remote description as the sender's
         .then(() => {
+          offerPack.candidates.forEach((candidate) => {
+            peerConnection.addIceCandidate(candidate);
+          });
           peerConnection
             .createAnswer()
             .then((answer) => {
@@ -124,11 +147,24 @@ export const openOfferListener = (
                   sdp: peerConnection.localDescription,
                   senderId: socket.id,
                   receiverId: offerPack.senderId,
+                  candidates: [],
                   kind: "answer",
                 });
+
+                const candidates: RTCIceCandidate[] = [];
+                peerConnection.onicecandidate = (event) => {
+                  if (event.candidate) {
+                    candidates.push(event.candidate);
+                  }
+                };
                 // send the answer
-                socket.emit("ANSWER", JSON.stringify(answerPack));
-                onAnswerEmitted(answerPack);
+                peerConnection.onicegatheringstatechange = () => {
+                  if (peerConnection.iceGatheringState === "complete") {
+                    answerPack.candidates = candidates;
+                    socket.emit("ANSWER", JSON.stringify(answerPack));
+                    onAnswerEmitted(answerPack);
+                  }
+                };
               }
             })
             .catch((e) => {
@@ -158,6 +194,9 @@ export const openAnswerListener = (
     peerConnection
       .setRemoteDescription(answerPack.sdp)
       .then(() => {
+        answerPack.candidates.forEach((candidate) => {
+          peerConnection.addIceCandidate(candidate);
+        });
         onAnswerReceived(answerPack);
       })
       .catch((e) => {

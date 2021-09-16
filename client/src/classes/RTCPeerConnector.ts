@@ -70,19 +70,18 @@ export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultO
             candidates: [],
             kind: "offer",
           });
-          const candidates: RTCIceCandidate[] = [];
+
           user.peerConnection.onicecandidate = (event) => {
             if (event.candidate) {
-              candidates.push(event.candidate);
+              socket.emit(
+                "ICE_CANDIDATE",
+                JSON.stringify({ ice: event.candidate, receiverId: user.id })
+              );
             }
           };
-          user.peerConnection.onicegatheringstatechange = () => {
-            if (user.peerConnection.iceGatheringState === "complete") {
-              offerPack.candidates = candidates;
-              socket.emit("OFFER", JSON.stringify(offerPack));
-              onOfferSent(offerPack);
-            }
-          };
+
+          socket.emit("OFFER", JSON.stringify(offerPack));
+          onOfferSent(offerPack);
         }
       })
       .catch((e) => {
@@ -132,9 +131,11 @@ export const openOfferListener = (
       peerConnection
         .setRemoteDescription(offerPack.sdp) // set remote description as the sender's
         .then(() => {
-          offerPack.candidates.forEach((candidate) => {
-            peerConnection.addIceCandidate(candidate);
+          socket.on("ICE_CANDIDATE", (dataString) => {
+            const data = JSON.parse(dataString);
+            peerConnection.addIceCandidate(data.ice);
           });
+
           peerConnection
             .createAnswer()
             .then((answer) => {
@@ -151,20 +152,17 @@ export const openOfferListener = (
                   kind: "answer",
                 });
 
-                const candidates: RTCIceCandidate[] = [];
                 peerConnection.onicecandidate = (event) => {
                   if (event.candidate) {
-                    candidates.push(event.candidate);
+                    socket.emit(
+                      "ICE_CANDIDATE",
+                      JSON.stringify({ ice: event.candidate, receiverId: sender.id })
+                    );
                   }
                 };
-                // send the answer
-                peerConnection.onicegatheringstatechange = () => {
-                  if (peerConnection.iceGatheringState === "complete") {
-                    answerPack.candidates = candidates;
-                    socket.emit("ANSWER", JSON.stringify(answerPack));
-                    onAnswerEmitted(answerPack);
-                  }
-                };
+
+                socket.emit("ANSWER", JSON.stringify(answerPack));
+                onAnswerEmitted(answerPack);
               }
             })
             .catch((e) => {
@@ -194,8 +192,9 @@ export const openAnswerListener = (
     peerConnection
       .setRemoteDescription(answerPack.sdp)
       .then(() => {
-        answerPack.candidates.forEach((candidate) => {
-          peerConnection.addIceCandidate(candidate);
+        socket.on("ICE_CANDIDATE", (dataString) => {
+          const data = JSON.parse(dataString);
+          peerConnection.addIceCandidate(data.ice);
         });
         onAnswerReceived(answerPack);
       })

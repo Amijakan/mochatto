@@ -1,12 +1,12 @@
 import React from "react";
 // Icon from https://icons8.com/icons/set/m
 import { Div } from "atomize";
-const Logo = ({ height = "50" }: { width?: string; height?: string }): JSX.Element => {
+const Logo = ({ height = "20" }: { width?: string; height?: string }): JSX.Element => {
   return (
-    <Div d="flex" align="center">
+    <Div d="flex" p="0.5rem" align="center">
       <img
         height={height}
-        src="https://github.com/Amijakan/mochatto/blob/main/logo/logo_both.png?raw=true"
+        src="https://github.com/Amijakan/mochatto/blob/main/logo/logo_light.png?raw=true"
       />
     </Div>
   );

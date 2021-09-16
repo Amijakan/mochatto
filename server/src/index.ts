@@ -76,6 +76,10 @@ io.of((nsp, query, next) => {
     console.log(socket.id + " has sent answer to " + targetId);
     io.of(socket.nsp.name).to(targetId).emit("ANSWER", dataString);
   });
+  socket.on("ICE_CANDIDATE", (dataString) => {
+    const targetId = JSON.parse(dataString).receiverId;
+    io.of(socket.nsp.name).to(targetId).emit("ICE_CANDIDATE", dataString);
+  });
   socket.on("disconnect", () => {
     const userIndex = users.findIndex((usr) => (usr as any).id === socket.id);
     if (users[userIndex]) {

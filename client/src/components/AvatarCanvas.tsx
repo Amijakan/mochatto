@@ -59,8 +59,8 @@ function AvatarCanvas({
         key={0}
         multiplier={selfUserInfo.multiplier}
         onPointerDown={_onPointerDown}
-        _backgroundColor={selfUserInfo.avatarColor.background}
-        _borderColor={selfUserInfo.avatarColor.border}
+        _backgroundColor={selfUserInfo.avatarColor?.background || "black"}
+        _borderColor={selfUserInfo.avatarColor?.border || "gray"}
         pos={selfPosition}
         isSelf={true}
         initial={selfUserInfo.name[0]}
@@ -77,8 +77,8 @@ function AvatarCanvas({
             onPointerDown={() => {
               console.log("not your avatar!");
             }}
-            _backgroundColor={info.avatarColor.background}
-            _borderColor={info.avatarColor.border}
+            _backgroundColor={info.avatarColor?.background || "black"}
+            _borderColor={info.avatarColor?.border || "gray"}
             pos={position}
             isSelf={false}
             initial={info.name[0]}

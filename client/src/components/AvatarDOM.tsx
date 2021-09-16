@@ -31,6 +31,7 @@ function AvatarDOM({
       className="avatar"
       onPointerDown={onPointerDown}
       style={{
+        touchAction: "none",
         width: "65px",
         height: "65px",
         borderRadius: "100%",

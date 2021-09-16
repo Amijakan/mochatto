@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 function AvatarDOM({
-  onMouseDown,
+  onPointerDown,
   pos,
   isSelf,
   multiplier = 1,
@@ -9,7 +9,7 @@ function AvatarDOM({
   _borderColor,
   initial,
 }: {
-  onMouseDown: (MouseEvent) => void;
+  onPointerDown: (PointerEvent) => void;
   pos: [number, number];
   isSelf: boolean;
   multiplier?: number;
@@ -29,8 +29,9 @@ function AvatarDOM({
   return (
     <div
       className="avatar"
-      onMouseDown={onMouseDown}
+      onPointerDown={onPointerDown}
       style={{
+        touchAction: "none",
         width: "65px",
         height: "65px",
         borderRadius: "100%",

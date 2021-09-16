@@ -12,5 +12,7 @@ services:
       dockerfile: ./Dockerfile.prod
     ports:
       - '4500:4500'
+    environment:
+      REACT_APP_SERVER_URL: 'https://jimanaka.com:4000'
 
       

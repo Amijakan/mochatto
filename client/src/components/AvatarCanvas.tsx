@@ -21,21 +21,21 @@ function AvatarCanvas({
   let offset;
 
   // on mouse down, add listeners for moving and mouse up
-  const _onMouseDown = (event) => {
+  const _onPointerDown = (event) => {
     offset = [event.clientX - selfPosition[0], event.clientY - selfPosition[1]];
-    document.addEventListener("mousemove", _onMouseMove, true);
-    document.addEventListener("mouseup", _onMouseUp, true);
+    document.addEventListener("pointermove", _onPointerMove, true);
+    document.addEventListener("pointerup", _onPointerUp, true);
     event.preventDefault();
   };
 
   // remove listeners on mouse up
-  const _onMouseUp = () => {
-    document.removeEventListener("mousemove", _onMouseMove, true);
-    document.removeEventListener("mouseup", _onMouseUp, true);
+  const _onPointerUp = () => {
+    document.removeEventListener("pointermove", _onPointerMove, true);
+    document.removeEventListener("pointerup", _onPointerUp, true);
   };
 
   // update mouse position on move
-  const _onMouseMove = (event) => {
+  const _onPointerMove = (event) => {
     // world coordinate
     const mousePos = [event.clientX, event.clientY];
     setSelfPosition([mousePos[0] - offset[0], mousePos[1] - offset[1]]);
@@ -58,7 +58,7 @@ function AvatarCanvas({
       <AvatarDOM
         key={0}
         multiplier={selfUserInfo.multiplier}
-        onMouseDown={_onMouseDown}
+        onPointerDown={_onPointerDown}
         _backgroundColor={selfUserInfo.avatarColor.background}
         _borderColor={selfUserInfo.avatarColor.border}
         pos={selfPosition}
@@ -74,7 +74,7 @@ function AvatarCanvas({
           <AvatarDOM
             key={index + 1}
             multiplier={info.multiplier}
-            onMouseDown={() => {
+            onPointerDown={() => {
               console.log("not your avatar!");
             }}
             _backgroundColor={info.avatarColor.background}

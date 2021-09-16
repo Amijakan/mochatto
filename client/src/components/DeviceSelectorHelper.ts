@@ -1,5 +1,5 @@
 export const Device = (): { value: string; label: string } => {
-  const value = "";
+  const value = "default";
   const label = "";
   return { value, label };
 };
@@ -12,9 +12,9 @@ const defaultOnError = (e: MediaStreamError): void => {
 // return a list of available input audio devices
 export const listInputDevices = (
   onError: (MediaStreamError) => void = defaultOnError
-): { value: string; label: string }[] => {
+): Promise<{ value: string; label: string }[]> => {
   const inputs: { value: string; label: string }[] = [];
-  navigator.mediaDevices
+  return navigator.mediaDevices
     .enumerateDevices()
     .then((devices) => {
       devices.map((device) => {
@@ -26,11 +26,12 @@ export const listInputDevices = (
           return null;
         }
       });
+      return inputs;
     })
     .catch((e) => {
       onError(e);
+      return [Device()];
     });
-  return inputs;
 };
 
 // select a device as the input device

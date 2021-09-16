@@ -30,6 +30,7 @@ export const UserInfoProvider = ({ children }: { children: JSX.Element }): JSX.E
     switch (action.type) {
       case "add": {
         let newInfo = userInfos[action.id];
+        console.log("UserContext:33, newInfo", newInfo);
         Object.keys(action.data).forEach((key) => {
           newInfo = { ...newInfo, [key]: action.data[key] };
         });

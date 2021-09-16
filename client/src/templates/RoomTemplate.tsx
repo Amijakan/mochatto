@@ -38,7 +38,7 @@ const RoomTemplate = ({
             align="center"
             onClick={() => history.push("/")}
           >
-            <Div bg={colors.bg + "AA"} m="0.5rem" rounded="xl" zIndex="20">
+            <Div bg={"#000000" + "00"} m="0.5rem" rounded="xl" zIndex="20">
               <Logo />
             </Div>
           </Col>

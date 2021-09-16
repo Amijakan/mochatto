@@ -23,7 +23,11 @@ class User {
     this.avatarDC = null as unknown as RTCDataChannel;
     this.userInfoDC = null as unknown as RTCDataChannel;
     // initialize with a free public STUN server to find out public ip, NAT type, and internet side port
-    this.peerConnection = new RTCPeerConnection();
+    this.peerConnection = new RTCPeerConnection({
+      iceServers: [
+        { urls: "stun:stun.l.google.com:19302" },
+      ],
+    });
     this.multiplier = 0;
     this.stream = new MediaStream();
     this.visualizer = null as unknown as AudioVisualizer;

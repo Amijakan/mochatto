@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import { SocketContext, DeviceContext } from "../contexts";
 import { DeviceSelector } from "../components/DeviceSelector";
 import { AudioVisualizer } from "../classes/AudioVisualizer";
@@ -20,6 +20,7 @@ const JoinPage = ({
   const { socket } = useContext(SocketContext);
   const { stream, setStream } = useContext(DeviceContext);
   const { room_id } = useParams<{ room_id: string }>();
+  const history = useHistory();
 
   const [gain, setGain] = useState(0);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
@@ -88,9 +89,15 @@ const JoinPage = ({
               <Button w="45%" onClick={() => onJoinClicked()}>
                 Join
               </Button>
-              <Button w="45%" onClick={() => onClearClicked()} bg="lightgray">
-                Clear
-              </Button>
+              {process.env.NODE_ENV === "development" ? (
+                <Button w="45%" onClick={() => onClearClicked()} bg="lightgray">
+                  Clear
+                </Button>
+              ) : (
+                <Button w="45%" onClick={() => history.push("/")} bg="lightgray">
+                  Button
+                </Button>
+              )}
             </Div>
           </Div>
         </Card>

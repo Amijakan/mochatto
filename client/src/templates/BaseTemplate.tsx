@@ -1,14 +1,13 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { Div, Row, Col } from "atomize";
-import { colors } from "../constants/colors";
 import { Logo } from "../components";
 
 const BaseTemplate = ({ children }: { children: JSX.Element }): JSX.Element => {
   const history = useHistory();
   return (
     <Div>
-      <Div>
+      <Div shadow="2">
         <Row>
           <Col
             size="2"

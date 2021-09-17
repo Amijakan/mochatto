@@ -156,7 +156,7 @@ export const pushToNetwork = (peerProcessor: PeerProcessor): void => {
 };
 
 // remove peerProcessor to the network
-export const removeUserFromNetwork = (id: string): void => {
+export const removeFromNetwork = (id: string): void => {
   const peerProcessorIndex = peerProcessors.findIndex((peerProcessor) => peerProcessor.id === id);
   if (peerProcessors[peerProcessorIndex]) {
     peerProcessors.splice(peerProcessorIndex, 1);

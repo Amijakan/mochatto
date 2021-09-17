@@ -5,7 +5,7 @@ import { Div, Notification, Icon, Text } from "atomize";
 import AvatarCanvas from "../components/AvatarCanvas";
 import {
   pushToNetwork,
-  removeUserFromNetwork,
+  removeFromNetwork,
   updateAllTracks,
   sendOffer,
   openOfferListener,
@@ -94,7 +94,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const onLeave = (id: string) => {
-    removeUserFromNetwork(id);
+    removeFromNetwork(id);
     removeAvatar(id);
     removeUserInfo(id);
     setNotificationTheme("leave");

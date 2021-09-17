@@ -11,7 +11,7 @@ import {
   openOfferListener,
   openAnswerListener,
   getPeerProcessors,
-  updateAvatarPositions,
+  broadcastData,
 } from "../classes/Network";
 import {
   requestNetworkInfo,
@@ -19,7 +19,7 @@ import {
   openLeaveListener,
   openRequestUsersListener,
 } from "./RoomPageHelper";
-import PeerProcessor from "../classes/PeerProcessor";
+import { PeerProcessor } from "../classes/PeerProcessor";
 import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "../classes/AudioVisualizer";
 import { RoomTemplate } from "../templates";
@@ -87,7 +87,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     const peerProcessor = new PeerProcessor(userId, addAvatar, addUserInfo);
     peerProcessor.setSelfPosition(selfPositionRef.current);
     peerProcessor.userInfo = selfUserInfoRef.current;
-    peerProcessor.visualizer = new AudioVisualizer(peerProcessor.onAudioActivity.bind(peerProcessor));
+    peerProcessor.visualizer = new AudioVisualizer(
+      peerProcessor.onAudioActivity.bind(peerProcessor)
+    );
     addUserToNetwork(peerProcessor);
   };
 
@@ -125,8 +127,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // update remote position when avatar is dragged
   useEffect(() => {
-    updateAvatarPositions(selfPositionRef.current);
-  }, [selfPosition]);
+    broadcastData({ position: selfPositionRef.current });
+  }, [selfPositionRef.current]);
 
   return (
     <RoomTemplate

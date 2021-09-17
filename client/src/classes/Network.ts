@@ -1,4 +1,4 @@
-import PeerProcessor from "./PeerProcessor";
+import { PeerProcessor, DataPackage } from "./PeerProcessor";
 import { Socket } from "socket.io-client";
 import { UserInfo } from "../contexts/UserInfoContext";
 
@@ -217,24 +217,11 @@ export const updateAllTracks = (track: MediaStreamTrack): void => {
   });
 };
 
-// update information about the peerProcessor such as avatar color, name, etc.
-export const updateUserInfo = (info: UserInfo): void => {
+export const broadcastData = (data: Partial<DataPackage>): void => {
   peerProcessors.forEach((peerProcessor) => {
     if (peerProcessor.dataChannel) {
       if (peerProcessor.dataChannel.readyState === "open") {
-        peerProcessor.dataChannel.send(JSON.stringify(info));
-      }
-    }
-  });
-};
-
-// update avatar positions for all peer connections
-export const updateAvatarPositions = (pos: [number, number]): void => {
-  peerProcessors.forEach((peerProcessor) => {
-    peerProcessor.setSelfPosition(pos);
-    if (peerProcessor.dataChannel) {
-      if (peerProcessor.dataChannel.readyState === "open") {
-        peerProcessor.dataChannel.send(JSON.stringify(pos));
+        peerProcessor.dataChannel.send(JSON.stringify(data));
       }
     }
   });

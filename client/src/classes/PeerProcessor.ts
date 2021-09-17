@@ -1,7 +1,12 @@
 import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "./AudioVisualizer";
 
-class PeerProcessor {
+export interface DataPackage {
+  position: [number, number];
+  info: UserInfo;
+}
+
+export class PeerProcessor {
   peerConnection: RTCPeerConnection;
   dataChannel: RTCDataChannel;
   sender: RTCRtpSender;
@@ -59,13 +64,15 @@ class PeerProcessor {
   }
 
   onDataChannelMessage(event: MessageEvent): void {
-    const info = JSON.parse(event.data).info as UserInfo;
-    this.addUserInfo(info);
-
-    const position = JSON.parse(event.data).position;
-    this.peerPosition = position;
-    this.updateVolume();
-    this.addPosition(position);
+    const data = JSON.parse(event.data);
+    if (data.info) {
+      this.addUserInfo(data.info);
+    }
+    if (data.position) {
+      this.peerPosition = data.position;
+      this.updateVolume();
+      this.addPosition(data.position);
+    }
   }
 
   setSelfPosition(position: [number, number]): void {
@@ -135,5 +142,3 @@ class PeerProcessor {
     this.setSender(this.peerConnection.addTrack(track));
   }
 }
-
-export default PeerProcessor;

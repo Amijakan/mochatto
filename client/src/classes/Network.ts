@@ -135,7 +135,7 @@ export const openAnswerListener = (socket: Socket): void => {
   socket.on("ANSWER", (dataString) => {
     const answerPack = JSON.parse(dataString);
     const peerProcessor = findPeerProcessorById(answerPack.peerProcessorId);
-    const peerConnection = (peerProcessor as PeerProcessor).peerConnection;
+    const peerConnection = peerProcessor.peerConnection;
     peerConnection
       .setRemoteDescription(answerPack.sdp)
       .then(() => {

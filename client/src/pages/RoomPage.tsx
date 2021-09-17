@@ -10,16 +10,16 @@ import {
   sendOffer,
   openOfferListener,
   openAnswerListener,
-  getUsers,
+  getPeerProcessors,
   updateAvatarPositions,
-} from "../classes/RTCPeerConnector";
+} from "../classes/Network";
 import {
   requestNetworkInfo,
   openJoinListener,
   openLeaveListener,
   openRequestUsersListener,
 } from "./RoomPageHelper";
-import User from "../classes/User";
+import PeerProcessor from "../classes/PeerProcessor";
 import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "../classes/AudioVisualizer";
 import { RoomTemplate } from "../templates";
@@ -84,11 +84,11 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   // set the user setPosition callback to change the state
   // add the user
   const setNewUser = (userId) => {
-    const user = new User(userId, addAvatar, addUserInfo);
-    user.setSelfPosition(selfPositionRef.current);
-    user.userInfo = selfUserInfoRef.current;
-    user.visualizer = new AudioVisualizer(user.onAudioActivity.bind(user));
-    addUserToNetwork(user);
+    const peerProcessor = new PeerProcessor(userId, addAvatar, addUserInfo);
+    peerProcessor.setSelfPosition(selfPositionRef.current);
+    peerProcessor.userInfo = selfUserInfoRef.current;
+    peerProcessor.visualizer = new AudioVisualizer(peerProcessor.onAudioActivity.bind(peerProcessor));
+    addUserToNetwork(peerProcessor);
   };
 
   const onLeave = (id: string) => {
@@ -110,8 +110,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     openJoinListener(socket, onNewJoin);
     openLeaveListener(socket, setAnnouncement, onLeave);
     openRequestUsersListener(name, socket, setNewUser);
-    openOfferListener(getUsers(), socket);
-    openAnswerListener(getUsers(), socket);
+    openOfferListener(getPeerProcessors(), socket);
+    openAnswerListener(getPeerProcessors(), socket);
     updateVisualizer(new AudioVisualizer(onAudioActivity));
   }, []);
 

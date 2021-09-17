@@ -1,7 +1,7 @@
 import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "./AudioVisualizer";
 
-class User {
+class PeerProcessor {
   peerConnection: RTCPeerConnection;
   dataChannel: RTCDataChannel;
   sender: RTCRtpSender;
@@ -67,7 +67,6 @@ class User {
     this.updateVolume();
     this.addPosition(position);
   }
-
 
   setSelfPosition(position: [number, number]): void {
     this.selfPosition = position;
@@ -137,4 +136,4 @@ class User {
   }
 }
 
-export default User;
+export default PeerProcessor;

@@ -1,6 +1,5 @@
 import { PeerProcessor, DataPackage } from "./PeerProcessor";
 import { Socket } from "socket.io-client";
-import { UserInfo } from "../contexts/UserInfoContext";
 
 export const Pack = ({
   sdp,
@@ -22,14 +21,11 @@ export const Pack = ({
 };
 
 const peerProcessors: PeerProcessor[] = [];
-const defaultOn = () => {
-  return;
-};
 
 const DCLabel = "DATACHANNEL";
 
 // send out offer to every peerProcessor on network
-export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultOn): void => {
+export const sendOffer = (socket: Socket): void => {
   // for each peerProcessor
   peerProcessors.forEach((peerProcessor) => {
     // if a datachannel is already open, close it
@@ -68,7 +64,6 @@ export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultO
           };
 
           socket.emit("OFFER", JSON.stringify(offerPack));
-          onOfferSent(offerPack);
         }
       })
       .catch((e) => {
@@ -78,17 +73,11 @@ export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultO
 };
 
 // open socketio listener for receiving WebRTC offers and sending answer
-export const openOfferListener = (
-  socket: Socket,
-  onOfferReceived: (Pack) => void = defaultOn,
-  onAnswerEmitted: (Pack) => void = defaultOn
-): void => {
+export const openOfferListener = (socket: Socket): void => {
   // emit an answer when offer is received
   socket.on("OFFER", (dataString) => {
     const offerPack = JSON.parse(dataString);
-    const peerProcessor = findPeerProcessorById(
-      offerPack.peerProcessorId
-    ) as PeerProcessor;
+    const peerProcessor = findPeerProcessorById(offerPack.peerProcessorId) as PeerProcessor;
     if (peerProcessor) {
       // set the local datachannel and event handlers on connect
       peerProcessor.peerConnection.ondatachannel = (event) => {
@@ -102,7 +91,6 @@ export const openOfferListener = (
             peerProcessor.onDataChannelMessage.bind(peerProcessor);
         }
       };
-      onOfferReceived(offerPack);
       // identify and use RTCPeerConnection object for the peerProcessor peerProcessor
       const peerConnection = peerProcessor.peerConnection;
 
@@ -139,7 +127,6 @@ export const openOfferListener = (
                 };
 
                 socket.emit("ANSWER", JSON.stringify(answerPack));
-                onAnswerEmitted(answerPack);
               }
             })
             .catch((e) => {
@@ -156,10 +143,7 @@ export const openOfferListener = (
 };
 
 // open socketio listener for receiving WebRTC answers
-export const openAnswerListener = (
-  socket: Socket,
-  onAnswerReceived: (Pack) => void = defaultOn
-): void => {
+export const openAnswerListener = (socket: Socket): void => {
   // set remote description once answer is recieved to establish connection
   socket.on("ANSWER", (dataString) => {
     const answerPack = JSON.parse(dataString);
@@ -172,7 +156,6 @@ export const openAnswerListener = (
           const data = JSON.parse(dataString);
           peerConnection.addIceCandidate(data.ice);
         });
-        onAnswerReceived(answerPack);
       })
       .catch((e) => {
         console.error(e);

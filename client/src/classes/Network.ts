@@ -87,7 +87,6 @@ export const openOfferListener = (
   socket.on("OFFER", (dataString) => {
     const offerPack = JSON.parse(dataString);
     const peerProcessor = findPeerProcessorById(
-      peerProcessors,
       offerPack.peerProcessorId
     ) as PeerProcessor;
     if (peerProcessor) {
@@ -164,7 +163,7 @@ export const openAnswerListener = (
   // set remote description once answer is recieved to establish connection
   socket.on("ANSWER", (dataString) => {
     const answerPack = JSON.parse(dataString);
-    const peerProcessor = findPeerProcessorById(peerProcessors, answerPack.peerProcessorId);
+    const peerProcessor = findPeerProcessorById(answerPack.peerProcessorId);
     const peerConnection = (peerProcessor as PeerProcessor).peerConnection;
     peerConnection
       .setRemoteDescription(answerPack.sdp)
@@ -200,10 +199,7 @@ export const getPeerProcessors = (): PeerProcessor[] => {
 };
 
 // find peerProcessor by its socketid
-export const findPeerProcessorById = (
-  peerProcessors: PeerProcessor[],
-  id: string
-): PeerProcessor => {
+const findPeerProcessorById = (id: string): PeerProcessor => {
   const peerProcessor = peerProcessors.find((pp) => pp.id === id);
   return peerProcessor as PeerProcessor;
 };

@@ -53,6 +53,10 @@ export class PeerProcessor {
   }
 
   initializeDataChannel(dc: RTCDataChannel) {
+    // if a datachannel is already open, close it
+    if (this.dataChannel) {
+      this.dataChannel.close();
+    }
     this.dataChannel = dc;
     this.dataChannel.onopen = this.onDataChannelOpen.bind(this);
     this.dataChannel.onclose = this.onDataChannelClose.bind(this);

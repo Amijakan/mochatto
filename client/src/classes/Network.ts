@@ -28,11 +28,6 @@ const DCLabel = "DATACHANNEL";
 export const sendOffer = (socket: Socket): void => {
   // for each peerProcessor
   peerProcessors.forEach((peerProcessor) => {
-    // if a datachannel is already open, close it
-    if (peerProcessor.dataChannel) {
-      peerProcessor.dataChannel.close();
-    }
-
     // create data channel for the peerProcessor as the caller
     peerProcessor.initializeDataChannel(peerProcessor.peerConnection.createDataChannel(DCLabel));
 

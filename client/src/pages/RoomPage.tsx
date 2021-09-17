@@ -84,9 +84,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   // set the user setPosition callback to change the state
   // add the user
   const setNewUser = (userId) => {
-    const user = new User(userId);
-    user.setPosition = addAvatar(userId);
-    user.setUserInfo = addUserInfo(userId);
+    const user = new User(userId, addAvatar, addUserInfo);
     user.setSelfPosition(selfPositionRef.current);
     user.userInfo = selfUserInfoRef.current;
     user.visualizer = new AudioVisualizer(user.onAudioActivity.bind(user));

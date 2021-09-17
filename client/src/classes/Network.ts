@@ -3,35 +3,31 @@ import { Socket } from "socket.io-client";
 
 export const Pack = ({
   sdp,
-  peerProcessorId,
+  userId,
   receiverId,
   kind,
 }: {
   sdp: RTCSessionDescription;
-  peerProcessorId: string;
+  userId: string;
   receiverId: string;
   kind: string;
 }): {
   sdp: RTCSessionDescription;
-  peerProcessorId: string;
+  userId: string;
   receiverId: string;
   kind: string;
 } => {
-  return { sdp, peerProcessorId, receiverId, kind };
+  return { sdp, userId, receiverId, kind };
 };
 
 const peerProcessors: PeerProcessor[] = [];
 
 const DCLabel = "DATACHANNEL";
 
-// send out offer to every peerProcessor on network
+// send out offer to every peer users on network
 export const sendOffer = (socket: Socket): void => {
-  // for each peerProcessor
   peerProcessors.forEach((peerProcessor) => {
-    // create data channel for the peerProcessor as the caller
     peerProcessor.initializeDataChannel(peerProcessor.peerConnection.createDataChannel(DCLabel));
-
-    // emit an offer to the server to be broadcasted
     peerProcessor.peerConnection
       .createOffer()
       .then((offer) => {
@@ -41,7 +37,7 @@ export const sendOffer = (socket: Socket): void => {
         if (peerProcessor.peerConnection.localDescription) {
           const offerPack = Pack({
             sdp: peerProcessor.peerConnection.localDescription,
-            peerProcessorId: socket.id,
+            userId: socket.id,
             receiverId: peerProcessor.id,
             kind: "offer",
           });
@@ -99,7 +95,7 @@ export const openOfferListener = (socket: Socket): void => {
                 // create the answer
                 const answerPack = Pack({
                   sdp: peerConnection.localDescription,
-                  peerProcessorId: socket.id,
+                  userId: socket.id,
                   receiverId: offerPack.peerProcessorId,
                   kind: "answer",
                 });

@@ -24,9 +24,7 @@ class User {
     this.userInfoDC = null as unknown as RTCDataChannel;
     // initialize with a free public STUN server to find out public ip, NAT type, and internet side port
     this.peerConnection = new RTCPeerConnection({
-      iceServers: [
-        { urls: "stun:stun.l.google.com:19302" },
-      ],
+      iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
     });
     this.multiplier = 0;
     this.stream = new MediaStream();
@@ -117,11 +115,6 @@ class User {
     }
   }
 
-  // keeping note of the track to remove later
-  setSender(s: RTCRtpSender): void {
-    this.sender = s;
-  }
-
   // updates the local track when the peer user (this) adds a new track
   updateLocalTrack(track: MediaStreamTrack): boolean {
     if (!track.readyState) {
@@ -145,12 +138,20 @@ class User {
     return true;
   }
 
+  // keeping note of the track to remove later
+  setSender(s: RTCRtpSender): void {
+    this.sender = s;
+  }
+
   // Update the shared mediastream to the new audio input
   updateRemoteTrack(track: MediaStreamTrack): void {
     if (this.sender) {
-      this.peerConnection.removeTrack(this.sender);
+      this.sender.replaceTrack(track).catch((e) => {
+        console.warn(e);
+      });
+    } else {
+      this.setSender(this.peerConnection.addTrack(track));
     }
-    this.setSender(this.peerConnection.addTrack(track));
   }
 }
 

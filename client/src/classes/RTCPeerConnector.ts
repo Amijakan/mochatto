@@ -26,31 +26,22 @@ const defaultOn = () => {
   return;
 };
 
-const avatarChannelLabel = "AVATAR_DC";
-const userInfoChannelLabel = "USER_INFO_DC";
+const DCLabel = "DATACHANNEL";
 
 // send out offer to every user on network
 export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultOn): void => {
   // for each user
   users.forEach((user) => {
     // if a datachannel is already open, close it
-    if (user.avatarDC) {
-      user.avatarDC.close();
-    }
-    if (user.userInfoDC) {
-      user.userInfoDC.close();
+    if (user.dataChannel) {
+      user.dataChannel.close();
     }
 
     // create data channel for the user as the caller
-    user.avatarDC = user.peerConnection.createDataChannel(avatarChannelLabel);
-    user.avatarDC.onopen = user.onAvatarDCOpen.bind(user);
-    user.avatarDC.onclose = user.onAvatarDCClose.bind(user);
-    user.avatarDC.onmessage = user.onAvatarDCMessage.bind(user);
-
-    user.userInfoDC = user.peerConnection.createDataChannel(userInfoChannelLabel);
-    user.userInfoDC.onopen = user.onUserInfoDCOpen.bind(user);
-    user.userInfoDC.onclose = user.onUserInfoDCClose.bind(user);
-    user.userInfoDC.onmessage = user.onUserInfoDCMessage.bind(user);
+    user.dataChannel = user.peerConnection.createDataChannel(DCLabel);
+    user.dataChannel.onopen = user.onDataChannelOpen.bind(user);
+    user.dataChannel.onclose = user.onDataChannelClose.bind(user);
+    user.dataChannel.onmessage = user.onDataChannelMessage.bind(user);
 
     // emit an offer to the server to be broadcasted
     user.peerConnection
@@ -101,23 +92,12 @@ export const openOfferListener = (
       // set the local datachannel and event handlers on connect
       sender.peerConnection.ondatachannel = (event) => {
         const dc = event.channel;
-        switch (dc.label) {
-          case avatarChannelLabel: {
-            sender.avatarDC = dc;
-            sender.avatarDC.onopen = sender.onAvatarDCOpen.bind(sender);
-            sender.avatarDC.onclose = sender.onAvatarDCClose.bind(sender);
-            sender.avatarDC.onmessage = sender.onAvatarDCMessage.bind(sender);
-            break;
-          }
-          case userInfoChannelLabel: {
-            sender.userInfoDC = dc;
-            sender.userInfoDC.onopen = sender.onUserInfoDCOpen.bind(sender);
-            sender.userInfoDC.onclose = sender.onUserInfoDCClose.bind(sender);
-            sender.userInfoDC.onmessage = sender.onUserInfoDCMessage.bind(sender);
-            break;
-          }
-          default:
-            break;
+        if(dc.label === DCLabel){
+            // create data channel for the user as the caller
+            sender.dataChannel = dc;
+            sender.dataChannel.onopen = sender.onDataChannelOpen.bind(sender);
+            sender.dataChannel.onclose = sender.onDataChannelClose.bind(sender);
+            sender.dataChannel.onmessage = sender.onDataChannelMessage.bind(sender);
         }
       };
       onOfferReceived(offerPack);

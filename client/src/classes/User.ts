@@ -3,8 +3,7 @@ import { AudioVisualizer, gainToMultiplier } from "./AudioVisualizer";
 
 class User {
   peerConnection: RTCPeerConnection;
-  avatarDC: RTCDataChannel;
-  userInfoDC: RTCDataChannel;
+  dataChannel: RTCDataChannel;
   sender: RTCRtpSender;
   id: string;
   stream: MediaStream;
@@ -20,13 +19,10 @@ class User {
   constructor(id: string) {
     this.id = id;
     this.sender = null as unknown as RTCRtpSender;
-    this.avatarDC = null as unknown as RTCDataChannel;
-    this.userInfoDC = null as unknown as RTCDataChannel;
+    this.dataChannel = null as unknown as RTCDataChannel;
     // initialize with a free public STUN server to find out public ip, NAT type, and internet side port
     this.peerConnection = new RTCPeerConnection({
-      iceServers: [
-        { urls: "stun:stun.l.google.com:19302" },
-      ],
+      iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
     });
     this.multiplier = 0;
     this.stream = new MediaStream();
@@ -51,39 +47,25 @@ class User {
     this.setUserInfo(newInfo);
   }
 
-  onUserInfoDCOpen(): void {
-    console.debug("dc open");
-    this.userInfoDC.send(JSON.stringify(this.userInfo));
-  }
-
-  onUserInfoDCClose(): void {
-    console.debug("dc close");
-    this.visualizer.stop();
-  }
-
-  onUserInfoDCMessage(event: MessageEvent): void {
-    const info = JSON.parse(event.data) as UserInfo;
+  onDataChannelMessage(event: MessageEvent): void {
+    const info = JSON.parse(event.data).info as UserInfo;
     this.setUserInfo(info);
-  }
 
-  // runs when the data channel opens
-  onAvatarDCOpen(): void {
-    console.log("dc open");
-    // send current position out for initial avatar rendering
-    this.avatarDC.send(JSON.stringify(this.selfPosition));
-  }
-
-  // runs when the data channel closes
-  onAvatarDCClose(): void {
-    console.log("dc close");
-  }
-
-  // runs when the data channel receives data
-  onAvatarDCMessage(event: MessageEvent): void {
-    const position = JSON.parse(event.data);
+    const position = JSON.parse(event.data).position;
     this.peerPosition = position;
     this.updateVolume();
     this.setPosition(position);
+  }
+
+  // runs when the data channel opens
+  onDataChannelOpen(): void {
+    const data = { position: this.selfPosition, info: this.userInfo };
+    this.dataChannel.send(JSON.stringify(data));
+  }
+
+  // runs when the data channel closes
+  onDataChannelClose(): void {
+    this.visualizer.stop();
   }
 
   setSelfPosition(position: [number, number]): void {

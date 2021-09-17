@@ -15,7 +15,10 @@ function DeviceSelector({ onSelect }: { onSelect: (MediaStream) => void }): JSX.
       //list options when permission is allowed
       listInputDevices().then((devices) => {
         setInputOptions(devices);
-        setSelectedInput(devices[0]);
+        // if the input hasn't been selected yet
+        if (selectedInput.label === "") {
+          setSelectedInput(devices[0]);
+        }
       });
     });
   }, []);

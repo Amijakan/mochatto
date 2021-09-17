@@ -13,10 +13,10 @@ class User {
   visualizer: AudioVisualizer;
   multiplier: number;
   // a function to update the positions array context
-  setPosition: (positionString) => void;
-  setUserInfo: (info) => void;
+  addPosition: (positionString) => void;
+  addUserInfo: (info) => void;
   userInfo: UserInfo;
-  constructor(id: string) {
+  constructor(id: string, addPosition: (position) => void, addUserInfo: (info) => void) {
     this.id = id;
     this.sender = null as unknown as RTCRtpSender;
     this.dataChannel = null as unknown as RTCDataChannel;
@@ -31,8 +31,8 @@ class User {
     this.selfPosition = [0, 0];
     this.peerPosition = [0, 0];
     // the function is re-assigned during the user's initialization
-    this.setPosition = (positionString) => console.warn(positionString);
-    this.setUserInfo = (info) => console.warn(info);
+    this.addPosition = addPosition;
+    this.addUserInfo = addUserInfo;
     this.userInfo = defaultUserInfo;
 
     // listener for when a peer adds a track
@@ -44,17 +44,7 @@ class User {
   onAudioActivity(gain: number): void {
     this.multiplier = gainToMultiplier(gain);
     const newInfo = { multiplier: this.multiplier };
-    this.setUserInfo(newInfo);
-  }
-
-  onDataChannelMessage(event: MessageEvent): void {
-    const info = JSON.parse(event.data).info as UserInfo;
-    this.setUserInfo(info);
-
-    const position = JSON.parse(event.data).position;
-    this.peerPosition = position;
-    this.updateVolume();
-    this.setPosition(position);
+    this.addUserInfo(newInfo);
   }
 
   // runs when the data channel opens
@@ -67,6 +57,17 @@ class User {
   onDataChannelClose(): void {
     this.visualizer.stop();
   }
+
+  onDataChannelMessage(event: MessageEvent): void {
+    const info = JSON.parse(event.data).info as UserInfo;
+    this.addUserInfo(info);
+
+    const position = JSON.parse(event.data).position;
+    this.peerPosition = position;
+    this.updateVolume();
+    this.addPosition(position);
+  }
+
 
   setSelfPosition(position: [number, number]): void {
     this.selfPosition = position;

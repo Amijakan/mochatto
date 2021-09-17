@@ -50,12 +50,10 @@ class User {
   }
 
   onUserInfoDCOpen(): void {
-    console.debug("dc open");
     this.userInfoDC.send(JSON.stringify(this.userInfo));
   }
 
   onUserInfoDCClose(): void {
-    console.debug("dc close");
     this.visualizer.stop();
   }
 
@@ -66,14 +64,13 @@ class User {
 
   // runs when the data channel opens
   onAvatarDCOpen(): void {
-    console.log("dc open");
     // send current position out for initial avatar rendering
     this.avatarDC.send(JSON.stringify(this.selfPosition));
   }
 
   // runs when the data channel closes
   onAvatarDCClose(): void {
-    console.log("dc close");
+    return;
   }
 
   // runs when the data channel receives data

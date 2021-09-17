@@ -43,12 +43,10 @@ export const sendOffer = (socket: Socket): void => {
           });
 
           peerProcessor.peerConnection.onicecandidate = (event) => {
-            if (event.candidate) {
-              socket.emit(
-                "ICE_CANDIDATE",
-                JSON.stringify({ ice: event.candidate, receiverId: peerProcessor.id })
-              );
-            }
+            socket.emit(
+              "ICE_CANDIDATE",
+              JSON.stringify({ ice: event.candidate, receiverId: peerProcessor.id })
+            );
           };
 
           socket.emit("OFFER", JSON.stringify(offerPack));
@@ -82,7 +80,7 @@ export const openOfferListener = (socket: Socket): void => {
         .then(() => {
           socket.on("ICE_CANDIDATE", (dataString) => {
             const data = JSON.parse(dataString);
-            peerConnection.addIceCandidate(data.ice);
+            peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
           });
 
           peerConnection
@@ -101,12 +99,10 @@ export const openOfferListener = (socket: Socket): void => {
                 });
 
                 peerConnection.onicecandidate = (event) => {
-                  if (event.candidate) {
                     socket.emit(
                       "ICE_CANDIDATE",
                       JSON.stringify({ ice: event.candidate, receiverId: peerProcessor.id })
                     );
-                  }
                 };
 
                 socket.emit("ANSWER", JSON.stringify(answerPack));
@@ -137,7 +133,7 @@ export const openAnswerListener = (socket: Socket): void => {
       .then(() => {
         socket.on("ICE_CANDIDATE", (dataString) => {
           const data = JSON.parse(dataString);
-          peerConnection.addIceCandidate(data.ice);
+            peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
         });
       })
       .catch((e) => {

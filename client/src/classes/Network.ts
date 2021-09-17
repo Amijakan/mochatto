@@ -34,10 +34,7 @@ export const sendOffer = (socket: Socket): void => {
     }
 
     // create data channel for the peerProcessor as the caller
-    peerProcessor.dataChannel = peerProcessor.peerConnection.createDataChannel(DCLabel);
-    peerProcessor.dataChannel.onopen = peerProcessor.onDataChannelOpen.bind(peerProcessor);
-    peerProcessor.dataChannel.onclose = peerProcessor.onDataChannelClose.bind(peerProcessor);
-    peerProcessor.dataChannel.onmessage = peerProcessor.onDataChannelMessage.bind(peerProcessor);
+    peerProcessor.initializeDataChannel(peerProcessor.peerConnection.createDataChannel(DCLabel));
 
     // emit an offer to the server to be broadcasted
     peerProcessor.peerConnection
@@ -83,12 +80,7 @@ export const openOfferListener = (socket: Socket): void => {
       peerProcessor.peerConnection.ondatachannel = (event) => {
         const dc = event.channel;
         if (dc.label === DCLabel) {
-          // create data channel for the peerProcessor as the caller
-          peerProcessor.dataChannel = dc;
-          peerProcessor.dataChannel.onopen = peerProcessor.onDataChannelOpen.bind(peerProcessor);
-          peerProcessor.dataChannel.onclose = peerProcessor.onDataChannelClose.bind(peerProcessor);
-          peerProcessor.dataChannel.onmessage =
-            peerProcessor.onDataChannelMessage.bind(peerProcessor);
+          peerProcessor.initializeDataChannel(dc);
         }
       };
       // identify and use RTCPeerConnection object for the peerProcessor peerProcessor

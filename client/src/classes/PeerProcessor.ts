@@ -52,6 +52,13 @@ export class PeerProcessor {
     this.addUserInfo(newInfo);
   }
 
+  initializeDataChannel(dc: RTCDataChannel) {
+    this.dataChannel = dc;
+    this.dataChannel.onopen = this.onDataChannelOpen.bind(this);
+    this.dataChannel.onclose = this.onDataChannelClose.bind(this);
+    this.dataChannel.onmessage = this.onDataChannelMessage.bind(this);
+  }
+
   // runs when the data channel opens
   onDataChannelOpen(): void {
     const data = { position: this.selfPosition, info: this.userInfo };

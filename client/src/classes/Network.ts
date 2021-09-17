@@ -79,7 +79,6 @@ export const sendOffer = (socket: Socket, onOfferSent: (Pack) => void = defaultO
 
 // open socketio listener for receiving WebRTC offers and sending answer
 export const openOfferListener = (
-  peerProcessors: PeerProcessor[],
   socket: Socket,
   onOfferReceived: (Pack) => void = defaultOn,
   onAnswerEmitted: (Pack) => void = defaultOn
@@ -159,7 +158,6 @@ export const openOfferListener = (
 
 // open socketio listener for receiving WebRTC answers
 export const openAnswerListener = (
-  peerProcessors: PeerProcessor[],
   socket: Socket,
   onAnswerReceived: (Pack) => void = defaultOn
 ): void => {

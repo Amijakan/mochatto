@@ -112,8 +112,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     openJoinListener(socket, onNewJoin);
     openLeaveListener(socket, setAnnouncement, onLeave);
     openRequestUsersListener(name, socket, setNewUser);
-    openOfferListener(getPeerProcessors(), socket);
-    openAnswerListener(getPeerProcessors(), socket);
+    openOfferListener(socket);
+    openAnswerListener(socket);
     updateVisualizer(new AudioVisualizer(onAudioActivity));
   }, []);
 

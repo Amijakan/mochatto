@@ -184,7 +184,7 @@ export const openAnswerListener = (
 };
 
 // add peerProcessor to the network
-export const addUserToNetwork = (peerProcessor: PeerProcessor): void => {
+export const pushToNetwork = (peerProcessor: PeerProcessor): void => {
   peerProcessors.push(peerProcessor);
 };
 

@@ -4,7 +4,7 @@ import { DeviceSelector } from "../components/DeviceSelector";
 import { Div, Notification, Icon, Text } from "atomize";
 import AvatarCanvas from "../components/AvatarCanvas";
 import {
-  addUserToNetwork,
+  pushToNetwork,
   removeUserFromNetwork,
   updateAllTracks,
   sendOffer,
@@ -90,7 +90,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     peerProcessor.visualizer = new AudioVisualizer(
       peerProcessor.onAudioActivity.bind(peerProcessor)
     );
-    addUserToNetwork(peerProcessor);
+    pushToNetwork(peerProcessor);
   };
 
   const onLeave = (id: string) => {

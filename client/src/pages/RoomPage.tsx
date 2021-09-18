@@ -82,11 +82,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   // add the user
   const setNewUser = (userId) => {
     const peerProcessor = new PeerProcessor(userId, socket, addAvatar, addUserInfo);
-    peerProcessor.setSelfPosition(selfPositionRef.current);
-    peerProcessor.userInfo = selfUserInfoRef.current;
-    peerProcessor.visualizer = new AudioVisualizer(
+    peerProcessor.initialize(selfPositionRef.current,selfUserInfoRef.current,new AudioVisualizer(
       peerProcessor.onAudioActivity.bind(peerProcessor)
-    );
+    ));
     pushToNetwork(peerProcessor);
   };
 

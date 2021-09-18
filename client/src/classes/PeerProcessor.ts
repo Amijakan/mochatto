@@ -105,20 +105,26 @@ export class PeerProcessor {
         });
     });
 
-  socket.on("ANSWER", (dataString) => {
-    const answerPack = JSON.parse(dataString);
-    this.peerConnection
-      .setRemoteDescription(answerPack.sdp)
-      .then(() => {
-        socket.on("ICE_CANDIDATE", (dataString) => {
-          const data = JSON.parse(dataString);
-          this.peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
+    socket.on("ANSWER", (dataString) => {
+      const answerPack = JSON.parse(dataString);
+      this.peerConnection
+        .setRemoteDescription(answerPack.sdp)
+        .then(() => {
+          socket.on("ICE_CANDIDATE", (dataString) => {
+            const data = JSON.parse(dataString);
+            this.peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
+          });
+        })
+        .catch((e) => {
+          console.error(e);
         });
-      })
-      .catch((e) => {
-        console.error(e);
-      });
-  });
+    });
+  }
+
+  initialize(initialSelfPosition, initialUserInfo, visualizer): void {
+    this.selfPosition = initialSelfPosition;
+    this.userInfo = initialUserInfo;
+    this.visualizer = visualizer;
   }
 
   onAudioActivity(gain: number): void {
@@ -127,7 +133,7 @@ export class PeerProcessor {
     this.addUserInfo(newInfo);
   }
 
-  initializeDataChannel(dc: RTCDataChannel) {
+  initializeDataChannel(dc: RTCDataChannel): void {
     // if a datachannel is already open, close it
     if (this.dataChannel) {
       this.dataChannel.close();

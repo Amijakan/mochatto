@@ -71,7 +71,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     setShowNotification(true);
     if (id != socket.id) {
       console.log("HELLO");
-      setNewUser(id);
+      addNewPeer(id);
       updateAllTracks(stream.getAudioTracks()[0]);
       broadcastOffer(socket);
     }
@@ -80,11 +80,13 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   // add a new position array in the peerPositions state
   // set the user setPosition callback to change the state
   // add the user
-  const setNewUser = (userId) => {
+  const addNewPeer = (userId) => {
     const peerProcessor = new PeerProcessor(userId, socket, addAvatar, addUserInfo);
-    peerProcessor.initialize(selfPositionRef.current,selfUserInfoRef.current,new AudioVisualizer(
-      peerProcessor.onAudioActivity.bind(peerProcessor)
-    ));
+    peerProcessor.initialize(
+      selfPositionRef.current,
+      selfUserInfoRef.current,
+      new AudioVisualizer(peerProcessor.onAudioActivity.bind(peerProcessor))
+    );
     pushToNetwork(peerProcessor);
   };
 
@@ -106,7 +108,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     requestNetworkInfo(socket);
     openJoinListener(socket, onNewJoin);
     openLeaveListener(socket, setAnnouncement, onLeave);
-    openRequestUsersListener(name, socket, setNewUser);
+    openRequestUsersListener(name, socket, addNewPeer);
     updateVisualizer(new AudioVisualizer(onAudioActivity));
   }, []);
 

@@ -34,6 +34,14 @@ export const broadcastOffer = (socket: Socket): void => {
         return peerProcessor.peerConnection.setLocalDescription(offer);
       })
       .then(() => {
+        peerProcessor.peerConnection.onicecandidate = (event) => {
+          // needs to wait until the remote sdp is set on the receiver side
+          socket.emit(
+            "ICE_CANDIDATE",
+            JSON.stringify({ ice: event.candidate, receiverId: peerProcessor.id })
+          );
+        };
+
         if (peerProcessor.peerConnection.localDescription) {
           const offerPack = Pack({
             sdp: peerProcessor.peerConnection.localDescription,
@@ -41,13 +49,6 @@ export const broadcastOffer = (socket: Socket): void => {
             receiverId: peerProcessor.id,
             kind: "offer",
           });
-
-          peerProcessor.peerConnection.onicecandidate = (event) => {
-            socket.emit(
-              "ICE_CANDIDATE",
-              JSON.stringify({ ice: event.candidate, receiverId: peerProcessor.id })
-            );
-          };
 
           socket.emit("OFFER", JSON.stringify(offerPack));
         }

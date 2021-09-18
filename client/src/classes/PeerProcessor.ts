@@ -78,6 +78,14 @@ export class PeerProcessor {
               return this.peerConnection.setLocalDescription(answer);
             })
             .then(() => {
+              this.peerConnection.onicecandidate = (event) => {
+                // needs to wait until the remote sdp is set on the receiver side
+                socket.emit(
+                  "ICE_CANDIDATE",
+                  JSON.stringify({ ice: event.candidate, receiverId: this.id })
+                );
+              };
+
               if (this.peerConnection.localDescription) {
                 // create the answer
                 const answerPack = Pack({
@@ -86,13 +94,6 @@ export class PeerProcessor {
                   receiverId: offerPack.userId,
                   kind: "answer",
                 });
-
-                this.peerConnection.onicecandidate = (event) => {
-                  socket.emit(
-                    "ICE_CANDIDATE",
-                    JSON.stringify({ ice: event.candidate, receiverId: this.id })
-                  );
-                };
 
                 socket.emit("ANSWER", JSON.stringify(answerPack));
               }

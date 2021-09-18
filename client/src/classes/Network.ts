@@ -1,6 +1,8 @@
 import { PeerProcessor, DataPackage } from "./PeerProcessor";
 import { Socket } from "socket.io-client";
 
+export const DCLabel = "DATACHANNEL";
+
 export const Pack = ({
   sdp,
   userId,
@@ -21,8 +23,6 @@ export const Pack = ({
 };
 
 const peerProcessors: PeerProcessor[] = [];
-
-const DCLabel = "DATACHANNEL";
 
 // send out offer to every peer users on network
 export const broadcastOffer = (socket: Socket): void => {
@@ -51,90 +51,6 @@ export const broadcastOffer = (socket: Socket): void => {
 
           socket.emit("OFFER", JSON.stringify(offerPack));
         }
-      })
-      .catch((e) => {
-        console.error(e);
-      });
-  });
-};
-
-// open socketio listener for receiving WebRTC offers and sending answer
-export const openOfferListener = (socket: Socket): void => {
-  // emit an answer when offer is received
-  socket.on("OFFER", (dataString) => {
-    const offerPack = JSON.parse(dataString);
-    const peerProcessor = findPeerProcessorById(offerPack.peerProcessorId) as PeerProcessor;
-    if (peerProcessor) {
-      // set the local datachannel and event handlers on connect
-      peerProcessor.peerConnection.ondatachannel = (event) => {
-        const dc = event.channel;
-        if (dc.label === DCLabel) {
-          peerProcessor.initializeDataChannel(dc);
-        }
-      };
-      // identify and use RTCPeerConnection object for the peerProcessor peerProcessor
-      const peerConnection = peerProcessor.peerConnection;
-
-      peerConnection
-        .setRemoteDescription(offerPack.sdp) // set remote description as the peerProcessor's
-        .then(() => {
-          socket.on("ICE_CANDIDATE", (dataString) => {
-            const data = JSON.parse(dataString);
-            peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
-          });
-
-          peerConnection
-            .createAnswer()
-            .then((answer) => {
-              return peerConnection.setLocalDescription(answer);
-            })
-            .then(() => {
-              if (peerConnection.localDescription) {
-                // create the answer
-                const answerPack = Pack({
-                  sdp: peerConnection.localDescription,
-                  userId: socket.id,
-                  receiverId: offerPack.peerProcessorId,
-                  kind: "answer",
-                });
-
-                peerConnection.onicecandidate = (event) => {
-                    socket.emit(
-                      "ICE_CANDIDATE",
-                      JSON.stringify({ ice: event.candidate, receiverId: peerProcessor.id })
-                    );
-                };
-
-                socket.emit("ANSWER", JSON.stringify(answerPack));
-              }
-            })
-            .catch((e) => {
-              console.error(e);
-            });
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    } else {
-      console.error("Could not emit answer. Sender was not found on peerProcessors list.");
-    }
-  });
-};
-
-// open socketio listener for receiving WebRTC answers
-export const openAnswerListener = (socket: Socket): void => {
-  // set remote description once answer is recieved to establish connection
-  socket.on("ANSWER", (dataString) => {
-    const answerPack = JSON.parse(dataString);
-    const peerProcessor = findPeerProcessorById(answerPack.peerProcessorId);
-    const peerConnection = peerProcessor.peerConnection;
-    peerConnection
-      .setRemoteDescription(answerPack.sdp)
-      .then(() => {
-        socket.on("ICE_CANDIDATE", (dataString) => {
-          const data = JSON.parse(dataString);
-            peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
-        });
       })
       .catch((e) => {
         console.error(e);

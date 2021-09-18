@@ -1,5 +1,7 @@
 import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "./AudioVisualizer";
+import { Socket } from "socket.io-client";
+import { DCLabel, Pack } from "./Network";
 
 export interface DataPackage {
   position: [number, number];
@@ -9,6 +11,7 @@ export interface DataPackage {
 export class PeerProcessor {
   peerConnection: RTCPeerConnection;
   dataChannel: RTCDataChannel;
+  socket: Socket;
   sender: RTCRtpSender;
   id: string;
   stream: MediaStream;
@@ -21,7 +24,12 @@ export class PeerProcessor {
   addPosition: (positionString) => void;
   addUserInfo: (info) => void;
   userInfo: UserInfo;
-  constructor(id: string, addPosition: (position) => void, addUserInfo: (info) => void) {
+  constructor(
+    id: string,
+    socket: Socket,
+    addPosition: (position) => void,
+    addUserInfo: (info) => void
+  ) {
     this.id = id;
     this.sender = null as unknown as RTCRtpSender;
     this.dataChannel = null as unknown as RTCDataChannel;
@@ -39,11 +47,78 @@ export class PeerProcessor {
     this.addPosition = addPosition;
     this.addUserInfo = addUserInfo;
     this.userInfo = defaultUserInfo;
+    this.socket = socket;
 
     // listener for when a peer adds a track
     this.peerConnection.ontrack = (event) => {
       this.updateLocalTrack(event.track);
     };
+    // emit an answer when offer is received
+    socket.on("OFFER", (dataString) => {
+      const offerPack = JSON.parse(dataString);
+      // set the local datachannel and event handlers on connect
+      this.peerConnection.ondatachannel = (event) => {
+        const dc = event.channel;
+        if (dc.label === DCLabel) {
+          this.initializeDataChannel(dc);
+        }
+      };
+      this.peerConnection
+        .setRemoteDescription(offerPack.sdp) // set remote description as the peerProcessor's
+        .then(() => {
+          socket.on("ICE_CANDIDATE", (dataString) => {
+            const data = JSON.parse(dataString);
+            this.peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
+          });
+
+          this.peerConnection
+            .createAnswer()
+            .then((answer) => {
+              return this.peerConnection.setLocalDescription(answer);
+            })
+            .then(() => {
+              if (this.peerConnection.localDescription) {
+                // create the answer
+                const answerPack = Pack({
+                  sdp: this.peerConnection.localDescription,
+                  userId: socket.id,
+                  receiverId: offerPack.peerProcessorId,
+                  kind: "answer",
+                });
+
+                this.peerConnection.onicecandidate = (event) => {
+                  socket.emit(
+                    "ICE_CANDIDATE",
+                    JSON.stringify({ ice: event.candidate, receiverId: this.id })
+                  );
+                };
+
+                socket.emit("ANSWER", JSON.stringify(answerPack));
+              }
+            })
+            .catch((e) => {
+              console.error(e);
+            });
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    });
+
+  socket.on("ANSWER", (dataString) => {
+    const answerPack = JSON.parse(dataString);
+    this.peerConnection
+      .setRemoteDescription(answerPack.sdp)
+      .then(() => {
+        socket.on("ICE_CANDIDATE", (dataString) => {
+          const data = JSON.parse(dataString);
+          this.peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
+        });
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  });
   }
 
   onAudioActivity(gain: number): void {

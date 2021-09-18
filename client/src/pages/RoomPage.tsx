@@ -71,7 +71,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     setShowNotification(true);
     if (id != socket.id) {
       addNewPeer(id);
-      broadcastOffer(socket);
+      broadcastOffer();
     }
   };
 

@@ -53,16 +53,21 @@ export class PeerProcessor {
     this.peerConnection.ontrack = (event) => {
       this.updateLocalTrack(event.track);
     };
+
+    this.peerConnection.onconnectionstatechange = (event) => {
+      console.log(this.peerConnection);
+    };
+
+    this.peerConnection.ondatachannel = (event) => {
+      const dc = event.channel;
+      if (dc.label === DCLabel) {
+        this.initializeDataChannel(dc);
+      }
+    };
+
     // emit an answer when offer is received
     socket.on("OFFER", (dataString) => {
       const offerPack = JSON.parse(dataString);
-      // set the local datachannel and event handlers on connect
-      this.peerConnection.ondatachannel = (event) => {
-        const dc = event.channel;
-        if (dc.label === DCLabel) {
-          this.initializeDataChannel(dc);
-        }
-      };
       this.peerConnection
         .setRemoteDescription(offerPack.sdp) // set remote description as the peerProcessor's
         .then(() => {
@@ -82,7 +87,7 @@ export class PeerProcessor {
                 const answerPack = Pack({
                   sdp: this.peerConnection.localDescription,
                   userId: socket.id,
-                  receiverId: offerPack.peerProcessorId,
+                  receiverId: offerPack.userId,
                   kind: "answer",
                 });
 
@@ -121,7 +126,11 @@ export class PeerProcessor {
     });
   }
 
-  initialize(initialSelfPosition: [number, number], initialUserInfo: UserInfo, visualizer: AudioVisualizer): void {
+  initialize(
+    initialSelfPosition: [number, number],
+    initialUserInfo: UserInfo,
+    visualizer: AudioVisualizer
+  ): void {
     this.selfPosition = initialSelfPosition;
     this.userInfo = initialUserInfo;
     this.visualizer = visualizer;

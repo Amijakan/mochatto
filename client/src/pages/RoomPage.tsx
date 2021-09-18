@@ -71,7 +71,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     setShowNotification(true);
     if (id != socket.id) {
       addNewPeer(id);
-      updateAllTracks(stream.getAudioTracks()[0]);
       broadcastOffer(socket);
     }
   };
@@ -87,6 +86,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       new AudioVisualizer(peerProcessor.onAudioActivity.bind(peerProcessor))
     );
     pushToNetwork(peerProcessor);
+    updateAllTracks(stream.getAudioTracks()[0]);
   };
 
   const onLeave = (id: string) => {

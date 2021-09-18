@@ -34,13 +34,30 @@ export const broadcastOffer = (socket: Socket): void => {
         return peerProcessor.peerConnection.setLocalDescription(offer);
       })
       .then(() => {
+        const iceCandidates: RTCIceCandidate[] = [];
         peerProcessor.peerConnection.onicecandidate = (event) => {
-          // needs to wait until the remote sdp is set on the receiver side
-          socket.emit(
-            "ICE_CANDIDATE",
-            JSON.stringify({ ice: event.candidate, receiverId: peerProcessor.id })
-          );
+          if (event.candidate) {
+            iceCandidates.push(event.candidate);
+          }
         };
+        socket.on("SDP_RECEIVED", () => {
+          iceCandidates.forEach((iceCandidate) => {
+            socket.emit(
+              "ICE_CANDIDATE",
+              JSON.stringify({ ice: iceCandidate, receiverId: peerProcessor.id })
+            );
+          });
+          peerProcessor.peerConnection.onicecandidate = (event) => {
+            if (peerProcessor.peerConnection.iceGatheringState === "gathering") {
+              if (event.candidate) {
+                socket.emit(
+                  "ICE_CANDIDATE",
+                  JSON.stringify({ ice: event.candidate, receiverId: peerProcessor.id })
+                );
+              }
+            }
+          };
+        });
 
         if (peerProcessor.peerConnection.localDescription) {
           const offerPack = Pack({

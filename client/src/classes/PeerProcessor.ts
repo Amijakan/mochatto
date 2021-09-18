@@ -132,7 +132,6 @@ export class PeerProcessor {
         .then(() => {
           socket.emit("SDP_RECEIVED", answerPack.userId);
           socket.on("ICE_CANDIDATE", (dataString) => {
-            console.log("ice received");
             const data = JSON.parse(dataString);
             this.peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
           });

@@ -70,7 +70,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     // if the id is not self, configure the new user and send offer
     setShowNotification(true);
     if (id != socket.id) {
-      console.log("HELLO");
       addNewPeer(id);
       updateAllTracks(stream.getAudioTracks()[0]);
       broadcastOffer(socket);
@@ -81,7 +80,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   // set the user setPosition callback to change the state
   // add the user
   const addNewPeer = (userId) => {
-    const peerProcessor = new PeerProcessor(userId, socket, addAvatar, addUserInfo);
+    const peerProcessor = new PeerProcessor(userId, socket, addAvatar(userId), addUserInfo(userId));
     peerProcessor.initialize(
       selfPositionRef.current,
       selfUserInfoRef.current,

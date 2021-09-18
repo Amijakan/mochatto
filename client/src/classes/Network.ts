@@ -26,7 +26,7 @@ const peerProcessors: PeerProcessor[] = [];
 export const timeout = 500;
 
 // send out offer to every peer users on network
-export const broadcastOffer = (socket: Socket): void => {
+export const broadcastOffer = (): void => {
   peerProcessors.forEach((peerProcessor) => {
     peerProcessor.sendOffer();
   });

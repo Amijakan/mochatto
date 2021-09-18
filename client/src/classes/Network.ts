@@ -76,12 +76,6 @@ export const getPeerProcessors = (): PeerProcessor[] => {
   return peerProcessors;
 };
 
-// find peerProcessor by its socketid
-const findPeerProcessorById = (id: string): PeerProcessor => {
-  const peerProcessor = peerProcessors.find((pp) => pp.id === id);
-  return peerProcessor as PeerProcessor;
-};
-
 // update tracks for all peer connections
 export const updateAllTracks = (track: MediaStreamTrack): void => {
   peerProcessors.forEach((peerProcessor) => {

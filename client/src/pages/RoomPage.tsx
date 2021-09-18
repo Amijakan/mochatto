@@ -8,9 +8,6 @@ import {
   removeFromNetwork,
   updateAllTracks,
   broadcastOffer,
-  openOfferListener,
-  openAnswerListener,
-  getPeerProcessors,
   broadcastData,
 } from "../classes/Network";
 import {
@@ -84,7 +81,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   // set the user setPosition callback to change the state
   // add the user
   const setNewUser = (userId) => {
-    const peerProcessor = new PeerProcessor(userId, addAvatar, addUserInfo);
+    const peerProcessor = new PeerProcessor(userId, socket, addAvatar, addUserInfo);
     peerProcessor.setSelfPosition(selfPositionRef.current);
     peerProcessor.userInfo = selfUserInfoRef.current;
     peerProcessor.visualizer = new AudioVisualizer(
@@ -112,8 +109,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     openJoinListener(socket, onNewJoin);
     openLeaveListener(socket, setAnnouncement, onLeave);
     openRequestUsersListener(name, socket, setNewUser);
-    openOfferListener(socket);
-    openAnswerListener(socket);
     updateVisualizer(new AudioVisualizer(onAudioActivity));
   }, []);
 

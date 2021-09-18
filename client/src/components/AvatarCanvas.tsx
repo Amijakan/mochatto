@@ -81,7 +81,7 @@ function AvatarCanvas({
             _borderColor={info.avatarColor.border}
             pos={position}
             isSelf={false}
-            initial={info.name ? info.name[0] : ""}
+            initial={info.name[0]}
           />
         );
       })}

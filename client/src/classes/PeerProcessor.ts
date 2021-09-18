@@ -121,7 +121,7 @@ export class PeerProcessor {
     });
   }
 
-  initialize(initialSelfPosition, initialUserInfo, visualizer): void {
+  initialize(initialSelfPosition: [number, number], initialUserInfo: UserInfo, visualizer: AudioVisualizer): void {
     this.selfPosition = initialSelfPosition;
     this.userInfo = initialUserInfo;
     this.visualizer = visualizer;

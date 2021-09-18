@@ -23,38 +23,12 @@ export const Pack = ({
 };
 
 const peerProcessors: PeerProcessor[] = [];
+export const timeout = 500;
 
 // send out offer to every peer users on network
 export const broadcastOffer = (socket: Socket): void => {
   peerProcessors.forEach((peerProcessor) => {
-    peerProcessor.initializeDataChannel(peerProcessor.peerConnection.createDataChannel(DCLabel));
-    peerProcessor.peerConnection
-      .createOffer()
-      .then((offer) => {
-        return peerProcessor.peerConnection.setLocalDescription(offer);
-      })
-      .then(() => {
-        if (peerProcessor.peerConnection.localDescription) {
-          const offerPack = Pack({
-            sdp: peerProcessor.peerConnection.localDescription,
-            userId: socket.id,
-            receiverId: peerProcessor.id,
-            kind: "offer",
-          });
-
-          peerProcessor.peerConnection.onicecandidate = (event) => {
-            socket.emit(
-              "ICE_CANDIDATE",
-              JSON.stringify({ ice: event.candidate, receiverId: peerProcessor.id })
-            );
-          };
-
-          socket.emit("OFFER", JSON.stringify(offerPack));
-        }
-      })
-      .catch((e) => {
-        console.error(e);
-      });
+    peerProcessor.sendOffer();
   });
 };
 
@@ -65,7 +39,9 @@ export const pushToNetwork = (peerProcessor: PeerProcessor): void => {
 
 // remove peerProcessor to the network
 export const removeFromNetwork = (id: string): void => {
-  const peerProcessorIndex = peerProcessors.findIndex((peerProcessor) => peerProcessor.id === id);
+  const peerProcessorIndex = peerProcessors.findIndex(
+    (peerProcessor) => peerProcessor.peerId === id
+  );
   if (peerProcessors[peerProcessorIndex]) {
     peerProcessors.splice(peerProcessorIndex, 1);
   }

@@ -4,22 +4,19 @@ import { DeviceSelector } from "../components/DeviceSelector";
 import { Div, Notification, Icon, Text } from "atomize";
 import AvatarCanvas from "../components/AvatarCanvas";
 import {
-  addUserToNetwork,
-  removeUserFromNetwork,
+  pushToNetwork,
+  removeFromNetwork,
   updateAllTracks,
-  sendOffer,
-  openOfferListener,
-  openAnswerListener,
-  getUsers,
-  updateAvatarPositions,
-} from "../classes/RTCPeerConnector";
+  broadcastOffer,
+  broadcastData,
+} from "../classes/Network";
 import {
   requestNetworkInfo,
   openJoinListener,
   openLeaveListener,
   openRequestUsersListener,
 } from "./RoomPageHelper";
-import User from "../classes/User";
+import { PeerProcessor } from "../classes/PeerProcessor";
 import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "../classes/AudioVisualizer";
 import { RoomTemplate } from "../templates";
@@ -73,28 +70,27 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     // if the id is not self, configure the new user and send offer
     setShowNotification(true);
     if (id != socket.id) {
-      console.log("HELLO");
-      setNewUser(id);
-      updateAllTracks(stream.getAudioTracks()[0]);
-      sendOffer(socket);
+      addNewPeer(id);
+      broadcastOffer(socket);
     }
   };
 
   // add a new position array in the peerPositions state
   // set the user setPosition callback to change the state
   // add the user
-  const setNewUser = (userId) => {
-    const user = new User(userId);
-    user.setPosition = addAvatar(userId);
-    user.setUserInfo = addUserInfo(userId);
-    user.setSelfPosition(selfPositionRef.current);
-    user.userInfo = selfUserInfoRef.current;
-    user.visualizer = new AudioVisualizer(user.onAudioActivity.bind(user));
-    addUserToNetwork(user);
+  const addNewPeer = (userId) => {
+    const peerProcessor = new PeerProcessor(userId, socket, addAvatar(userId), addUserInfo(userId));
+    peerProcessor.initialize(
+      selfPositionRef.current,
+      selfUserInfoRef.current,
+      new AudioVisualizer(peerProcessor.onAudioActivity.bind(peerProcessor))
+    );
+    pushToNetwork(peerProcessor);
+    updateAllTracks(stream.getAudioTracks()[0]);
   };
 
   const onLeave = (id: string) => {
-    removeUserFromNetwork(id);
+    removeFromNetwork(id);
     removeAvatar(id);
     removeUserInfo(id);
     setNotificationTheme("leave");
@@ -111,15 +107,12 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     requestNetworkInfo(socket);
     openJoinListener(socket, onNewJoin);
     openLeaveListener(socket, setAnnouncement, onLeave);
-    openRequestUsersListener(name, socket, setNewUser);
-    openOfferListener(getUsers(), socket);
-    openAnswerListener(getUsers(), socket);
+    openRequestUsersListener(name, socket, addNewPeer);
     updateVisualizer(new AudioVisualizer(onAudioActivity));
   }, []);
 
   useEffect(() => {
     updateAllTracks(stream.getAudioTracks()[0]);
-    sendOffer(socket);
     if (visualizerRef.current) {
       visualizerRef.current.setStream(stream);
     }
@@ -127,11 +120,18 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // update remote position when avatar is dragged
   useEffect(() => {
-    updateAvatarPositions(selfPositionRef.current);
-  }, [selfPosition]);
+    broadcastData({ position: selfPositionRef.current });
+  }, [selfPositionRef.current]);
 
   return (
-    <RoomTemplate sideDrawerComponent={<>Hello</>}>
+    <RoomTemplate
+      sideDrawerComponent={
+        <Div>
+          <Text>Choose your audio input source.</Text>
+          <DeviceSelector onSelect={onSelect} />
+        </Div>
+      }
+    >
       <>
         <Notification
           isOpen={showNotification}
@@ -149,10 +149,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         >
           {announcement}
         </Notification>
-        <Div>
-          <Text>Choose your audio input source.</Text>
-          <DeviceSelector onSelect={onSelect} />
-        </Div>
         <Div w="50%" p={{ x: "1.25rem", y: "1.25rem" }}>
           <AvatarCanvas
             selfUserInfo={selfUserInfoRef.current}

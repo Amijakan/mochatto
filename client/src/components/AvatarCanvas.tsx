@@ -59,15 +59,14 @@ function AvatarCanvas({
         key={0}
         multiplier={selfUserInfo.multiplier}
         onPointerDown={_onPointerDown}
-        _backgroundColor={selfUserInfo.avatarColor?.background || "black"}
-        _borderColor={selfUserInfo.avatarColor?.border || "gray"}
+        _backgroundColor={selfUserInfo.avatarColor.background}
+        _borderColor={selfUserInfo.avatarColor.border}
         pos={selfPosition}
         isSelf={true}
         initial={selfUserInfo.name[0]}
       />
       {positions.map((position, index) => {
         let info = userInfos[index];
-        console.log("Info", info);
         if (!info) {
           info = defaultUserInfo;
         }
@@ -76,13 +75,13 @@ function AvatarCanvas({
             key={index + 1}
             multiplier={info.multiplier}
             onPointerDown={() => {
-              console.log("not your avatar!");
+              console.debug("not your avatar!");
             }}
-            _backgroundColor={info.avatarColor?.background || "black"}
-            _borderColor={info.avatarColor?.border || "gray"}
+            _backgroundColor={info.avatarColor.background}
+            _borderColor={info.avatarColor.border}
             pos={position}
             isSelf={false}
-            initial={info.name ? info.name[0] : ""}
+            initial={info.name[0]}
           />
         );
       })}

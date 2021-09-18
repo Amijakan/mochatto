@@ -1,5 +1,4 @@
 import { PeerProcessor, DataPackage } from "./PeerProcessor";
-import { Socket } from "socket.io-client";
 
 export const DCLabel = "DATACHANNEL";
 

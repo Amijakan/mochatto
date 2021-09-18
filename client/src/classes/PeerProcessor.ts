@@ -1,7 +1,7 @@
 import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "./AudioVisualizer";
 import { Socket } from "socket.io-client";
-import { DCLabel, Pack } from "./Network";
+import { timeout, DCLabel, Pack } from "./Network";
 
 export interface DataPackage {
   position: [number, number];
@@ -13,7 +13,7 @@ export class PeerProcessor {
   dataChannel: RTCDataChannel;
   socket: Socket;
   sender: RTCRtpSender;
-  id: string;
+  peerId: string;
   stream: MediaStream;
   player: HTMLAudioElement;
   selfPosition: [number, number];
@@ -25,12 +25,12 @@ export class PeerProcessor {
   addUserInfo: (info) => void;
   userInfo: UserInfo;
   constructor(
-    id: string,
+    peerId: string,
     socket: Socket,
     addPosition: (position) => void,
     addUserInfo: (info) => void
   ) {
-    this.id = id;
+    this.peerId = peerId;
     this.sender = null as unknown as RTCRtpSender;
     this.dataChannel = null as unknown as RTCDataChannel;
     // initialize with a free public STUN server to find out public ip, NAT type, and internet side port
@@ -90,7 +90,7 @@ export class PeerProcessor {
                 this.peerConnection.onicecandidate = (event) => {
                   socket.emit(
                     "ICE_CANDIDATE",
-                    JSON.stringify({ ice: event.candidate, receiverId: this.id })
+                    JSON.stringify({ ice: event.candidate, receiverId: this.peerId })
                   );
                 };
 
@@ -120,6 +120,45 @@ export class PeerProcessor {
           console.error(e);
         });
     });
+  }
+
+  sendOffer(): void {
+    this.initializeDataChannel(this.peerConnection.createDataChannel(DCLabel));
+    this.peerConnection
+      .createOffer()
+      .then((offer) => {
+        return this.peerConnection.setLocalDescription(offer);
+      })
+      .then(() => {
+        if (this.peerConnection.localDescription) {
+          const offerPack = Pack({
+            sdp: this.peerConnection.localDescription,
+            userId: this.socket.id,
+            receiverId: this.peerId,
+            kind: "offer",
+          });
+
+          this.peerConnection.onicecandidate = (event) => {
+            this.socket.emit(
+              "ICE_CANDIDATE",
+              JSON.stringify({ ice: event.candidate, receiverId: this.peerId })
+            );
+          };
+
+          this.socket.emit("OFFER", JSON.stringify(offerPack));
+
+          setTimeout(() => {
+            if (this.peerConnection.connectionState != "connected") {
+              console.warn("Timed out, retrying connection");
+              this.peerConnection.restartIce();
+              this.sendOffer();
+            }
+          }, timeout);
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   }
 
   initialize(

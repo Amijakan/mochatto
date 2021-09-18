@@ -2,6 +2,7 @@ import express from "express";
 import { Server } from "socket.io";
 import { createServer } from "http";
 import cors from "cors";
+
 const app = express();
 const port = 4000;
 const server = app.listen(port, () => {
@@ -10,7 +11,7 @@ const server = app.listen(port, () => {
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:4500"],
+    origin: ["http://localhost:4500", "http://localhost:4600"],
   },
 });
 
@@ -62,9 +63,6 @@ io.of((nsp, query, next) => {
     const targetId = JSON.parse(dataString).receiverId;
     console.log(socket.id + " has sent answer to " + targetId);
     io.of(socket.nsp.name).to(targetId).emit("ANSWER", dataString);
-  });
-  socket.on("SDP_RECEIVED", (sdpSenderId) => {
-    io.of(socket.nsp.name).to(sdpSenderId).emit("SDP_RECEIVED");
   });
   socket.on("ICE_CANDIDATE", (dataString) => {
     const targetId = JSON.parse(dataString).receiverId;

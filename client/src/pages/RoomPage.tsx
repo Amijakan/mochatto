@@ -120,7 +120,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // update remote position when avatar is dragged
   useEffect(() => {
-    broadcastData({ position: selfPositionRef.current });
+    console.log(selfUserInfoRef.current);
+    broadcastData({ position: selfPositionRef.current, info: selfUserInfoRef.current });
   }, [selfPositionRef.current]);
 
   return (

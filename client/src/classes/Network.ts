@@ -25,7 +25,7 @@ const peerProcessors: PeerProcessor[] = [];
 const DCLabel = "DATACHANNEL";
 
 // send out offer to every peer users on network
-export const sendOffer = (socket: Socket): void => {
+export const broadcastOffer = (socket: Socket): void => {
   peerProcessors.forEach((peerProcessor) => {
     peerProcessor.initializeDataChannel(peerProcessor.peerConnection.createDataChannel(DCLabel));
     peerProcessor.peerConnection

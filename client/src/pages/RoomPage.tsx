@@ -7,7 +7,7 @@ import {
   pushToNetwork,
   removeFromNetwork,
   updateAllTracks,
-  sendOffer,
+  broadcastOffer,
   openOfferListener,
   openAnswerListener,
   getPeerProcessors,
@@ -76,7 +76,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       console.log("HELLO");
       setNewUser(id);
       updateAllTracks(stream.getAudioTracks()[0]);
-      sendOffer(socket);
+      broadcastOffer(socket);
     }
   };
 
@@ -119,7 +119,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   useEffect(() => {
     updateAllTracks(stream.getAudioTracks()[0]);
-    sendOffer(socket);
+    broadcastOffer(socket);
     if (visualizerRef.current) {
       visualizerRef.current.setStream(stream);
     }

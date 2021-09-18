@@ -124,7 +124,14 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, [selfPositionRef.current]);
 
   return (
-    <RoomTemplate sideDrawerComponent={<>Hello</>}>
+    <RoomTemplate
+      sideDrawerComponent={
+        <Div>
+          <Text>Choose your audio input source.</Text>
+          <DeviceSelector onSelect={onSelect} />
+        </Div>
+      }
+    >
       <>
         <Notification
           isOpen={showNotification}
@@ -142,10 +149,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         >
           {announcement}
         </Notification>
-        <Div>
-          <Text>Choose your audio input source.</Text>
-          <DeviceSelector onSelect={onSelect} />
-        </Div>
         <Div w="50%" p={{ x: "1.25rem", y: "1.25rem" }}>
           <AvatarCanvas
             selfUserInfo={selfUserInfoRef.current}

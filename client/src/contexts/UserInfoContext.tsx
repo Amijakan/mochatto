@@ -34,15 +34,15 @@ export const UserInfoProvider = ({ children }: { children: JSX.Element }): JSX.E
           newInfo = { ...newInfo, [key]: action.data[key] };
         });
         Object.keys(defaultUserInfo).forEach((key) => {
-          if(!newInfo[key]){
+          if (!newInfo[key]) {
             newInfo[key] = defaultUserInfo[key];
           }
         });
         return { ...userInfos, [action.id]: newInfo };
       }
       case "remove": {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { [action.id]: _toRemove, ...removed } = userInfos;
-        console.log(_toRemove);
         return removed;
       }
       default:

@@ -67,7 +67,6 @@ function AvatarCanvas({
       />
       {positions.map((position, index) => {
         let info = userInfos[index];
-        console.log("Info", info);
         if (!info) {
           info = defaultUserInfo;
         }
@@ -76,7 +75,7 @@ function AvatarCanvas({
             key={index + 1}
             multiplier={info.multiplier}
             onPointerDown={() => {
-              console.log("not your avatar!");
+              console.debug("not your avatar!");
             }}
             _backgroundColor={info.avatarColor.background}
             _borderColor={info.avatarColor.border}

@@ -54,10 +54,6 @@ export class PeerProcessor {
       this.updateLocalTrack(event.track);
     };
 
-    this.peerConnection.onconnectionstatechange = (event) => {
-      console.log(this.peerConnection);
-    };
-
     this.peerConnection.ondatachannel = (event) => {
       const dc = event.channel;
       if (dc.label === DCLabel) {

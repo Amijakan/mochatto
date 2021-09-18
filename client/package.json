@@ -23,7 +23,7 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "HTTPS=true SSL_CRT_FILE=localhost.pem SSL_KEY_FILE=localhost-key.pem PORT=4500 react-scripts start",
+    "start": "PORT=4500 react-scripts start",
     "build": "react-scripts build",
     "devTest": "yarn run cypress open",
     "test": "npx cypress run --record --key 7af4c11b-fe02-4012-bfde-b35c55f2306b",

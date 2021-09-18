@@ -14,29 +14,24 @@ export const listInputDevices = (
   onError: (MediaStreamError) => void = defaultOnError
 ): Promise<{ value: string; label: string }[]> => {
   const inputs: { value: string; label: string }[] = [];
-  if (navigator.mediaDevices) {
-    return navigator.mediaDevices
-      .enumerateDevices()
-      .then((devices) => {
-        devices.map((device) => {
-          if (device.kind === "audioinput") {
-            const input = Device();
-            input.value = device.deviceId;
-            input.label = device.label;
-            inputs.push(input);
-            return null;
-          }
-        });
-        return inputs;
-      })
-      .catch((e) => {
-        onError(e);
-        return [Device()];
+  return navigator.mediaDevices
+    .enumerateDevices()
+    .then((devices) => {
+      devices.map((device) => {
+        if (device.kind === "audioinput") {
+          const input = Device();
+          input.value = device.deviceId;
+          input.label = device.label;
+          inputs.push(input);
+          return null;
+        }
       });
-  }
-  return new Promise(() => {
-    return [Device()];
-  });
+      return inputs;
+    })
+    .catch((e) => {
+      onError(e);
+      return [Device()];
+    });
 };
 
 // select a device as the input device
@@ -45,22 +40,20 @@ export const selectInputDevice = (
   useStream: (MediaStream) => void,
   onError: (MediaStreamError) => void = defaultOnError
 ): void => {
-  if (navigator.mediaDevices) {
-    navigator.mediaDevices
-      .getUserMedia({
-        audio: {
-          deviceId: id,
-          autoGainControl: false,
-          echoCancellation: false,
-          noiseSuppression: false,
-        },
-        video: false,
-      })
-      .then((stream) => {
-        useStream(stream);
-      })
-      .catch((e) => {
-        onError(e);
-      });
-  }
+  navigator.mediaDevices
+    .getUserMedia({
+      audio: {
+        deviceId: id,
+        autoGainControl: false,
+        echoCancellation: false,
+        noiseSuppression: false,
+      },
+      video: false,
+    })
+    .then((stream) => {
+      useStream(stream);
+    })
+    .catch((e) => {
+      onError(e);
+    });
 };

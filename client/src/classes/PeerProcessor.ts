@@ -67,6 +67,7 @@ export class PeerProcessor {
       this.peerConnection
         .setRemoteDescription(offerPack.sdp) // set remote description as the peerProcessor's
         .then(() => {
+          socket.emit("SDP_RECEIVED", JSON.stringify(offerPack));
           socket.on("ICE_CANDIDATE", (dataString) => {
             const data = JSON.parse(dataString);
             this.peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
@@ -112,6 +113,7 @@ export class PeerProcessor {
       this.peerConnection
         .setRemoteDescription(answerPack.sdp)
         .then(() => {
+          socket.emit("SDP_RECEIVED", JSON.stringify(answerPack));
           socket.on("ICE_CANDIDATE", (dataString) => {
             const data = JSON.parse(dataString);
             this.peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));

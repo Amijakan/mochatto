@@ -72,6 +72,10 @@ io.of((nsp, query, next) => {
     console.log(socket.id + " has sent answer to " + targetId);
     io.of(socket.nsp.name).to(targetId).emit("ANSWER", dataString);
   });
+  socket.on("SDP_RECEIVED", (dataString) => {
+    const targetId = JSON.parse(dataString).userId;
+    io.of(socket.nsp.name).to(targetId).emit("SDP_RECEIVED", dataString);
+  });
   socket.on("ICE_CANDIDATE", (dataString) => {
     const targetId = JSON.parse(dataString).receiverId;
     io.of(socket.nsp.name).to(targetId).emit("ICE_CANDIDATE", dataString);

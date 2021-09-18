@@ -34,6 +34,31 @@ export const broadcastOffer = (socket: Socket): void => {
         return peerProcessor.peerConnection.setLocalDescription(offer);
       })
       .then(() => {
+        const iceCandidates: RTCIceCandidate[] = [];
+        peerProcessor.peerConnection.onicecandidate = (event) => {
+          if (event.candidate) {
+            iceCandidates.push(event.candidate);
+          }
+        };
+        socket.on("SDP_RECEIVED", () => {
+          iceCandidates.forEach((iceCandidate) => {
+            socket.emit(
+              "ICE_CANDIDATE",
+              JSON.stringify({ ice: iceCandidate, receiverId: peerProcessor.id })
+            );
+          });
+          peerProcessor.peerConnection.onicecandidate = (event) => {
+            if (peerProcessor.peerConnection.iceGatheringState === "gathering") {
+              if (event.candidate) {
+                socket.emit(
+                  "ICE_CANDIDATE",
+                  JSON.stringify({ ice: event.candidate, receiverId: peerProcessor.id })
+                );
+              }
+            }
+          };
+        });
+
         if (peerProcessor.peerConnection.localDescription) {
           const offerPack = Pack({
             sdp: peerProcessor.peerConnection.localDescription,
@@ -41,13 +66,6 @@ export const broadcastOffer = (socket: Socket): void => {
             receiverId: peerProcessor.id,
             kind: "offer",
           });
-
-          peerProcessor.peerConnection.onicecandidate = (event) => {
-            socket.emit(
-              "ICE_CANDIDATE",
-              JSON.stringify({ ice: event.candidate, receiverId: peerProcessor.id })
-            );
-          };
 
           socket.emit("OFFER", JSON.stringify(offerPack));
         }

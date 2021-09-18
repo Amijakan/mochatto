@@ -2,16 +2,24 @@ import express from "express";
 import { Server } from "socket.io";
 import { createServer } from "http";
 import cors from "cors";
+import https from "https";
+import fs from "fs";
+
+const privateKey = fs.readFileSync("localhost-key.pem", "utf8");
+const certificate = fs.readFileSync("localhost.pem", "utf8");
+
+const credentials = { key: privateKey, cert: certificate };
 
 const app = express();
+const httpsServer = https.createServer(credentials, app);
 const port = 4000;
-const server = app.listen(port, () => {
+const server = httpsServer.listen(port, () => {
   return console.log(`server is listening on ${port}`);
 });
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:4500", "http://localhost:4600"],
+    origin: "*",
   },
 });
 
@@ -63,6 +71,9 @@ io.of((nsp, query, next) => {
     const targetId = JSON.parse(dataString).receiverId;
     console.log(socket.id + " has sent answer to " + targetId);
     io.of(socket.nsp.name).to(targetId).emit("ANSWER", dataString);
+  });
+  socket.on("SDP_RECEIVED", (sdpSenderId) => {
+    io.of(socket.nsp.name).to(sdpSenderId).emit("SDP_RECEIVED");
   });
   socket.on("ICE_CANDIDATE", (dataString) => {
     const targetId = JSON.parse(dataString).receiverId;

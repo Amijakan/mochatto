@@ -113,7 +113,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   useEffect(() => {
     updateAllTracks(stream.getAudioTracks()[0]);
-    broadcastOffer(socket);
     if (visualizerRef.current) {
       visualizerRef.current.setStream(stream);
     }

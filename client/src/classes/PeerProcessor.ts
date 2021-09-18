@@ -234,8 +234,11 @@ export class PeerProcessor {
   // Update the shared mediastream to the new audio input
   updateRemoteTrack(track: MediaStreamTrack): void {
     if (this.sender) {
-      this.peerConnection.removeTrack(this.sender);
+      this.sender.replaceTrack(track).catch((e) => {
+        console.warn(e);
+      });
+    } else {
+      this.setSender(this.peerConnection.addTrack(track));
     }
-    this.setSender(this.peerConnection.addTrack(track));
   }
 }

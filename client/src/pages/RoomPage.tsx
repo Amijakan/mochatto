@@ -3,19 +3,8 @@ import { SocketContext, PositionsContext, DeviceContext, UserInfoContext } from 
 import { DeviceSelector } from "../components/DeviceSelector";
 import { Div, Notification, Icon, Text } from "atomize";
 import AvatarCanvas from "../components/AvatarCanvas";
-import {
-  pushToNetwork,
-  removeFromNetwork,
-  updateAllTracks,
-  broadcastOffer,
-  broadcastData,
-} from "../classes/Network";
-import {
-  requestNetworkInfo,
-  openJoinListener,
-  openLeaveListener,
-  openRequestUsersListener,
-} from "./RoomPageHelper";
+import { Network } from "../classes/Network";
+import { openJoinListener, openLeaveListener } from "./RoomPageHelper";
 import { PeerProcessor } from "../classes/PeerProcessor";
 import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "../classes/AudioVisualizer";
@@ -42,6 +31,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const [selfUserInfo, setSelfUserInfo] = useState<UserInfo>({ ...defaultUserInfo, name });
   const selfUserInfoRef = useRef(selfUserInfo);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
+
+  const [network, setNetwork] = useState<Network>(null as unknown as Network);
 
   // when new input is selected update all tracks and send a new offer out
   const onSelect = (_stream) => {

@@ -1,4 +1,4 @@
-import { PeerProcessor, DataPackage } from "./PeerProcessor";
+import { PeerProcessor } from "./PeerProcessor";
 import { AudioVisualizer } from "./AudioVisualizer";
 import { UserInfo } from "../contexts/UserInfoContext";
 import { Socket } from "socket.io-client";

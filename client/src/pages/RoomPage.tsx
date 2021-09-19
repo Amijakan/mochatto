@@ -69,7 +69,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   useEffect(() => {
     setNetwork(new Network(socket, name, addUserInfo, selfUserInfoRef.current, stream));
 
-    socket.on("JOIN", ({ name, id }) => {
+    socket.on("JOIN", ({ name }) => {
       onJoin(name);
     });
 

@@ -16,20 +16,13 @@ export class PeerProcessor {
   peerId: string;
   stream: MediaStream;
   player: HTMLAudioElement;
-  selfPosition: [number, number];
-  peerPosition: [number, number];
   visualizer: AudioVisualizer;
   multiplier: number;
   // a function to update the positions array context
-  addPosition: (positionString) => void;
   addUserInfo: (info) => void;
-  userInfo: UserInfo;
-  constructor(
-    peerId: string,
-    socket: Socket,
-    addPosition: (position) => void,
-    addUserInfo: (info) => void
-  ) {
+  selfUserInfo: UserInfo;
+  peerUserInfo: UserInfo;
+  constructor(peerId: string, socket: Socket, addUserInfo: (info) => void) {
     this.peerId = peerId;
     this.sender = null as unknown as RTCRtpSender;
     this.dataChannel = null as unknown as RTCDataChannel;
@@ -41,12 +34,10 @@ export class PeerProcessor {
     this.stream = new MediaStream();
     this.visualizer = null as unknown as AudioVisualizer;
     this.player = new Audio();
-    this.selfPosition = [0, 0];
-    this.peerPosition = [0, 0];
     // the function is re-assigned during the user's initialization
-    this.addPosition = addPosition;
     this.addUserInfo = addUserInfo;
-    this.userInfo = defaultUserInfo;
+    this.selfUserInfo = defaultUserInfo;
+    this.peerUserInfo = defaultUserInfo;
     this.socket = socket;
 
     // listener for when a peer adds a track
@@ -60,66 +51,6 @@ export class PeerProcessor {
         this.initializeDataChannel(dc);
       }
     };
-
-    // emit an answer when offer is received
-    socket.on("OFFER", (dataString) => {
-      const offerPack = JSON.parse(dataString);
-      this.peerConnection
-        .setRemoteDescription(offerPack.sdp) // set remote description as the peerProcessor's
-        .then(() => {
-          socket.on("ICE_CANDIDATE", (dataString) => {
-            const data = JSON.parse(dataString);
-            this.peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
-          });
-
-          this.peerConnection
-            .createAnswer()
-            .then((answer) => {
-              return this.peerConnection.setLocalDescription(answer);
-            })
-            .then(() => {
-              if (this.peerConnection.localDescription) {
-                // create the answer
-                const answerPack = Pack({
-                  sdp: this.peerConnection.localDescription,
-                  userId: socket.id,
-                  receiverId: offerPack.userId,
-                  kind: "answer",
-                });
-
-                this.peerConnection.onicecandidate = (event) => {
-                  socket.emit(
-                    "ICE_CANDIDATE",
-                    JSON.stringify({ ice: event.candidate, receiverId: this.peerId })
-                  );
-                };
-
-                socket.emit("ANSWER", JSON.stringify(answerPack));
-              }
-            })
-            .catch((e) => {
-              console.error(e);
-            });
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    });
-
-    socket.on("ANSWER", (dataString) => {
-      const answerPack = JSON.parse(dataString);
-      this.peerConnection
-        .setRemoteDescription(answerPack.sdp)
-        .then(() => {
-          socket.on("ICE_CANDIDATE", (dataString) => {
-            const data = JSON.parse(dataString);
-            this.peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
-          });
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    });
   }
 
   sendOffer(): void {
@@ -131,19 +62,37 @@ export class PeerProcessor {
       })
       .then(() => {
         if (this.peerConnection.localDescription) {
+          const iceCandidates: RTCIceCandidate[] = [];
+          this.peerConnection.onicecandidate = (event) => {
+            if (event.candidate) {
+              iceCandidates.push(event.candidate);
+            }
+          };
+          this.socket.on("SDP_RECEIVED", () => {
+            iceCandidates.forEach((iceCandidate) => {
+              this.socket.emit(
+                "ICE_CANDIDATE",
+                JSON.stringify({ ice: iceCandidate, receiverId: this.peerId })
+              );
+            });
+            this.peerConnection.onicecandidate = (event) => {
+              if (this.peerConnection.iceGatheringState === "gathering") {
+                if (event.candidate) {
+                  this.socket.emit(
+                    "ICE_CANDIDATE",
+                    JSON.stringify({ ice: event.candidate, receiverId: this.peerId })
+                  );
+                }
+              }
+            };
+          });
+
           const offerPack = Pack({
             sdp: this.peerConnection.localDescription,
             userId: this.socket.id,
             receiverId: this.peerId,
             kind: "offer",
           });
-
-          this.peerConnection.onicecandidate = (event) => {
-            this.socket.emit(
-              "ICE_CANDIDATE",
-              JSON.stringify({ ice: event.candidate, receiverId: this.peerId })
-            );
-          };
 
           this.socket.emit("OFFER", JSON.stringify(offerPack));
 
@@ -161,13 +110,8 @@ export class PeerProcessor {
       });
   }
 
-  initialize(
-    initialSelfPosition: [number, number],
-    initialUserInfo: UserInfo,
-    visualizer: AudioVisualizer
-  ): void {
-    this.selfPosition = initialSelfPosition;
-    this.userInfo = initialUserInfo;
+  initialize(initialUserInfo: UserInfo, visualizer: AudioVisualizer): void {
+    this.selfUserInfo = initialUserInfo;
     this.visualizer = visualizer;
   }
 
@@ -190,8 +134,7 @@ export class PeerProcessor {
 
   // runs when the data channel opens
   onDataChannelOpen(): void {
-    const data = { position: this.selfPosition, info: this.userInfo };
-    this.dataChannel.send(JSON.stringify(data));
+    this.send(this.selfUserInfo);
   }
 
   // runs when the data channel closes
@@ -200,24 +143,28 @@ export class PeerProcessor {
   }
 
   onDataChannelMessage(event: MessageEvent): void {
-    const data = JSON.parse(event.data);
-    if (data.info) {
-      this.addUserInfo(data.info);
-    }
-    if (data.position) {
-      this.peerPosition = data.position;
-      this.updateVolume();
-      this.addPosition(data.position);
+    const info = JSON.parse(event.data);
+    this.addUserInfo(info);
+    this.peerUserInfo = info;
+    this.updateVolume();
+  }
+
+  send(info: UserInfo): void {
+    this.updateSelfUserInfo(info);
+    if (this.dataChannel) {
+      if (this.dataChannel.readyState === "open") {
+        this.dataChannel.send(JSON.stringify(info));
+      }
     }
   }
 
-  setSelfPosition(position: [number, number]): void {
-    this.selfPosition = position;
+  updateSelfUserInfo(info: UserInfo): void {
+    this.selfUserInfo = info;
     this.updateVolume();
   }
 
   updateVolume(): void {
-    this.setVolume(this.getVolume(this.selfPosition, this.peerPosition));
+    this.setVolume(this.getVolume(this.selfUserInfo.position, this.peerUserInfo.position));
   }
 
   getVolume(selfPosition: [number, number], peerPosition: [number, number]): number {

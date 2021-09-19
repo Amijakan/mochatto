@@ -1,18 +1,22 @@
 import React, { createContext, useReducer, useCallback } from "react";
 
-export interface UserInfo {
+export type Position = [number, number];
+
+export type UserInfo = {
   name: string;
   avatarColor: {
     background: string;
     border: string;
   };
   multiplier: number;
-}
+  position: Position;
+};
 
 export const defaultUserInfo = {
   name: "",
   avatarColor: { background: "gray", border: "black" },
   multiplier: 0,
+  position: [100, 100] as Position,
 };
 
 interface Action {

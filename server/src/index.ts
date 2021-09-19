@@ -19,7 +19,6 @@ app.get("/", (req, res) => {
   res.send({ body: "Hello world, 3" });
 });
 
-const users: object[] = [];
 io.of((nsp, query, next) => {
   const { token } = query;
   console.log(nsp);
@@ -33,26 +32,8 @@ io.of((nsp, query, next) => {
   console.log("new client: " + socket.id);
   socket.on("JOIN", (name) => {
     const user = { name, id: socket.id };
-    users.push(user);
-    console.log(
-      name +
-        " (" +
-        socket.id +
-        ") has joined namespace " +
-        socket.nsp.name +
-        ". There are currently " +
-        users.length +
-        " users total."
-    );
+    console.log(name + " (" + socket.id + ") has joined namespace " + socket.nsp.name);
     io.of(socket.nsp.name).emit("JOIN", user);
-  });
-  socket.on("REQUEST_USERS", () => {
-    socket.emit("REQUEST_USERS", users);
-    console.log("Requested users. There are currently " + users.length + " users.");
-  });
-  socket.on("CLEAR_USERS", () => {
-    users.length = 0;
-    console.log("Cleared users. There are currently " + users.length + " users.");
   });
   socket.on("OFFER", (dataString) => {
     const targetId = JSON.parse(dataString).receiverId;
@@ -68,12 +49,11 @@ io.of((nsp, query, next) => {
     const targetId = JSON.parse(dataString).receiverId;
     io.of(socket.nsp.name).to(targetId).emit("ICE_CANDIDATE", dataString);
   });
+  socket.on("SDP_RECEIVED", (sdpSenderId) => {
+    io.of(socket.nsp.name).to(sdpSenderId).emit("SDP_RECEIVED");
+  });
   socket.on("disconnect", () => {
-    const userIndex = users.findIndex((usr) => (usr as any).id === socket.id);
-    if (users[userIndex]) {
-      io.of(socket.nsp.name).emit("LEAVE", { name: (users[userIndex] as any).name, id: socket.id });
-      users.splice(userIndex, 1);
-      console.log(socket.id + " has disconnected. There are currently " + users.length + " users.");
-    }
+    io.of(socket.nsp.name).emit("LEAVE", { id: socket.id });
+    console.log(socket.id + " has disconnected.");
   });
 });

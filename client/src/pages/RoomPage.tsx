@@ -15,6 +15,8 @@ const notificationColors = {
   leave: { color: "danger", icon: "Info" },
 };
 
+let globalUserInfos = {};
+
 function RoomPage({ name }: { name: string }): JSX.Element {
   const [announcement, setAnnouncement] = useState("");
   const [showNotification, setShowNotification] = useState(false);
@@ -52,8 +54,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const onLeave = (id: string) => {
-    setAnnouncement(" has left.");
-    console.log(removeUserInfo(id));
+    setAnnouncement(globalUserInfos[id].name + " has left.");
+    removeUserInfo(id);
     setNotificationTheme("leave");
     setShowNotification(true);
   };
@@ -77,6 +79,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
     updateVisualizer(new AudioVisualizer(onAudioActivity));
   }, []);
+
+  useEffect(() => {
+    globalUserInfos = userInfos;
+  }, [userInfos]);
 
   useEffect(() => {
     if (network) {

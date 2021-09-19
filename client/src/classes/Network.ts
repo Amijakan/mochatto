@@ -24,7 +24,7 @@ export const Pack = ({
   return { sdp, userId, receiverId, kind };
 };
 
-export const timeout = 200;
+export const timeout = 3000;
 
 export class Network {
   socket: Socket;

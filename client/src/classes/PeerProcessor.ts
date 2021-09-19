@@ -16,20 +16,13 @@ export class PeerProcessor {
   peerId: string;
   stream: MediaStream;
   player: HTMLAudioElement;
-  selfPosition: [number, number];
-  peerPosition: [number, number];
   visualizer: AudioVisualizer;
   multiplier: number;
   // a function to update the positions array context
-  addPosition: (positionString) => void;
   addUserInfo: (info) => void;
-  userInfo: UserInfo;
-  constructor(
-    peerId: string,
-    socket: Socket,
-    addPosition: (position) => void,
-    addUserInfo: (info) => void
-  ) {
+  selfUserInfo: UserInfo;
+  peerUserInfo: UserInfo;
+  constructor(peerId: string, socket: Socket, addUserInfo: (info) => void) {
     this.peerId = peerId;
     this.sender = null as unknown as RTCRtpSender;
     this.dataChannel = null as unknown as RTCDataChannel;
@@ -41,12 +34,10 @@ export class PeerProcessor {
     this.stream = new MediaStream();
     this.visualizer = null as unknown as AudioVisualizer;
     this.player = new Audio();
-    this.selfPosition = [0, 0];
-    this.peerPosition = [0, 0];
     // the function is re-assigned during the user's initialization
-    this.addPosition = addPosition;
     this.addUserInfo = addUserInfo;
-    this.userInfo = defaultUserInfo;
+    this.selfUserInfo = defaultUserInfo;
+    this.peerUserInfo = defaultUserInfo;
     this.socket = socket;
 
     // listener for when a peer adds a track
@@ -89,9 +80,9 @@ export class PeerProcessor {
 
           setTimeout(() => {
             if (this.peerConnection.connectionState != "connected") {
-              console.warn("Timed out, retrying connection");
-              this.peerConnection.restartIce();
-              this.sendOffer();
+              //console.warn("Timed out, retrying connection");
+              //this.peerConnection.restartIce();
+              //this.sendOffer();
             }
           }, timeout);
         }
@@ -101,13 +92,8 @@ export class PeerProcessor {
       });
   }
 
-  initialize(
-    initialSelfPosition: [number, number],
-    initialUserInfo: UserInfo,
-    visualizer: AudioVisualizer
-  ): void {
-    this.selfPosition = initialSelfPosition;
-    this.userInfo = initialUserInfo;
+  initialize(initialUserInfo: UserInfo, visualizer: AudioVisualizer): void {
+    this.selfUserInfo = initialUserInfo;
     this.visualizer = visualizer;
   }
 
@@ -130,8 +116,7 @@ export class PeerProcessor {
 
   // runs when the data channel opens
   onDataChannelOpen(): void {
-    const data = { position: this.selfPosition, info: this.userInfo };
-    this.dataChannel.send(JSON.stringify(data));
+    this.send(this.selfUserInfo);
   }
 
   // runs when the data channel closes
@@ -140,24 +125,27 @@ export class PeerProcessor {
   }
 
   onDataChannelMessage(event: MessageEvent): void {
-    const data = JSON.parse(event.data);
-    if (data.info) {
-      this.addUserInfo(data.info);
-    }
-    if (data.position) {
-      this.peerPosition = data.position;
-      this.updateVolume();
-      this.addPosition(data.position);
+    const info = JSON.parse(event.data);
+    this.addUserInfo(info);
+    this.peerUserInfo = info;
+  }
+
+  send(info: UserInfo): void {
+    this.updateSelfUserInfo(info);
+    if (this.dataChannel) {
+      if (this.dataChannel.readyState === "open") {
+        this.dataChannel.send(JSON.stringify(info));
+      }
     }
   }
 
-  setSelfPosition(position: [number, number]): void {
-    this.selfPosition = position;
+  updateSelfUserInfo(info: UserInfo): void {
+    this.selfUserInfo = info;
     this.updateVolume();
   }
 
   updateVolume(): void {
-    this.setVolume(this.getVolume(this.selfPosition, this.peerPosition));
+    this.setVolume(this.getVolume(this.selfUserInfo.position, this.peerUserInfo.position));
   }
 
   getVolume(selfPosition: [number, number], peerPosition: [number, number]): number {

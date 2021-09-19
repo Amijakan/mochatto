@@ -1,11 +1,9 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import { SocketContext, PositionsContext, DeviceContext, UserInfoContext } from "../contexts";
+import { SocketContext, DeviceContext, UserInfoContext } from "../contexts";
 import { DeviceSelector } from "../components/DeviceSelector";
 import { Div, Notification, Icon, Text } from "atomize";
 import AvatarCanvas from "../components/AvatarCanvas";
 import { Network } from "../classes/Network";
-import { openJoinListener, openLeaveListener } from "./RoomPageHelper";
-import { PeerProcessor } from "../classes/PeerProcessor";
 import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "../classes/AudioVisualizer";
 import { RoomTemplate } from "../templates";
@@ -23,9 +21,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const [notificationTheme, setNotificationTheme] = useState("join");
   const { socket } = useContext(SocketContext);
   const { stream, setStream } = useContext(DeviceContext);
-  const { selfPosition, setSelfPosition, peerPositions, addAvatar, removeAvatar } =
-    useContext(PositionsContext);
-  const selfPositionRef = useRef(selfPosition);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
   const visualizerRef = useRef(visualizer);
   const [selfUserInfo, setSelfUserInfo] = useState<UserInfo>({ ...defaultUserInfo, name });
@@ -39,11 +34,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     setStream(_stream);
   };
 
-  const updateSelfPosition = (pos) => {
-    selfPositionRef.current = pos;
-    setSelfPosition(pos);
-  };
-
   const updateSelfUserInfo = (info) => {
     selfUserInfoRef.current = info;
     setSelfUserInfo(info);
@@ -55,16 +45,15 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   // announce and set a new user on join
-  const onJoin = ({ name, id }) => {
-    console.log(name);
+  const onJoin = (name) => {
     setAnnouncement(name + " has joined the room!");
     setNotificationTheme("join");
     setShowNotification(true);
   };
 
   const onLeave = (id: string) => {
-    removeAvatar(id);
-    removeUserInfo(id);
+    setAnnouncement(" has left.");
+    console.log(removeUserInfo(id));
     setNotificationTheme("leave");
     setShowNotification(true);
   };
@@ -76,19 +65,16 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // open all listeners on render
   useEffect(() => {
-    setNetwork(
-      new Network(
-        socket,
-        name,
-        addAvatar,
-        addUserInfo,
-        selfPositionRef.current,
-        selfUserInfoRef.current,
-        stream
-      )
-    );
-    openJoinListener(socket, onJoin);
-    openLeaveListener(socket, setAnnouncement, onLeave);
+    setNetwork(new Network(socket, name, addUserInfo, selfUserInfoRef.current, stream));
+
+    socket.on("JOIN", ({ name, id }) => {
+      onJoin(name);
+    });
+
+    socket.on("LEAVE", ({ id }) => {
+      onLeave(id);
+    });
+
     updateVisualizer(new AudioVisualizer(onAudioActivity));
   }, []);
 
@@ -104,9 +90,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   // update remote position when avatar is dragged
   useEffect(() => {
     if (network) {
-      network.broadcastData({ position: selfPositionRef.current });
+      network.updateInfo(selfUserInfoRef.current);
     }
-  }, [selfPositionRef.current]);
+  }, [selfUserInfoRef.current]);
 
   return (
     <RoomTemplate
@@ -139,9 +125,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
             selfUserInfo={selfUserInfoRef.current}
             setSelfUserInfo={updateSelfUserInfo}
             userInfos={Object.values(userInfos)}
-            selfPosition={selfPositionRef.current}
-            setSelfPosition={updateSelfPosition}
-            positions={Object.values(peerPositions)}
           />
         </Div>
       </>

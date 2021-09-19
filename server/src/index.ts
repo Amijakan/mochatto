@@ -50,6 +50,7 @@ io.of((nsp, query, next) => {
     io.of(socket.nsp.name).to(targetId).emit("ICE_CANDIDATE", dataString);
   });
   socket.on("disconnect", () => {
+    io.of(socket.nsp.name).emit("LEAVE", { id: socket.id });
     console.log(socket.id + " has disconnected.");
   });
 });

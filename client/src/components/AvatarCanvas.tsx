@@ -4,16 +4,10 @@ import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
 
 // for dragging and rendering avatars
 function AvatarCanvas({
-  selfPosition,
-  setSelfPosition,
-  positions,
   userInfos,
   selfUserInfo,
   setSelfUserInfo,
 }: {
-  selfPosition: [number, number];
-  setSelfPosition: (any) => void;
-  positions: [number, number][];
   userInfos: UserInfo[];
   selfUserInfo: UserInfo;
   setSelfUserInfo: (any) => void;
@@ -22,7 +16,7 @@ function AvatarCanvas({
 
   // on mouse down, add listeners for moving and mouse up
   const _onPointerDown = (event) => {
-    offset = [event.clientX - selfPosition[0], event.clientY - selfPosition[1]];
+    offset = [event.clientX - selfUserInfo.position[0], event.clientY - selfUserInfo.position[1]];
     document.addEventListener("pointermove", _onPointerMove, true);
     document.addEventListener("pointerup", _onPointerUp, true);
     event.preventDefault();
@@ -38,7 +32,8 @@ function AvatarCanvas({
   const _onPointerMove = (event) => {
     // world coordinate
     const mousePos = [event.clientX, event.clientY];
-    setSelfPosition([mousePos[0] - offset[0], mousePos[1] - offset[1]]);
+    const position = [mousePos[0] - offset[0], mousePos[1] - offset[1]];
+    setSelfUserInfo({ ...selfUserInfo, position });
   };
 
   // returns a randomly generated pastel color
@@ -61,12 +56,11 @@ function AvatarCanvas({
         onPointerDown={_onPointerDown}
         _backgroundColor={selfUserInfo.avatarColor.background}
         _borderColor={selfUserInfo.avatarColor.border}
-        pos={selfPosition}
+        pos={selfUserInfo.position}
         isSelf={true}
         initial={selfUserInfo.name[0]}
       />
-      {positions.map((position, index) => {
-        let info = userInfos[index];
+      {userInfos.map((info, index) => {
         if (!info) {
           info = defaultUserInfo;
         }
@@ -79,7 +73,7 @@ function AvatarCanvas({
             }}
             _backgroundColor={info.avatarColor.background}
             _borderColor={info.avatarColor.border}
-            pos={position}
+            pos={info.position}
             isSelf={false}
             initial={info.name[0]}
           />

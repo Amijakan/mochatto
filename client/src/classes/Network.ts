@@ -29,26 +29,20 @@ export const timeout = 500;
 export class Network {
   socket: Socket;
   peerProcessors: PeerProcessor[];
-  addPosition: (id) => (position: [number, number]) => void;
   addUserInfo: (id) => (info: UserInfo) => void;
   selfUserInfo: UserInfo;
-  selfPosition: [number, number];
   stream: MediaStream;
   constructor(
     socket: Socket,
     userName: string,
-    addPosition: (id) => (position: [number, number]) => void,
     addUserInfo: (id) => (info: UserInfo) => void,
-    selfPosition: [number, number],
     selfUserInfo: UserInfo,
     stream: MediaStream
   ) {
     this.socket = socket;
     this.peerProcessors = [];
-    this.addPosition = addPosition;
     this.addUserInfo = addUserInfo;
     this.selfUserInfo = selfUserInfo;
-    this.selfPosition = selfPosition;
     this.stream = stream;
 
     // AS A NEW COMER
@@ -142,19 +136,14 @@ export class Network {
 
   // add peerProcessor to the network
   pushToNetwork(id: string): PeerProcessor {
-    const peerProcessor = new PeerProcessor(
-      id,
-      this.socket,
-      this.addPosition(id),
-      this.addUserInfo(id)
-    );
+    const peerProcessor = new PeerProcessor(id, this.socket, this.addUserInfo(id));
     peerProcessor.initialize(
-      this.selfPosition,
       this.selfUserInfo,
       new AudioVisualizer(peerProcessor.onAudioActivity.bind(peerProcessor))
     );
     this.peerProcessors.push(peerProcessor);
     this.updateAllTracks(this.stream.getAudioTracks()[0]);
+    this.broadcastInfo(this.selfUserInfo);
     return peerProcessor;
   }
 
@@ -185,13 +174,14 @@ export class Network {
     });
   }
 
-  broadcastData(data: Partial<DataPackage>): void {
+  updateInfo(info: UserInfo): void {
+    this.selfUserInfo = info;
+    this.broadcastInfo(info);
+  }
+
+  broadcastInfo(info: UserInfo): void {
     this.peerProcessors.forEach((peerProcessor) => {
-      if (peerProcessor.dataChannel) {
-        if (peerProcessor.dataChannel.readyState === "open") {
-          peerProcessor.dataChannel.send(JSON.stringify(data));
-        }
-      }
+      peerProcessor.send(info);
     });
   }
 }

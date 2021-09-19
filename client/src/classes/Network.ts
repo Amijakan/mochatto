@@ -24,7 +24,7 @@ export const Pack = ({
   return { sdp, userId, receiverId, kind };
 };
 
-export const timeout = 500;
+export const timeout = 200;
 
 export class Network {
   socket: Socket;
@@ -60,6 +60,7 @@ export class Network {
       peerConnection
         .setRemoteDescription(offerPack.sdp) // set remote description as the peerProcessor's
         .then(() => {
+          socket.emit("SDP_RECEIVED", peerId);
           socket.on("ICE_CANDIDATE", (dataString) => {
             const data = JSON.parse(dataString);
             peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
@@ -72,6 +73,30 @@ export class Network {
             })
             .then(() => {
               if (peerConnection.localDescription) {
+                const iceCandidates: RTCIceCandidate[] = [];
+                peerConnection.onicecandidate = (event) => {
+                  if (event.candidate) {
+                    iceCandidates.push(event.candidate);
+                  }
+                };
+                socket.on("SDP_RECEIVED", () => {
+                  iceCandidates.forEach((iceCandidate) => {
+                    socket.emit(
+                      "ICE_CANDIDATE",
+                      JSON.stringify({ ice: iceCandidate, receiverId: peerId })
+                    );
+                  });
+                  peerConnection.onicecandidate = (event) => {
+                    if (peerConnection.iceGatheringState === "gathering") {
+                      if (event.candidate) {
+                        socket.emit(
+                          "ICE_CANDIDATE",
+                          JSON.stringify({ ice: event.candidate, receiverId: peerId })
+                        );
+                      }
+                    }
+                  };
+                });
                 // create the answer
                 const answerPack = Pack({
                   sdp: peerConnection.localDescription,
@@ -79,13 +104,6 @@ export class Network {
                   receiverId: offerPack.userId,
                   kind: "answer",
                 });
-
-                peerConnection.onicecandidate = (event) => {
-                  socket.emit(
-                    "ICE_CANDIDATE",
-                    JSON.stringify({ ice: event.candidate, receiverId: peerId })
-                  );
-                };
 
                 socket.emit("ANSWER", JSON.stringify(answerPack));
                 console.log("sending answer to: " + answerPack.receiverId);
@@ -117,12 +135,13 @@ export class Network {
 
     socket.on("ANSWER", (dataString) => {
       const answerPack = JSON.parse(dataString);
-      console.log("received answer from: " + answerPack.userId);
       const peerId = answerPack.userId;
+      console.log("received answer from: " + peerId);
       const peerConnection = this.findPeerProcessorById(peerId).peerConnection;
       peerConnection
         .setRemoteDescription(answerPack.sdp)
         .then(() => {
+          socket.emit("SDP_RECEIVED", peerId);
           socket.on("ICE_CANDIDATE", (dataString) => {
             const data = JSON.parse(dataString);
             peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));

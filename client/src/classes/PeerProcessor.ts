@@ -62,6 +62,31 @@ export class PeerProcessor {
       })
       .then(() => {
         if (this.peerConnection.localDescription) {
+          const iceCandidates: RTCIceCandidate[] = [];
+          this.peerConnection.onicecandidate = (event) => {
+            if (event.candidate) {
+              iceCandidates.push(event.candidate);
+            }
+          };
+          this.socket.on("SDP_RECEIVED", () => {
+            iceCandidates.forEach((iceCandidate) => {
+              this.socket.emit(
+                "ICE_CANDIDATE",
+                JSON.stringify({ ice: iceCandidate, receiverId: this.peerId })
+              );
+            });
+            this.peerConnection.onicecandidate = (event) => {
+              if (this.peerConnection.iceGatheringState === "gathering") {
+                if (event.candidate) {
+                  this.socket.emit(
+                    "ICE_CANDIDATE",
+                    JSON.stringify({ ice: event.candidate, receiverId: this.peerId })
+                  );
+                }
+              }
+            };
+          });
+
           const offerPack = Pack({
             sdp: this.peerConnection.localDescription,
             userId: this.socket.id,
@@ -69,20 +94,13 @@ export class PeerProcessor {
             kind: "offer",
           });
 
-          this.peerConnection.onicecandidate = (event) => {
-            this.socket.emit(
-              "ICE_CANDIDATE",
-              JSON.stringify({ ice: event.candidate, receiverId: this.peerId })
-            );
-          };
-
           this.socket.emit("OFFER", JSON.stringify(offerPack));
 
           setTimeout(() => {
             if (this.peerConnection.connectionState != "connected") {
-              //console.warn("Timed out, retrying connection");
-              //this.peerConnection.restartIce();
-              //this.sendOffer();
+              console.warn("Timed out, retrying connection");
+              this.peerConnection.restartIce();
+              this.sendOffer();
             }
           }, timeout);
         }

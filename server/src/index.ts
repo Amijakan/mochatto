@@ -49,6 +49,9 @@ io.of((nsp, query, next) => {
     const targetId = JSON.parse(dataString).receiverId;
     io.of(socket.nsp.name).to(targetId).emit("ICE_CANDIDATE", dataString);
   });
+  socket.on("SDP_RECEIVED", (sdpSenderId) => {
+    io.of(socket.nsp.name).to(sdpSenderId).emit("SDP_RECEIVED");
+  });
   socket.on("disconnect", () => {
     io.of(socket.nsp.name).emit("LEAVE", { id: socket.id });
     console.log(socket.id + " has disconnected.");

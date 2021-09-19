@@ -60,66 +60,6 @@ export class PeerProcessor {
         this.initializeDataChannel(dc);
       }
     };
-
-    // emit an answer when offer is received
-    socket.on("OFFER", (dataString) => {
-      const offerPack = JSON.parse(dataString);
-      this.peerConnection
-        .setRemoteDescription(offerPack.sdp) // set remote description as the peerProcessor's
-        .then(() => {
-          socket.on("ICE_CANDIDATE", (dataString) => {
-            const data = JSON.parse(dataString);
-            this.peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
-          });
-
-          this.peerConnection
-            .createAnswer()
-            .then((answer) => {
-              return this.peerConnection.setLocalDescription(answer);
-            })
-            .then(() => {
-              if (this.peerConnection.localDescription) {
-                // create the answer
-                const answerPack = Pack({
-                  sdp: this.peerConnection.localDescription,
-                  userId: socket.id,
-                  receiverId: offerPack.userId,
-                  kind: "answer",
-                });
-
-                this.peerConnection.onicecandidate = (event) => {
-                  socket.emit(
-                    "ICE_CANDIDATE",
-                    JSON.stringify({ ice: event.candidate, receiverId: this.peerId })
-                  );
-                };
-
-                socket.emit("ANSWER", JSON.stringify(answerPack));
-              }
-            })
-            .catch((e) => {
-              console.error(e);
-            });
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    });
-
-    socket.on("ANSWER", (dataString) => {
-      const answerPack = JSON.parse(dataString);
-      this.peerConnection
-        .setRemoteDescription(answerPack.sdp)
-        .then(() => {
-          socket.on("ICE_CANDIDATE", (dataString) => {
-            const data = JSON.parse(dataString);
-            this.peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
-          });
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    });
   }
 
   sendOffer(): void {

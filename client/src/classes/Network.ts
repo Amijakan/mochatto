@@ -24,7 +24,7 @@ export const Pack = ({
   return { sdp, userId, receiverId, kind };
 };
 
-export const timeout = 200;
+export const timeout = 3000;
 
 export class Network {
   socket: Socket;
@@ -50,7 +50,6 @@ export class Network {
 
     socket.on("OFFER", (dataString) => {
       const offerPack = JSON.parse(dataString);
-      console.log("received offer from: " + offerPack.userId);
       const peerId = offerPack.userId;
       let peerProcessor = this.findPeerProcessorById(peerId);
       if (!peerProcessor) {
@@ -106,7 +105,6 @@ export class Network {
                 });
 
                 socket.emit("ANSWER", JSON.stringify(answerPack));
-                console.log("sending answer to: " + answerPack.receiverId);
               }
             })
             .catch((e) => {
@@ -122,10 +120,7 @@ export class Network {
     socket.on("JOIN", ({ id }) => {
       if (id != socket.id) {
         const peerProcessor = this.pushToNetwork(id);
-        console.log("sending offer to: " + id);
         peerProcessor.sendOffer();
-      } else {
-        console.log(id);
       }
     });
 
@@ -136,7 +131,6 @@ export class Network {
     socket.on("ANSWER", (dataString) => {
       const answerPack = JSON.parse(dataString);
       const peerId = answerPack.userId;
-      console.log("received answer from: " + peerId);
       const peerConnection = this.findPeerProcessorById(peerId).peerConnection;
       peerConnection
         .setRemoteDescription(answerPack.sdp)

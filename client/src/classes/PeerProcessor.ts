@@ -146,6 +146,7 @@ export class PeerProcessor {
     const info = JSON.parse(event.data);
     this.addUserInfo(info);
     this.peerUserInfo = info;
+    this.updateVolume();
   }
 
   send(info: UserInfo): void {

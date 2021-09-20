@@ -32,12 +32,6 @@ const JoinPage = ({
     }
   };
 
-  const onClearClicked = () => {
-    if (socket) {
-      socket.emit("CLEAR_USERS");
-    }
-  };
-
   const onSelect = (_stream) => {
     setStream(_stream);
   };

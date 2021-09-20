@@ -19,12 +19,16 @@ app.get("/", (req, res) => {
   res.send({ body: "Hello world, 3" });
 });
 
+const rooms: { [key: string]: number } = {};
+
 const users: object[] = [];
+io.on("connection", (socket) => {
+  socket.on("NUM_USERS", (nspName) => {
+    socket.emit("NUM_USERS", rooms[nspName]);
+  });
+});
 io.of((nsp, query, next) => {
   const { token } = query;
-  console.log(nsp);
-  console.log(query);
-
   // authentication
 
   // If success
@@ -34,6 +38,11 @@ io.of((nsp, query, next) => {
   socket.on("JOIN", (name) => {
     const user = { name, id: socket.id };
     users.push(user);
+    if (rooms[socket.nsp.name]) {
+      rooms[socket.nsp.name] += 1;
+    } else {
+      rooms[socket.nsp.name] = 1;
+    }
     console.log(
       name +
         " (" +
@@ -46,6 +55,7 @@ io.of((nsp, query, next) => {
     );
     io.of(socket.nsp.name).emit("JOIN", user);
   });
+
   socket.on("REQUEST_USERS", () => {
     socket.emit("REQUEST_USERS", users);
     console.log("Requested users. There are currently " + users.length + " users.");
@@ -69,6 +79,10 @@ io.of((nsp, query, next) => {
     io.of(socket.nsp.name).to(targetId).emit("ICE_CANDIDATE", dataString);
   });
   socket.on("disconnect", () => {
+    rooms[socket.nsp.name] -= 1;
+    if (rooms[socket.nsp.name] === 0) {
+      delete rooms[socket.nsp.name];
+    }
     const userIndex = users.findIndex((usr) => (usr as any).id === socket.id);
     if (users[userIndex]) {
       io.of(socket.nsp.name).emit("LEAVE", { name: (users[userIndex] as any).name, id: socket.id });

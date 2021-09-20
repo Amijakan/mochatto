@@ -24,7 +24,6 @@ const rooms: { [key: string]: number } = {};
 const users: object[] = [];
 io.on("connection", (socket) => {
   socket.on("NUM_USERS", (nspName) => {
-    console.log(rooms[nspName]);
     socket.emit("NUM_USERS", rooms[nspName]);
   });
 });

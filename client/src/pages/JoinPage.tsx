@@ -89,15 +89,9 @@ const JoinPage = ({
               <Button w="45%" onClick={() => onJoinClicked()}>
                 Join
               </Button>
-              {process.env.NODE_ENV === "development" ? (
-                <Button w="45%" onClick={() => onClearClicked()} bg="lightgray">
-                  Clear
-                </Button>
-              ) : (
-                <Button w="45%" onClick={() => history.push("/")} bg="lightgray">
-                  Button
-                </Button>
-              )}
+              <Button w="45%" onClick={() => history.push("/")} bg="gray">
+                Back
+              </Button>
             </Div>
           </Div>
         </Card>

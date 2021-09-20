@@ -3,11 +3,13 @@ import { BaseTemplate } from "../templates";
 import { Div } from "atomize";
 import { Button, Text, Input } from "../components/atomize_wrapper";
 import { SocketContext } from "../contexts";
+import { useHistory } from "react-router-dom";
 
 const HomePage = (): JSX.Element => {
   const { socket } = useContext(SocketContext);
   const [roomExists, setRoomExists] = useState(false);
   const [roomId, setRoomId] = useState("");
+  const history = useHistory();
 
   useEffect(() => {
     if (socket) {
@@ -45,6 +47,11 @@ const HomePage = (): JSX.Element => {
             placeholder="Room ID"
             type="text"
             name="name"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                history.push(roomId);
+              }
+            }}
             onChange={(e) => {
               setRoomId(e.target.value);
             }}
@@ -53,7 +60,7 @@ const HomePage = (): JSX.Element => {
         <Button
           w="30%"
           onClick={() => {
-            console.log("hi");
+            history.push(roomId);
           }}
         >
           {roomExists ? "Join" : "Create"}

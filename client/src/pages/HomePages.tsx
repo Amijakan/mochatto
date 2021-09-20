@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { BaseTemplate } from "../templates";
 import { Div } from "atomize";
-import { Button, Card, Text, Input } from "../components/atomize_wrapper";
+import { Button, Text, Input } from "../components/atomize_wrapper";
 import { SocketContext } from "../contexts";
 
 const HomePage = (): JSX.Element => {

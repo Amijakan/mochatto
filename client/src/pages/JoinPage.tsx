@@ -87,7 +87,7 @@ const JoinPage = ({
             <Div>
               <Input
                 placeholder="Password"
-                type={showPassword ? "text" : "text"}
+                type={showPassword ? "text" : "password"}
                 suffix={
                   <Button
                     pos="absolute"

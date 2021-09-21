@@ -5,24 +5,12 @@ import { Socket } from "socket.io-client";
 
 export const DCLabel = "DATACHANNEL";
 
-export const Pack = ({
-  sdp,
-  userId,
-  receiverId,
-  kind,
-}: {
+export interface Pack {
   sdp: RTCSessionDescription;
   userId: string;
   receiverId: string;
   kind: string;
-}): {
-  sdp: RTCSessionDescription;
-  userId: string;
-  receiverId: string;
-  kind: string;
-} => {
-  return { sdp, userId, receiverId, kind };
-};
+}
 
 export const timeout = 3000;
 
@@ -97,12 +85,12 @@ export class Network {
                   };
                 });
                 // create the answer
-                const answerPack = Pack({
+                const answerPack: Pack = {
                   sdp: peerConnection.localDescription,
                   userId: socket.id,
                   receiverId: offerPack.userId,
                   kind: "answer",
-                });
+                };
 
                 socket.emit("ANSWER", JSON.stringify(answerPack));
               }

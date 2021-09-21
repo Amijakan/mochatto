@@ -5,7 +5,7 @@ import { DeviceSelector } from "../components/DeviceSelector";
 import { AudioVisualizer } from "../classes/AudioVisualizer";
 import PropTypes from "prop-types";
 import { Input } from "../components/atomize_wrapper";
-import { Div } from "atomize";
+import { Div, Icon } from "atomize";
 import { Button, Card, Text } from "../components/atomize_wrapper";
 import { BaseTemplate } from "../templates";
 import { colors } from "../constants/colors";
@@ -83,6 +83,32 @@ const JoinPage = ({
                   background: colors.bg,
                 }}
               ></Div>
+            </Div>
+            <Div>
+              <Input
+                placeholder="Password"
+                type={showPassword ? "text" : "text"}
+                suffix={
+                  <Button
+                    pos="absolute"
+                    onClick={() => setShowPassword(!showPassword)}
+                    bg="transparent"
+                    w="3rem"
+                    top="0"
+                    right="0"
+                    rounded={{ r: "md" }}
+                  >
+                    <Icon
+                      name={showPassword ? "EyeSolid" : "Eye"}
+                      color={showPassword ? "danger800" : "success800"}
+                      size="16px"
+                    />
+                  </Button>
+                }
+                onChange={(e) => {
+                  setPass(e.target.value);
+                }}
+              />
             </Div>
             <Div d="flex" justify="space-around" w="100%" m={{ t: "20px" }}>
               <Button w="45%" onClick={() => onJoinClicked()}>

@@ -18,6 +18,9 @@ const JoinPage = ({
   setJoined: (string) => void;
 }): JSX.Element => {
   const { socket } = useContext(SocketContext);
+  const { checkPass, authenticated } = useContext(AuthenticationContext);
+  const [pass, setPass] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { stream, setStream } = useContext(DeviceContext);
   const { room_id } = useParams<{ room_id: string }>();
   const history = useHistory();
@@ -26,10 +29,8 @@ const JoinPage = ({
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
 
   const onJoinClicked = () => {
-    if (socket) {
-      setJoined(true);
-      visualizer.stop();
-    }
+    checkPass(pass);
+    visualizer.stop();
   };
 
   const onSelect = (_stream) => {
@@ -39,6 +40,10 @@ const JoinPage = ({
   useEffect(() => {
     setVisualizer(new AudioVisualizer(onAudioActivity));
   }, []);
+
+  useEffect(() => {
+    setJoined(authenticated);
+  }, [authenticated]);
 
   useEffect(() => {
     if (visualizer) {

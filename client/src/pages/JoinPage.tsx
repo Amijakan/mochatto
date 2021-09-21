@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { SocketContext, DeviceContext } from "../contexts";
+import { SocketContext, DeviceContext, AuthenticationContext } from "../contexts";
 import { DeviceSelector } from "../components/DeviceSelector";
 import { AudioVisualizer } from "../classes/AudioVisualizer";
 import PropTypes from "prop-types";

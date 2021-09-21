@@ -20,6 +20,7 @@ app.get("/", (req, res) => {
 });
 
 const rooms: { [key: string]: number } = {};
+let savedHash = "";
 
 const users: object[] = [];
 io.on("connection", (socket) => {
@@ -54,6 +55,29 @@ io.of((nsp, query, next) => {
         " users total."
     );
     io.of(socket.nsp.name).emit("JOIN", user);
+  });
+
+  socket.on("AUTHENTICATE", (dataString) => {
+    const id = JSON.parse(dataString).id;
+    const hash = JSON.parse(dataString).hash;
+    console.log(rooms[socket.nsp.name]);
+    console.log(savedHash);
+    if (
+      rooms[socket.nsp.name] === 0 ||
+      rooms[socket.nsp.name] === null ||
+      rooms[socket.nsp.name] === undefined ||
+      isNaN(rooms[socket.nsp.name])
+    ) {
+      savedHash = hash;
+      socket.emit("AUTHENTICATE_RESPONSE", true);
+    } else {
+      if (hash === savedHash) {
+        socket.emit("AUTHENTICATE_RESPONSE", true);
+      } else {
+        socket.emit("AUTHENTICATE_RESPONSE", false);
+      }
+      io.of(socket.nsp.name).emit("AUTHENTICATE", dataString);
+    }
   });
 
   socket.on("REQUEST_USERS", () => {

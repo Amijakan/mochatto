@@ -91,12 +91,12 @@ export class PeerProcessor {
             };
           });
 
-          const offerPack = Pack({
+          const offerPack: Pack = {
             sdp: this.peerConnection.localDescription,
             userId: this.socket.id,
             receiverId: this.peerId,
             kind: "offer",
-          });
+          };
 
           this.socket.emit("OFFER", JSON.stringify(offerPack));
 

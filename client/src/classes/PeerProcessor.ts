@@ -45,6 +45,10 @@ export class PeerProcessor {
       this.updateLocalTrack(event.track);
     };
 
+    this.peerConnection.onnegotiationneeded = () => {
+      this.sendOffer();
+    };
+
     this.peerConnection.ondatachannel = (event) => {
       const dc = event.channel;
       if (dc.label === DCLabel) {
@@ -100,7 +104,6 @@ export class PeerProcessor {
             if (this.peerConnection.connectionState != "connected") {
               console.warn("Timed out, retrying connection");
               this.peerConnection.restartIce();
-              this.sendOffer();
             }
           }, timeout);
         }

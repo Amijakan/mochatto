@@ -1,24 +1,28 @@
 import React, { createContext, useReducer, useCallback } from "react";
 
-export interface UserInfo {
+export type Position = [number, number];
+
+export type UserInfo = {
   name: string;
   avatarColor: {
     background: string;
     border: string;
   };
-  multiplier;
-}
+  multiplier: number;
+  position: Position;
+};
 
 export const defaultUserInfo = {
   name: "",
   avatarColor: { background: "gray", border: "black" },
   multiplier: 0,
+  position: [100, 100] as Position,
 };
 
 interface Action {
   type: string;
   id: string;
-  data: { any };
+  data: Partial<UserInfo>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -33,11 +37,16 @@ export const UserInfoProvider = ({ children }: { children: JSX.Element }): JSX.E
         Object.keys(action.data).forEach((key) => {
           newInfo = { ...newInfo, [key]: action.data[key] };
         });
+        Object.keys(defaultUserInfo).forEach((key) => {
+          if (!newInfo[key]) {
+            newInfo[key] = defaultUserInfo[key];
+          }
+        });
         return { ...userInfos, [action.id]: newInfo };
       }
       case "remove": {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { [action.id]: _toRemove, ...removed } = userInfos;
-        console.log(_toRemove);
         return removed;
       }
       default:
@@ -50,13 +59,13 @@ export const UserInfoProvider = ({ children }: { children: JSX.Element }): JSX.E
   );
   // dispatching the action for adding a position
   const addUserInfo = useCallback(
-    (userId: string) => (data: {any}) => {
+    (userId: string) => (data: Partial<UserInfo>) => {
       dispatch({ type: "add", data, id: userId });
     },
     []
   );
   const removeUserInfo = useCallback((userId: string) => {
-    dispatch({ type: "remove", data: null as unknown as {any}, id: userId });
+    dispatch({ type: "remove", data: {}, id: userId });
   }, []);
   return (
     <UserInfoContext.Provider value={{ userInfos, addUserInfo, removeUserInfo }}>

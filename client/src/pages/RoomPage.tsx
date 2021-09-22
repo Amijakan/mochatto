@@ -82,7 +82,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
     updateVisualizer(new AudioVisualizer(onAudioActivity));
 
-    window.onbeforeunload = (event) => {
+    window.onbeforeunload = () => {
       console.log("unmount");
       socket.emit("LEAVE");
       network.close();

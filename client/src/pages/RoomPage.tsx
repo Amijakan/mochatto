@@ -78,6 +78,13 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     });
 
     updateVisualizer(new AudioVisualizer(onAudioActivity));
+
+    window.onbeforeunload = (event) => {
+      console.log("unmount");
+      socket.emit("LEAVE");
+      network.close();
+      stream.getTracks().forEach((track) => track.stop());
+    };
   }, []);
 
   useEffect(() => {

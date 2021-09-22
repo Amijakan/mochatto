@@ -185,4 +185,10 @@ export class Network {
       peerProcessor.send(info);
     });
   }
+
+  close(): void {
+    this.peerProcessors.forEach((peerProcessor) => {
+      peerProcessor.close();
+    });
+  }
 }

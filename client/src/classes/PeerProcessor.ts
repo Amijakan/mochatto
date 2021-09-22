@@ -161,6 +161,12 @@ export class PeerProcessor {
     }
   }
 
+  close(): void {
+    this.dataChannel.close();
+    this.peerConnection.close();
+    this.stream.getTracks().forEach((track) => track.stop());
+  }
+
   updateSelfUserInfo(info: UserInfo): void {
     this.selfUserInfo = info;
     this.updateVolume();

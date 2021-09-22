@@ -35,7 +35,10 @@ const RoomTemplate = ({
             flexDir="row"
             cursor="pointer"
             align="center"
-            onClick={() => history.push("/")}
+            onClick={() => {
+              history.push("/");
+              history.go(0);
+            }}
           >
             <Div bg={"#000000" + "00"} m="0.5rem" rounded="xl" zIndex="20">
               <Logo />

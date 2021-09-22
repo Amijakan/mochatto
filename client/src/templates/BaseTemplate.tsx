@@ -15,7 +15,10 @@ const BaseTemplate = ({ children }: { children: JSX.Element }): JSX.Element => {
             flexDir="row"
             cursor="pointer"
             align="center"
-            onClick={() => history.push("/")}
+            onClick={() => {
+              history.push("/");
+              history.go(0);
+            }}
           >
             <Logo />
           </Col>

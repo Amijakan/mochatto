@@ -56,7 +56,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const updateMute = (_mute) => {
     muteRef.current = _mute;
     setMute(_mute);
-  }
+  };
 
   // announce and set a new user on join
   const onJoin = (name) => {
@@ -114,7 +114,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     document.addEventListener("keydown", onM);
     return () => {
       document.removeEventListener("keydown", onM);
-    }
+    };
   }, []);
 
   useEffect(() => {
@@ -177,22 +177,11 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           title="Press m to mute/unmute"
           w="4%"
           bg="rgb(0 0 0 / 60%)"
-          onClick={function (){
-            updateMute(!mute);
-          }}
+          onClick={updateMute(!mute)}
         >
           {mute ? <MicOffIcon /> : <MicIcon />}
         </Button>
-        <Button
-          pos="absolute"
-          bottom="1rem"
-          left="35%"
-          w="30%"
-          onClick={function (){
-            history.go(0);
-          }}
-          bg="red"
-        >
+        <Button pos="absolute" bottom="1rem" left="35%" w="30%" onClick={history.go(0)} bg="red">
           Leave
         </Button>
       </>

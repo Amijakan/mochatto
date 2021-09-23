@@ -97,6 +97,15 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       network.close();
       stream.getTracks().forEach((track) => track.stop());
     };
+    const onM = (e) => {
+      if (e.key === "m") {
+        updateMute(!muteRef.current);
+      }
+    };
+    document.addEventListener("keydown", onM);
+    return () => {
+      document.removeEventListener("keydown", onM);
+    }
   }, []);
 
   useEffect(() => {

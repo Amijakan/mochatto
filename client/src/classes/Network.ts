@@ -143,7 +143,9 @@ export class Network {
       new AudioVisualizer(peerProcessor.onAudioActivity.bind(peerProcessor))
     );
     this.peerProcessors.push(peerProcessor);
-    this.updateAllTracks(this.stream.getAudioTracks()[0]);
+    if(this.stream){
+      this.updateAllTracks(this.stream.getAudioTracks()[0]);
+    }
     this.broadcastInfo(this.selfUserInfo);
     return peerProcessor;
   }

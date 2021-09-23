@@ -77,6 +77,15 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     updateSelfUserInfo({ ...selfUserInfoRef.current, multiplier: newMultiplier });
   };
 
+  const updateTracks = () => {
+    if (network) {
+      network.updateAllTracks(stream.getAudioTracks()[0]);
+    }
+    if (visualizerRef.current) {
+      visualizerRef.current.setStream(stream);
+    }
+  };
+
   // open all listeners on render
   useEffect(() => {
     setNetwork(new Network(socket, name, addUserInfo, selfUserInfoRef.current, stream));
@@ -128,15 +137,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     }
   }, [selfUserInfoRef.current]);
 
-  const updateTracks = () => {
-    if (network) {
-      network.updateAllTracks(stream.getAudioTracks()[0]);
-    }
-    if (visualizerRef.current) {
-      visualizerRef.current.setStream(stream);
-    }
-  };
-
   return (
     <RoomTemplate
       sideDrawerComponent={
@@ -177,7 +177,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           title="Press m to mute/unmute"
           w="4%"
           bg="rgb(0 0 0 / 60%)"
-          onClick={() => {
+          onClick={function (){
             updateMute(!mute);
           }}
         >
@@ -188,7 +188,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           bottom="1rem"
           left="35%"
           w="30%"
-          onClick={() => {
+          onClick={function (){
             history.go(0);
           }}
           bg="red"

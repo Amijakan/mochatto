@@ -6,9 +6,7 @@
 
 # mochatto
 
-Mochatto is an open-source spatial voice chat application for virtual meetings.
-
-# Debugging branch
+Mochatto is an open-source proximity voice chat application for virtual meetings.
 
 ## Try it out
 

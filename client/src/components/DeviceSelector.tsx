@@ -33,6 +33,7 @@ function DeviceSelector({ onSelect }: { onSelect: (MediaStream) => void }): JSX.
   return (
     <>
       <Select
+        isSearchable={false}
         value={selectedInput}
         options={inputOptions}
         onChange={(selection) => {

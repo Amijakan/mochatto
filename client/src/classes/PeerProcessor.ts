@@ -91,12 +91,12 @@ export class PeerProcessor {
             };
           });
 
-          const offerPack = Pack({
+          const offerPack: Pack = {
             sdp: this.peerConnection.localDescription,
             userId: this.socket.id,
             receiverId: this.peerId,
             kind: "offer",
-          });
+          };
 
           this.socket.emit("OFFER", JSON.stringify(offerPack));
 
@@ -159,6 +159,12 @@ export class PeerProcessor {
         this.dataChannel.send(JSON.stringify(info));
       }
     }
+  }
+
+  close(): void {
+    this.dataChannel.close();
+    this.peerConnection.close();
+    this.stream.getTracks().forEach((track) => track.stop());
   }
 
   updateSelfUserInfo(info: UserInfo): void {

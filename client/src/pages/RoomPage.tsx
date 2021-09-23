@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { SocketContext, DeviceContext, UserInfoContext } from "../contexts";
+import { useHistory } from "react-router-dom";
 import { DeviceSelector } from "../components/DeviceSelector";
 import { Div, Notification, Icon, Text } from "atomize";
 import AvatarCanvas from "../components/AvatarCanvas";
@@ -7,6 +8,7 @@ import { Network } from "../classes/Network";
 import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "../classes/AudioVisualizer";
 import { RoomTemplate } from "../templates";
+import { Button } from "../components/atomize_wrapper";
 
 import PropTypes from "prop-types";
 
@@ -28,6 +30,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const [selfUserInfo, setSelfUserInfo] = useState<UserInfo>({ ...defaultUserInfo, name });
   const selfUserInfoRef = useRef(selfUserInfo);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
+  const history = useHistory();
 
   const [network, setNetwork] = useState<Network>(null as unknown as Network);
 
@@ -78,6 +81,13 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     });
 
     updateVisualizer(new AudioVisualizer(onAudioActivity));
+
+    window.onbeforeunload = () => {
+      console.log("unmount");
+      socket.emit("LEAVE");
+      network.close();
+      stream.getTracks().forEach((track) => track.stop());
+    };
   }, []);
 
   useEffect(() => {
@@ -133,6 +143,18 @@ function RoomPage({ name }: { name: string }): JSX.Element {
             userInfos={Object.values(userInfos)}
           />
         </Div>
+        <Button
+          pos="absolute"
+          bottom="1rem"
+          left="35%"
+          w="30%"
+          onClick={() => {
+            history.go(0);
+          }}
+          bg="red"
+        >
+          Leave
+        </Button>
       </>
     </RoomTemplate>
   );

@@ -50,6 +50,7 @@ const HomePage = (): JSX.Element => {
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 history.push(roomId);
+                history.go(0);
               }
             }}
             onChange={(e) => {
@@ -61,6 +62,7 @@ const HomePage = (): JSX.Element => {
           w="30%"
           onClick={() => {
             history.push(roomId);
+            history.go(0);
           }}
         >
           {roomExists ? "Join" : "Create"}

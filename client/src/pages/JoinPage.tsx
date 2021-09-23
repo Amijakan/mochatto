@@ -83,7 +83,14 @@ const JoinPage = ({
               <Button w="45%" onClick={() => onJoinClicked()}>
                 Join
               </Button>
-              <Button w="45%" onClick={() => history.push("/")} bg="gray">
+              <Button
+                w="45%"
+                onClick={() => {
+                  history.push("/");
+                  history.go(0);
+                }}
+                bg="gray"
+              >
                 Back
               </Button>
             </Div>

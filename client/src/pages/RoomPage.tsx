@@ -33,7 +33,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const selfUserInfoRef = useRef(selfUserInfo);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
   const history = useHistory();
-  const [muted, setMuted] = useState(false);
+  const [mute, setMute] = useState(false);
+  const muteRef = useRef(mute);
 
   const [network, setNetwork] = useState<Network>(null as unknown as Network);
 
@@ -51,6 +52,11 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     visualizerRef.current = _visualizer;
     setVisualizer(_visualizer);
   };
+
+  const updateMute = (_mute) => {
+    muteRef.current = _mute;
+    setMute(_mute);
+  }
 
   // announce and set a new user on join
   const onJoin = (name) => {
@@ -102,9 +108,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, [stream]);
 
   useEffect(() => {
-    stream.getAudioTracks()[0].enabled = !muted;
+    stream.getAudioTracks()[0].enabled = !mute;
     updateTracks();
-  }, [muted]);
+  }, [mute]);
 
   // update remote position when avatar is dragged
   useEffect(() => {
@@ -159,13 +165,14 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           pos="absolute"
           bottom="1rem"
           left="30%"
+          title="Press m to mute/unmute"
           w="4%"
           bg="rgb(0 0 0 / 60%)"
           onClick={() => {
-            setMuted(!muted);
+            updateMute(!mute);
           }}
         >
-          {muted ? <MicOffIcon /> : <MicIcon />}
+          {mute ? <MicOffIcon /> : <MicIcon />}
         </Button>
         <Button
           pos="absolute"

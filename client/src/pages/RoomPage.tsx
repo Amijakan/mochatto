@@ -113,6 +113,15 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     }
   }, [selfUserInfoRef.current]);
 
+  const updateTracks = () => {
+    if (network) {
+      network.updateAllTracks(stream.getAudioTracks()[0]);
+    }
+    if (visualizerRef.current) {
+      visualizerRef.current.setStream(stream);
+    }
+  };
+
   return (
     <RoomTemplate
       sideDrawerComponent={

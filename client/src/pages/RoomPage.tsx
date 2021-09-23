@@ -78,7 +78,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const updateTracks = () => {
-    if(stream){
+    if (stream) {
       if (network) {
         network.updateAllTracks(stream.getAudioTracks()[0]);
       }
@@ -179,11 +179,18 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           title="Press m to mute/unmute"
           w="4%"
           bg="rgb(0 0 0 / 60%)"
-          onClick={updateMute(!mute)}
+          onClick={() => updateMute(!mute)}
         >
           {mute ? <MicOffIcon /> : <MicIcon />}
         </Button>
-        <Button pos="absolute" bottom="1rem" left="35%" w="30%" onClick={history.go(0)} bg="red">
+        <Button
+          pos="absolute"
+          bottom="1rem"
+          left="35%"
+          w="30%"
+          onClick={() => history.go(0)}
+          bg="red"
+        >
           Leave
         </Button>
       </>

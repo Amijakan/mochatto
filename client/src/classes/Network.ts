@@ -172,9 +172,11 @@ export class Network {
 
   // update tracks for all peer connections
   updateAllTracks(track: MediaStreamTrack): void {
-    this.peerProcessors.forEach((peerProcessor) => {
-      peerProcessor.updateRemoteTrack(track);
-    });
+    if(track){
+      this.peerProcessors.forEach((peerProcessor) => {
+        peerProcessor.updateRemoteTrack(track);
+      });
+    }
   }
 
   updateInfo(info: UserInfo): void {

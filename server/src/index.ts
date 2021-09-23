@@ -65,6 +65,10 @@ io.of((nsp, query, next) => {
   socket.on("SDP_RECEIVED", (sdpSenderId) => {
     io.of(socket.nsp.name).to(sdpSenderId).emit("SDP_RECEIVED");
   });
+  socket.on("LEAVE", () => {
+    console.log("user's leaving");
+    io.of(socket.nsp.name).emit("LEAVE", { id: socket.id });
+  });
   socket.on("disconnect", () => {
     rooms[socket.nsp.name] -= 1;
     if (rooms[socket.nsp.name] === 0) {

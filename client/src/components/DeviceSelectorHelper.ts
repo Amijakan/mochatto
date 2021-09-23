@@ -38,15 +38,16 @@ export const listInputDevices = (
 export const selectInputDevice = (
   id: string,
   useStream: (MediaStream) => void,
+  options: {autoGainControl: boolean, echoCancellation: boolean, noiseSuppression: boolean},
   onError: (MediaStreamError) => void = defaultOnError
 ): void => {
   navigator.mediaDevices
     .getUserMedia({
       audio: {
         deviceId: id,
-        autoGainControl: false,
-        echoCancellation: false,
-        noiseSuppression: false,
+        autoGainControl: options.autoGainControl,
+        echoCancellation: options.echoCancellation,
+        noiseSuppression: options.noiseSuppression,
       },
       video: false,
     })

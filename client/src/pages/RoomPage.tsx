@@ -78,11 +78,13 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const updateTracks = () => {
-    if (network) {
-      network.updateAllTracks(stream.getAudioTracks()[0]);
-    }
-    if (visualizerRef.current) {
-      visualizerRef.current.setStream(stream);
+    if(stream){
+      if (network) {
+        network.updateAllTracks(stream.getAudioTracks()[0]);
+      }
+      if (visualizerRef.current) {
+        visualizerRef.current.setStream(stream);
+      }
     }
   };
 

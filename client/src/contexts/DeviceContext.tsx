@@ -8,7 +8,7 @@ export const DeviceProvider = ({ children }: { children: JSX.Element }): JSX.Ele
   const [stream, setStream] = useState(null as unknown as MediaStream);
   const [inputOptions, setInputOptions] = useState([{}]);
   const [selectedInput, setSelectedInput] = useState(Device());
-  const [options, setOptions] = useState({autoGainControl: true, echoCancellation: true, noiseSuppresion: false});
+  const [options, setOptions] = useState({autoGainControl: true, echoCancellation: true, noiseSuppression: false});
 
   return (
     <DeviceContext.Provider

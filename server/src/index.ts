@@ -39,13 +39,15 @@ io.of((nsp, query, next) => {
   console.log("new client: " + socket.id);
   socket.on("JOIN", (name) => {
     const user = { name, id: socket.id };
-    if (rooms[socket.nsp.name]) {
-      rooms[socket.nsp.name] += 1;
-    } else {
-      rooms[socket.nsp.name] = 1;
+    if (name !== "") {
+      if (rooms[socket.nsp.name]) {
+        rooms[socket.nsp.name] += 1;
+      } else {
+        rooms[socket.nsp.name] = 1;
+      }
+      console.log(name + " (" + socket.id + ") has joined namespace " + socket.nsp.name);
+      io.of(socket.nsp.name).emit("JOIN", user);
     }
-    console.log(name + " (" + socket.id + ") has joined namespace " + socket.nsp.name);
-    io.of(socket.nsp.name).emit("JOIN", user);
   });
 
   socket.on("OFFER", (dataString) => {

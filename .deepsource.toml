@@ -1,0 +1,20 @@
+version = 1
+
+[[analyzers]]
+name = "javascript"
+enabled = true
+
+  [analyzers.meta]
+  plugins = ["react"]
+
+[[analyzers]]
+name = "docker"
+enabled = true
+
+  [analyzers.meta]
+  dockerfile_paths = [
+    "client/Dockerfile",
+    "server/Dockerfile",
+    "client/Dockerfile.prod",
+    "server/Dockerfile.prod"
+  ]

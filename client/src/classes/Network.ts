@@ -143,7 +143,9 @@ export class Network {
       new AudioVisualizer(peerProcessor.onAudioActivity.bind(peerProcessor))
     );
     this.peerProcessors.push(peerProcessor);
-    this.updateAllTracks(this.stream.getAudioTracks()[0]);
+    if(this.stream){
+      this.updateAllTracks(this.stream.getAudioTracks()[0]);
+    }
     this.broadcastInfo(this.selfUserInfo);
     return peerProcessor;
   }
@@ -170,9 +172,11 @@ export class Network {
 
   // update tracks for all peer connections
   updateAllTracks(track: MediaStreamTrack): void {
-    this.peerProcessors.forEach((peerProcessor) => {
-      peerProcessor.updateRemoteTrack(track);
-    });
+    if(track){
+      this.peerProcessors.forEach((peerProcessor) => {
+        peerProcessor.updateRemoteTrack(track);
+      });
+    }
   }
 
   updateInfo(info: UserInfo): void {

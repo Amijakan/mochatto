@@ -95,11 +95,13 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, [userInfos]);
 
   useEffect(() => {
-    if (network) {
-      network.updateAllTracks(stream.getAudioTracks()[0]);
-    }
-    if (visualizerRef.current) {
-      visualizerRef.current.setStream(stream);
+    if(stream){
+      if (network) {
+        network.updateAllTracks(stream.getAudioTracks()[0]);
+      }
+      if (visualizerRef.current) {
+        visualizerRef.current.setStream(stream);
+      }
     }
   }, [stream]);
 

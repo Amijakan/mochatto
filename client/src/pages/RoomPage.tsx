@@ -9,6 +9,8 @@ import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "../classes/AudioVisualizer";
 import { RoomTemplate } from "../templates";
 import { Button } from "../components/atomize_wrapper";
+import MicIcon from "@material-ui/icons/Mic";
+import MicOffIcon from "@material-ui/icons/MicOff";
 
 import PropTypes from "prop-types";
 
@@ -31,6 +33,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const selfUserInfoRef = useRef(selfUserInfo);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
   const history = useHistory();
+  const [muted, setMuted] = useState(false);
 
   const [network, setNetwork] = useState<Network>(null as unknown as Network);
 
@@ -95,13 +98,13 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, [userInfos]);
 
   useEffect(() => {
-    if (network) {
-      network.updateAllTracks(stream.getAudioTracks()[0]);
-    }
-    if (visualizerRef.current) {
-      visualizerRef.current.setStream(stream);
-    }
+    updateTracks();
   }, [stream]);
+
+  useEffect(() => {
+    stream.getAudioTracks()[0].enabled = !muted;
+    updateTracks();
+  }, [muted]);
 
   // update remote position when avatar is dragged
   useEffect(() => {
@@ -143,6 +146,18 @@ function RoomPage({ name }: { name: string }): JSX.Element {
             userInfos={Object.values(userInfos)}
           />
         </Div>
+        <Button
+          pos="absolute"
+          bottom="1rem"
+          left="30%"
+          w="4%"
+          bg="rgb(0 0 0 / 60%)"
+          onClick={() => {
+            setMuted(!muted);
+          }}
+        >
+          {muted ? <MicOffIcon /> : <MicIcon />}
+        </Button>
         <Button
           pos="absolute"
           bottom="1rem"

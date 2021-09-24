@@ -74,17 +74,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     updateSelfUserInfo({ ...selfUserInfoRef.current, multiplier: newMultiplier });
   };
 
-  const updateTracks = () => {
-    if (stream) {
-      if (network) {
-        network.updateAllTracks(stream.getAudioTracks()[0]);
-      }
-      if (visualizerRef.current) {
-        visualizerRef.current.setStream(stream);
-      }
-    }
-  };
-
   // open all listeners on render
   useEffect(() => {
     setNetwork(new Network(socket, name, addUserInfo, selfUserInfoRef.current, stream));
@@ -121,20 +110,30 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, [userInfos]);
 
   useEffect(() => {
-    updateTracks();
+    if (stream) {
+      if (network) {
+        network.updateAllTracks(stream.getAudioTracks()[0]);
+      }
+      if (visualizerRef.current) {
+        visualizerRef.current.setStream(stream);
+      }
+    }
   }, [stream]);
-
-  useEffect(() => {
-    stream.getAudioTracks()[0].enabled = !mute;
-    updateTracks();
-  }, [mute]);
 
   // update remote position when avatar is dragged
   useEffect(() => {
+    stream.getAudioTracks()[0].enabled = !selfUserInfoRef.current.mute;
     if (network) {
       network.updateInfo(selfUserInfoRef.current);
+      network.updateAllTracks(stream.getAudioTracks()[0]);
     }
   }, [selfUserInfoRef.current]);
+
+  useEffect(() => {
+    if(network){
+      network.toggleDeaf(!selfUserInfoRef.current.active);
+    }
+  }, [selfUserInfoRef.current.active]);
 
   return (
     <RoomTemplate

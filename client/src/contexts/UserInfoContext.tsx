@@ -42,7 +42,7 @@ export const UserInfoProvider = ({ children }: { children: JSX.Element }): JSX.E
           newInfo = { ...newInfo, [key]: action.data[key] };
         });
         Object.keys(defaultUserInfo).forEach((key) => {
-          if (!newInfo[key]) {
+          if (newInfo[key] == undefined) {
             newInfo[key] = defaultUserInfo[key];
           }
         });

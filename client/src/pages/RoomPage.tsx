@@ -33,8 +33,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const selfUserInfoRef = useRef(selfUserInfo);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
   const history = useHistory();
-  const [mute, setMute] = useState(false);
-  const muteRef = useRef(mute);
 
   const [network, setNetwork] = useState<Network>(null as unknown as Network);
 
@@ -53,9 +51,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     setVisualizer(_visualizer);
   };
 
-  const updateMute = (_mute) => {
-    muteRef.current = _mute;
-    setMute(_mute);
+  const toggleMute = () => {
+    updateSelfUserInfo({ ...selfUserInfoRef.current, mute: !selfUserInfoRef.current.mute });
   };
 
   // announce and set a new user on join
@@ -110,7 +107,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     };
     const onM = (e) => {
       if (e.key === "m") {
-        updateMute(!muteRef.current);
+        toggleMute();
       }
     };
     document.addEventListener("keydown", onM);

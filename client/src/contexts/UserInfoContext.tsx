@@ -10,6 +10,8 @@ export type UserInfo = {
   };
   multiplier: number;
   position: Position;
+  active: boolean;
+  mute: boolean;
 };
 
 export const defaultUserInfo = {
@@ -17,6 +19,8 @@ export const defaultUserInfo = {
   avatarColor: { background: "gray", border: "black" },
   multiplier: 0,
   position: [100, 100] as Position,
+  active: true,
+  mute: false,
 };
 
 interface Action {

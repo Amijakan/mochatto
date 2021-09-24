@@ -168,27 +168,35 @@ function RoomPage({ name }: { name: string }): JSX.Element {
             userInfos={Object.values(userInfos)}
           />
         </Div>
-        <Button
-          pos="absolute"
-          bottom="1rem"
-          left="30%"
-          title="Press m to mute/unmute"
-          w="4%"
-          bg="rgb(0 0 0 / 60%)"
-          onClick={() => updateMute(!mute)}
-        >
-          {mute ? <MicOffIcon /> : <MicIcon />}
-        </Button>
-        <Button
-          pos="absolute"
-          bottom="1rem"
-          left="35%"
-          w="30%"
-          onClick={() => history.go(0)}
-          bg="red"
-        >
-          Leave
-        </Button>
+        <Div pos="absolute" w="40%" left="30%" bottom="1rem" d="flex">
+          <Button
+            title="Press spacebar to toggle status"
+            w="20%"
+            m="0.5%"
+            bg={selfUserInfoRef.current.active ? "success700" : "danger700"}
+            onClick={() => {
+              updateSelfUserInfo({
+                ...selfUserInfoRef.current,
+                active: !selfUserInfoRef.current.active,
+                mute: selfUserInfoRef.current.active,
+              });
+            }}
+          >
+            {selfUserInfoRef.current.active ? "Active" : "Inactive"}
+          </Button>
+          <Button
+            title="Press m to mute/unmute"
+            w="10%"
+            m="0.5%"
+            bg="rgb(0 0 0 / 60%)"
+            onClick={() => toggleMute()}
+          >
+            {selfUserInfoRef.current.mute ? <MicOffIcon /> : <MicIcon />}
+          </Button>
+          <Button w="70%" m="0.5%" onClick={() => history.go(0)} bg="red">
+            Leave
+          </Button>
+        </Div>
       </>
     </RoomTemplate>
   );

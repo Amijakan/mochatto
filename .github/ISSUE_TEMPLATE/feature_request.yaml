@@ -1,7 +1,7 @@
 name: Feature Request
 description: Additional Features
 title: "[Feature]: "
-labels: [feature, enhancements]
+labels: [enhancement]
 body:
   - type: markdown
     attributes:

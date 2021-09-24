@@ -26,6 +26,15 @@ body:
     validations:
       required: true
   - type: textarea
+    id: reproduce
+    attributes:
+      label: How to Reproduce the problem
+      description: How exactly did you make that bug appear? (Videos would be nice too!)
+      placeholder: How did the bug occured?
+      value: "How did it occur?"
+    validations:
+      required: false
+  - type: textarea
     id: additional
     attributes:
       label: Additional Info

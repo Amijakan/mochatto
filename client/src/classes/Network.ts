@@ -108,7 +108,6 @@ export class Network {
     socket.on("JOIN", ({ id }) => {
       if (id != socket.id) {
         const peerProcessor = this.pushToNetwork(id);
-        peerProcessor.sendOffer();
       }
     });
 

@@ -55,6 +55,14 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     updateSelfUserInfo({ ...selfUserInfoRef.current, mute: !selfUserInfoRef.current.mute });
   };
 
+  const toggleActive = () => {
+    updateSelfUserInfo({
+      ...selfUserInfoRef.current,
+      active: !selfUserInfoRef.current.active,
+      mute: selfUserInfoRef.current.active,
+    });
+  };
+
   // announce and set a new user on join
   const onJoin = (name) => {
     setAnnouncement(name + " has joined the room!");
@@ -174,13 +182,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
             w="20%"
             m="0.5%"
             bg={selfUserInfoRef.current.active ? "success700" : "danger700"}
-            onClick={() => {
-              updateSelfUserInfo({
-                ...selfUserInfoRef.current,
-                active: !selfUserInfoRef.current.active,
-                mute: selfUserInfoRef.current.active,
-              });
-            }}
+            onClick={() => toggleActive()}
           >
             {selfUserInfoRef.current.active ? "Active" : "Inactive"}
           </Button>

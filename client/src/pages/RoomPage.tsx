@@ -140,7 +140,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, [selfUserInfoRef.current]);
 
   useEffect(() => {
-    if(network){
+    if (network) {
       network.toggleDeaf(!selfUserInfoRef.current.active);
     }
   }, [selfUserInfoRef.current.active]);

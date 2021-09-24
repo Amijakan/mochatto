@@ -30,7 +30,7 @@
     "devTest": "yarn run cypress open",
     "test": "npx cypress run --record --key 7af4c11b-fe02-4012-bfde-b35c55f2306b",
     "eject": "react-scripts eject",
-    "serve": "serve -s ./build --ssl-key /selfsigned.key --ssl-cert /selfsigned.crt"
+    "serve": "serve -s ./build --ssl-key /server.key --ssl-cert /server.cert"
   },
   "eslintConfig": {
     "extends": [

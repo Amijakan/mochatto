@@ -8,19 +8,19 @@ services:
       - '4000:4000'
     environment:
       HTTPS: "true"
-      SSL_CRT_FILE: "/selfsigned.crt"
-      SSL_KEY_FILE: "/selfsigned.key"
+      SSL_CRT_FILE: "/server.cert"
+      SSL_KEY_FILE: "/server.key"
       SSL_CA_FILE: "/chain.pem"
   client_prod:
     build:
       context: ./client
       dockerfile: ./Dockerfile.prod
     ports:
-      - '4500:4500'
+      - '443:4500'
     environment:
       HTTPS: "true"
-      SSL_CRT_FILE: "/selfsigned.crt"
-      SSL_KEY_FILE: "/selfsigned.key"
+      SSL_CRT_FILE: "/server.cert"
+      SSL_KEY_FILE: "/server.key"
       SSL_CA_FILE: "/chain.pem"
       REACT_APP_SERVER_URL: 'https://jimanaka.com:4000'
 

@@ -107,7 +107,7 @@ export class Network {
     // AS AN EXISTING USER
     socket.on("JOIN", ({ id }) => {
       if (id != socket.id) {
-        const peerProcessor = this.pushToNetwork(id);
+        this.pushToNetwork(id);
       }
     });
 

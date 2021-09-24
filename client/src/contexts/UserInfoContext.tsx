@@ -10,6 +10,8 @@ export type UserInfo = {
   };
   multiplier: number;
   position: Position;
+  active: boolean;
+  mute: boolean;
 };
 
 export const defaultUserInfo = {
@@ -17,6 +19,8 @@ export const defaultUserInfo = {
   avatarColor: { background: "gray", border: "black" },
   multiplier: 0,
   position: [100, 100] as Position,
+  active: true,
+  mute: false,
 };
 
 interface Action {
@@ -38,7 +42,7 @@ export const UserInfoProvider = ({ children }: { children: JSX.Element }): JSX.E
           newInfo = { ...newInfo, [key]: action.data[key] };
         });
         Object.keys(defaultUserInfo).forEach((key) => {
-          if (!newInfo[key]) {
+          if (newInfo[key] == undefined) {
             newInfo[key] = defaultUserInfo[key];
           }
         });

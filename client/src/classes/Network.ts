@@ -170,6 +170,12 @@ export class Network {
     return peerProcessor as PeerProcessor;
   }
 
+  toggleDeaf(deaf: boolean): void{
+    this.peerProcessors.forEach(peerProcessor => {
+      peerProcessor.player.muted = deaf;
+    });
+  }
+
   // update tracks for all peer connections
   updateAllTracks(track: MediaStreamTrack): void {
     if(track){

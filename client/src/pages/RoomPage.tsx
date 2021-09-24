@@ -33,8 +33,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const selfUserInfoRef = useRef(selfUserInfo);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
   const history = useHistory();
-  const [mute, setMute] = useState(false);
-  const muteRef = useRef(mute);
 
   const [network, setNetwork] = useState<Network>(null as unknown as Network);
 
@@ -53,9 +51,16 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     setVisualizer(_visualizer);
   };
 
-  const updateMute = (_mute) => {
-    muteRef.current = _mute;
-    setMute(_mute);
+  const toggleMute = () => {
+    updateSelfUserInfo({ ...selfUserInfoRef.current, mute: !selfUserInfoRef.current.mute });
+  };
+
+  const toggleActive = () => {
+    updateSelfUserInfo({
+      ...selfUserInfoRef.current,
+      active: !selfUserInfoRef.current.active,
+      mute: selfUserInfoRef.current.active,
+    });
   };
 
   // announce and set a new user on join
@@ -75,17 +80,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const onAudioActivity = (gain: number) => {
     const newMultiplier = gainToMultiplier(gain);
     updateSelfUserInfo({ ...selfUserInfoRef.current, multiplier: newMultiplier });
-  };
-
-  const updateTracks = () => {
-    if (stream) {
-      if (network) {
-        network.updateAllTracks(stream.getAudioTracks()[0]);
-      }
-      if (visualizerRef.current) {
-        visualizerRef.current.setStream(stream);
-      }
-    }
   };
 
   // open all listeners on render
@@ -108,14 +102,16 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       network.close();
       stream.getTracks().forEach((track) => track.stop());
     };
-    const onM = (e) => {
+    const onKey = (e) => {
       if (e.key === "m") {
-        updateMute(!muteRef.current);
+        toggleMute();
+      } else if (e.code === "Space") {
+        toggleActive();
       }
     };
-    document.addEventListener("keydown", onM);
+    document.addEventListener("keydown", onKey);
     return () => {
-      document.removeEventListener("keydown", onM);
+      document.removeEventListener("keydown", onKey);
     };
   }, []);
 
@@ -124,20 +120,30 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, [userInfos]);
 
   useEffect(() => {
-    updateTracks();
+    if (stream) {
+      if (network) {
+        network.updateAllTracks(stream.getAudioTracks()[0]);
+      }
+      if (visualizerRef.current) {
+        visualizerRef.current.setStream(stream);
+      }
+    }
   }, [stream]);
-
-  useEffect(() => {
-    stream.getAudioTracks()[0].enabled = !mute;
-    updateTracks();
-  }, [mute]);
 
   // update remote position when avatar is dragged
   useEffect(() => {
+    stream.getAudioTracks()[0].enabled = !selfUserInfoRef.current.mute;
     if (network) {
       network.updateInfo(selfUserInfoRef.current);
+      network.updateAllTracks(stream.getAudioTracks()[0]);
     }
   }, [selfUserInfoRef.current]);
+
+  useEffect(() => {
+    if (network) {
+      network.toggleDeaf(!selfUserInfoRef.current.active);
+    }
+  }, [selfUserInfoRef.current.active]);
 
   return (
     <RoomTemplate
@@ -172,27 +178,29 @@ function RoomPage({ name }: { name: string }): JSX.Element {
             userInfos={Object.values(userInfos)}
           />
         </Div>
-        <Button
-          pos="absolute"
-          bottom="1rem"
-          left="30%"
-          title="Press m to mute/unmute"
-          w="4%"
-          bg="rgb(0 0 0 / 60%)"
-          onClick={() => updateMute(!mute)}
-        >
-          {mute ? <MicOffIcon /> : <MicIcon />}
-        </Button>
-        <Button
-          pos="absolute"
-          bottom="1rem"
-          left="35%"
-          w="30%"
-          onClick={() => history.go(0)}
-          bg="red"
-        >
-          Leave
-        </Button>
+        <Div pos="absolute" w="40%" left="30%" bottom="1rem" d="flex">
+          <Button
+            title="Press spacebar to toggle status"
+            w="20%"
+            m="0.5%"
+            bg={selfUserInfoRef.current.active ? "success700" : "danger700"}
+            onClick={() => toggleActive()}
+          >
+            {selfUserInfoRef.current.active ? "Active" : "Inactive"}
+          </Button>
+          <Button
+            title="Press m to mute/unmute"
+            w="10%"
+            m="0.5%"
+            bg="rgb(0 0 0 / 60%)"
+            onClick={() => toggleMute()}
+          >
+            {selfUserInfoRef.current.mute ? <MicOffIcon /> : <MicIcon />}
+          </Button>
+          <Button w="70%" m="0.5%" onClick={() => history.go(0)} bg="red">
+            Leave
+          </Button>
+        </Div>
       </>
     </RoomTemplate>
   );

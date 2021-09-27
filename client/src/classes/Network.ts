@@ -107,7 +107,6 @@ export class Network {
       if (id != socket.id) {
         const peerProcessor = this.pushToNetwork(id);
         peerProcessor.sendOffer();
-        this.pushToNetwork(id);
       }
     });
 

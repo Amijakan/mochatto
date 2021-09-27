@@ -17,7 +17,7 @@ const RoomTemplate = ({
   const history = useHistory();
   return (
     <Div
-      bgImg="https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v996-010-kroiqxy3.jpg?w=1000&dpr=1&fit=default&crop=default&q=65&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=4b9ae16977c89089d08b6061c9456e2c"
+      bgImg={process.env.PUBLIC_URL + "/background.jpg"}
       bgSize="cover"
       position="fixed"
       d="flex"

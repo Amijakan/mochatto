@@ -12,8 +12,6 @@ export interface Pack {
   kind: string;
 }
 
-export const timeout = 3000;
-
 export class Network {
   socket: Socket;
   peerProcessors: PeerProcessor[];

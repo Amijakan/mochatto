@@ -106,6 +106,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     const onKey = (e) => {
       if (e.key === "m") {
         toggleMute();
+      } else if (e.key === "s") {
+        setShowSideDrawer(true);
+      } else if (e.key === "L") {
+        history.go(0);
       } else if (e.code === "Space") {
         toggleActive();
       }

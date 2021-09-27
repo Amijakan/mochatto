@@ -37,14 +37,14 @@ function AvatarCanvas({
   };
 
   // returns a randomly generated pastel color
-  const getColor = (random: number, lighteness: number) => {
-    return "hsl(" + 360 * random + "," + (30 + 70 * random) + "%," + 70 * lighteness + "%)";
+  const getColor = (random: number, lighteness: number, transparency: number) => {
+    return "hsla(" + 360 * random + "," + (30 + 70 * random) + "%," + 70 * lighteness + "%, " + transparency + ")";
   };
 
   useEffect(() => {
     const random = Math.random();
-    const background = getColor(random, 1);
-    const border = getColor(random, 1.2);
+    const background = getColor(random, 1, 1);
+    const border = getColor(random, 1.2, 0.6);
     setSelfUserInfo({ ...selfUserInfo, avatarColor: { background, border } });
   }, []);
 

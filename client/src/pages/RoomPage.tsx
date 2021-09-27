@@ -199,7 +199,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
             <Div d="inline-block">
               <Div rounded="circle" bg="#000000ba" d="flex" p={{ x: "1rem", y: "0.3rem" }}>
                 <Button title="Settings (s)" {...buttonStyle} onClick={() => setShowSideDrawer(true)}>
-                  <Icon name="SettingsSolid" color="white" />
+                  <Icon name="SettingsSolid" color="white" size="24px"/>
                 </Button>
                 <Button
                   title="Status (spacebar)"
@@ -208,9 +208,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
                   onClick={() => toggleActive()}
                 >
                   {selfUserInfoRef.current.active ? (
-                    <Icon name="Status" color="success700" size="20px" />
+                    <Icon name="Status" color="success700" size="24px" />
                   ) : (
-                    <Icon name="RemoveSolid" color="danger700" size="20px" />
+                    <Icon name="RemoveSolid" color="danger700" size="26px" />
                   )}
                 </Button>
                 <Button

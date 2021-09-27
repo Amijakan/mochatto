@@ -38,8 +38,8 @@ function AvatarDOM({
       onPointerDown={onPointerDown}
       style={{
         touchAction: "none",
-        width: "65px",
-        height: "65px",
+        width: "5rem",
+        height: "5rem",
         borderRadius: "100%",
         boxShadow: "0 0 0 " + (1 + multiplier * 10).toString() + "px " + _borderColor,
         background: _backgroundColor,

@@ -152,8 +152,19 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     }
   }, [selfUserInfoRef.current.active]);
 
+  const buttonStyle = {
+    m: "0.3rem",
+    bg: "none",
+    h: "2.5rem",
+    w: "2.5rem",
+    hoverBg: "#ffffff29",
+    rounded: "circle",
+  };
+
   return (
     <RoomTemplate
+      showSideDrawer={showSideDrawer}
+      setShowSideDrawer={setShowSideDrawer}
       sideDrawerComponent={
         <Div>
           <Text>Choose your audio input source.</Text>
@@ -178,35 +189,49 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         >
           {announcement}
         </Notification>
-        <Div w="50%" p={{ x: "1.25rem", y: "1.25rem" }}>
-          <AvatarCanvas
-            selfUserInfo={selfUserInfoRef.current}
-            setSelfUserInfo={updateSelfUserInfo}
-            userInfos={Object.values(userInfos)}
-          />
-        </Div>
-        <Div pos="absolute" w="40%" left="30%" bottom="1rem" d="flex">
-          <Button
-            title="Press spacebar to toggle status"
-            w="20%"
-            m="0.5%"
-            bg={selfUserInfoRef.current.active ? "success700" : "danger700"}
-            onClick={() => toggleActive()}
-          >
-            {selfUserInfoRef.current.active ? "Active" : "Inactive"}
-          </Button>
-          <Button
-            title="Press m to mute/unmute"
-            w="10%"
-            m="0.5%"
-            bg="rgb(0 0 0 / 60%)"
-            onClick={() => toggleMute()}
-          >
-            {selfUserInfoRef.current.mute ? <MicOffIcon /> : <MicIcon />}
-          </Button>
-          <Button w="70%" m="0.5%" onClick={() => history.go(0)} bg="red">
-            Leave
-          </Button>
+        <AvatarCanvas
+          selfUserInfo={selfUserInfoRef.current}
+          setSelfUserInfo={updateSelfUserInfo}
+          userInfos={Object.values(userInfos)}
+        />
+        <Div d="flex" h="100%" flexDir="column">
+          <Div d="flex" justify="center" m={{ t: "auto" }}>
+            <Div d="inline-block">
+              <Div rounded="circle" bg="#000000ba" d="flex" p={{ x: "1rem", y: "0.3rem" }}>
+                <Button title="Settings (s)" {...buttonStyle} onClick={() => setShowSideDrawer(true)}>
+                  <Icon name="SettingsSolid" color="white" />
+                </Button>
+                <Button
+                  title="Status (spacebar)"
+                  {...buttonStyle}
+                  textColor={selfUserInfoRef.current.active ? "success700" : "danger700"}
+                  onClick={() => toggleActive()}
+                >
+                  {selfUserInfoRef.current.active ? (
+                    <Icon name="Status" color="success700" size="20px" />
+                  ) : (
+                    <Icon name="RemoveSolid" color="danger700" size="20px" />
+                  )}
+                </Button>
+                <Button
+                  title="Toggle mute (m)"
+                  {...buttonStyle}
+                  onClick={() => toggleMute()}
+                >
+                  {selfUserInfoRef.current.mute ? <MicOffIcon /> : <MicIcon />}
+                </Button>
+                <Button
+                  title="Leave room (L)"
+                  {...buttonStyle}
+                  w="4rem"
+                  onClick={() => history.go(0)}
+                  textColor="red"
+                >
+                  Leave
+                </Button>
+              </Div>
+            </Div>
+          </Div>
         </Div>
       </>
     </RoomTemplate>

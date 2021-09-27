@@ -38,8 +38,8 @@ function AvatarDOM({
       onPointerDown={onPointerDown}
       style={{
         touchAction: "none",
-        width: "5rem",
-        height: "5rem",
+        width: "4.5rem",
+        height: "4.5rem",
         borderRadius: "100%",
         boxShadow: "0 0 0 " + (1 + multiplier * 10).toString() + "px " + _borderColor,
         background: _backgroundColor,
@@ -57,7 +57,7 @@ function AvatarDOM({
           textAlign: "center",
           display: "table-cell",
           fontFamily: "helvetica",
-          fontSize: "2.5rem",
+          fontSize: "2rem",
           cursor: "default",
         }}
       >
@@ -68,8 +68,8 @@ function AvatarDOM({
           position: "absolute",
           bottom: "0",
           right: "0",
-          width: "1.7rem",
-          height: "1.7rem",
+          width: "1.5rem",
+          height: "1.5rem",
         }}
       >
         {active ? (
@@ -87,7 +87,7 @@ function AvatarDOM({
               height: "100%",
             }}
           >
-            <Icon name="RemoveSolid" color="danger700" size="1.7rem" />
+            <Icon name="RemoveSolid" color="danger700" size="1.5rem" />
           </div>
         )}
       </div>

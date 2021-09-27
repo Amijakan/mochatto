@@ -208,7 +208,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
                   onClick={() => toggleActive()}
                 >
                   {selfUserInfoRef.current.active ? (
-                    <Icon name="Status" color="success700" size="24px" />
+                    <Icon name="Status" color="success700" size="22px" />
                   ) : (
                     <Icon name="RemoveSolid" color="danger700" size="26px" />
                   )}

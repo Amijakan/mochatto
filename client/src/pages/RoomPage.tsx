@@ -33,6 +33,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const selfUserInfoRef = useRef(selfUserInfo);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
   const history = useHistory();
+  const [showSideDrawer, setShowSideDrawer] = useState(false);
 
   const [network, setNetwork] = useState<Network>(null as unknown as Network);
 

@@ -50,8 +50,7 @@ const RoomTemplate = ({
               <Logo />
             </Div>
           </Col>
-          <Col p="1rem" offset="9" size="1">
-          </Col>
+          <Col p="1rem" offset="9" size="1"></Col>
         </Row>
       </Div>
       {children}

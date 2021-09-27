@@ -33,7 +33,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const selfUserInfoRef = useRef(selfUserInfo);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
   const history = useHistory();
-  const [showSideDrawer, setShowSideDrawer] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const [network, setNetwork] = useState<Network>(null as unknown as Network);
 
@@ -107,7 +107,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       if (e.key === "m") {
         toggleMute();
       } else if (e.key === "s") {
-        setShowSideDrawer(true);
+        setShowModal(true);
       } else if (e.key === "L") {
         history.go(0);
       } else if (e.code === "Space") {
@@ -163,8 +163,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   return (
     <RoomTemplate
-      showSideDrawer={showSideDrawer}
-      setShowSideDrawer={setShowSideDrawer}
+      showModal={showModal}
+      setShowModal={setShowModal}
       sideDrawerComponent={
         <Div>
           <Text>Choose your audio input source.</Text>
@@ -198,7 +198,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           <Div d="flex" justify="center" m={{ t: "auto" }}>
             <Div d="inline-block">
               <Div rounded="circle" bg="#000000ba" d="flex" p={{ x: "1rem", y: "0.3rem" }}>
-                <Button title="Settings (s)" {...buttonStyle} onClick={() => setShowSideDrawer(true)}>
+                <Button title="Settings (s)" {...buttonStyle} onClick={() => setShowModal(true)}>
                   <Icon name="SettingsSolid" color="white" size="24px"/>
                 </Button>
                 <Button

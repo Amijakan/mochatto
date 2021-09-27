@@ -1,18 +1,18 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { Div, Row, Col, SideDrawer, Button } from "atomize";
+import { Div, Row, Col, Modal, Button } from "atomize";
 import { Logo } from "../components";
 
 const RoomTemplate = ({
   children,
   sideDrawerComponent,
-  showSideDrawer,
-  setShowSideDrawer,
+  showModal,
+  setShowModal,
 }: {
   children: JSX.Element;
   sideDrawerComponent: JSX.Element;
-  showSideDrawer: boolean;
-  setShowSideDrawer: (boolean) => void;
+  showModal: boolean;
+  setShowModal: (boolean) => void;
 }): JSX.Element => {
   const history = useHistory();
   return (
@@ -27,12 +27,14 @@ const RoomTemplate = ({
       overflow="hidden"
       p={{ b: "1rem" }}
     >
-      <SideDrawer isOpen={showSideDrawer} onClose={() => setShowSideDrawer(false)} h="100%">
+      <Div d="inline">
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)} h="auto" align="center" rounded="md">
         {sideDrawerComponent}
-        <Div d="flex" justify="flex-end" align="flex-end" m={{ t: "2rem" }}>
-          <Button onClick={() => setShowSideDrawer(false)}>Close</Button>
+        <Div d="flex" justify="center" m={{ t: "2rem" }}>
+          <Button bg="gray200" textColor="medium" onClick={() => setShowModal(false)}>Close</Button>
         </Div>
-      </SideDrawer>
+      </Modal>
+    </Div>
       <Div>
         <Row>
           <Col

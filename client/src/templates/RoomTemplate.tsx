@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { useHistory } from "react-router-dom";
-import { Div, Row, Col, Icon, SideDrawer, Button } from "atomize";
+import { Div, Row, Col, SideDrawer, Button } from "atomize";
 import { Logo } from "../components";
 
 const RoomTemplate = ({

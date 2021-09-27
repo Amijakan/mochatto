@@ -57,44 +57,40 @@ function AvatarDOM({
           textAlign: "center",
           display: "table-cell",
           fontFamily: "helvetica",
-          fontSize: "30px",
+          fontSize: "2.5rem",
           cursor: "default",
         }}
       >
         {initial}
       </div>
-      {active ? (
-        mute ? (
+      <div
+        style={{
+          position: "absolute",
+          bottom: "0",
+          right: "0",
+          width: "1.7rem",
+          height: "1.7rem",
+        }}
+      >
+        {active ? (
+          mute ? (
+            <MicOffIcon />
+          ) : (
+            <></>
+          )
+        ) : (
           <div
             style={{
-              position: "absolute",
-              bottom: "0",
-              right: "0",
-              width: "25px",
-              height: "25px",
-              color: "#0000008c",
+              background: "white",
+              borderRadius: "100%",
+              width: "100%",
+              height: "100%",
             }}
           >
-            <MicOffIcon />
+            <Icon name="RemoveSolid" color="danger700" size="1.7rem" />
           </div>
-        ) : (
-          <></>
-        )
-      ) : (
-        <div
-          style={{
-            position: "absolute",
-            bottom: "0",
-            right: "0",
-            width: "25px",
-            height: "25px",
-            background: "white",
-            borderRadius: "100%",
-          }}
-        >
-          <Icon name="RemoveSolid" color="danger700" size="25px" />
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

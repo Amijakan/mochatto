@@ -132,7 +132,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // update remote position when avatar is dragged
   useEffect(() => {
-    stream.getAudioTracks()[0].enabled = !selfUserInfoRef.current.mute;
+    if (stream.getAudioTracks().length) {
+      stream.getAudioTracks()[0].enabled = !selfUserInfoRef.current.mute;
+    }
     if (network) {
       network.updateInfo(selfUserInfoRef.current);
       network.updateAllTracks(stream.getAudioTracks()[0]);

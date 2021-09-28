@@ -38,8 +38,8 @@ function AvatarDOM({
       onPointerDown={onPointerDown}
       style={{
         touchAction: "none",
-        width: "65px",
-        height: "65px",
+        width: "4.5rem",
+        height: "4.5rem",
         borderRadius: "100%",
         boxShadow: "0 0 0 " + (1 + multiplier * 10).toString() + "px " + _borderColor,
         background: _backgroundColor,
@@ -57,44 +57,40 @@ function AvatarDOM({
           textAlign: "center",
           display: "table-cell",
           fontFamily: "helvetica",
-          fontSize: "30px",
+          fontSize: "2rem",
           cursor: "default",
         }}
       >
         {initial}
       </div>
-      {active ? (
-        mute ? (
+      <div
+        style={{
+          position: "absolute",
+          bottom: "0",
+          right: "0",
+          width: "1.5rem",
+          height: "1.5rem",
+        }}
+      >
+        {active ? (
+          mute ? (
+            <MicOffIcon />
+          ) : (
+            <></>
+          )
+        ) : (
           <div
             style={{
-              position: "absolute",
-              bottom: "0",
-              right: "0",
-              width: "25px",
-              height: "25px",
-              color: "#0000008c",
+              background: "white",
+              borderRadius: "100%",
+              width: "100%",
+              height: "100%",
             }}
           >
-            <MicOffIcon />
+            <Icon name="RemoveSolid" color="danger700" size="1.5rem" />
           </div>
-        ) : (
-          <></>
-        )
-      ) : (
-        <div
-          style={{
-            position: "absolute",
-            bottom: "0",
-            right: "0",
-            width: "25px",
-            height: "25px",
-            background: "white",
-            borderRadius: "100%",
-          }}
-        >
-          <Icon name="RemoveSolid" color="danger700" size="25px" />
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

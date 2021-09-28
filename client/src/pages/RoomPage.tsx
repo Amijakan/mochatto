@@ -98,20 +98,29 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     updateVisualizer(new AudioVisualizer(onAudioActivity));
 
     window.onbeforeunload = () => {
-      console.log("unmount");
       socket.emit("LEAVE");
       network.close();
       stream.getTracks().forEach((track) => track.stop());
     };
     const onKey = (e) => {
-      if (e.key === "m") {
-        toggleMute();
-      } else if (e.key === "s") {
-        setShowModal(true);
-      } else if (e.key === "L") {
-        history.go(0);
-      } else if (e.code === "Space") {
-        toggleActive();
+      switch (e.key) {
+        case "m":
+          toggleMute();
+          break;
+        case ",":
+          setShowModal(true);
+          break;
+        case "Escape":
+          setShowModal(false);
+          break;
+        case "L":
+          history.go(0);
+          break;
+        case "s":
+          toggleActive();
+          break;
+        default:
+          break;
       }
     };
     document.addEventListener("keydown", onKey);
@@ -198,11 +207,11 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           <Div d="flex" justify="center" m={{ t: "auto" }}>
             <Div d="inline-block">
               <Div rounded="circle" bg="#000000ba" d="flex" p={{ x: "1rem", y: "0.3rem" }}>
-                <Button title="Settings (s)" {...buttonStyle} onClick={() => setShowModal(true)}>
-                  <Icon name="SettingsSolid" color="white" size="24px"/>
+                <Button title="Settings (,)" {...buttonStyle} onClick={() => setShowModal(true)}>
+                  <Icon name="SettingsSolid" color="white" size="24px" />
                 </Button>
                 <Button
-                  title="Status (spacebar)"
+                  title="Status (s)"
                   {...buttonStyle}
                   textColor={selfUserInfoRef.current.active ? "success700" : "danger700"}
                   onClick={() => toggleActive()}
@@ -213,11 +222,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
                     <Icon name="RemoveSolid" color="danger700" size="26px" />
                   )}
                 </Button>
-                <Button
-                  title="Toggle mute (m)"
-                  {...buttonStyle}
-                  onClick={() => toggleMute()}
-                >
+                <Button title="Toggle mute (m)" {...buttonStyle} onClick={() => toggleMute()}>
                   {selfUserInfoRef.current.mute ? <MicOffIcon /> : <MicIcon />}
                 </Button>
                 <Button

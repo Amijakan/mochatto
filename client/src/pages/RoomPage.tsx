@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { SocketContext, DeviceContext, UserInfoContext } from "../contexts";
+import { useHistory } from "react-router-dom";
 import { DeviceSelector } from "../components/DeviceSelector";
 import { Div, Notification, Icon, Text } from "atomize";
 import AvatarCanvas from "../components/AvatarCanvas";
@@ -7,6 +8,9 @@ import { Network } from "../classes/Network";
 import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "../classes/AudioVisualizer";
 import { RoomTemplate } from "../templates";
+import { Button } from "../components/atomize_wrapper";
+import MicIcon from "@material-ui/icons/Mic";
+import MicOffIcon from "@material-ui/icons/MicOff";
 
 import PropTypes from "prop-types";
 
@@ -28,6 +32,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const [selfUserInfo, setSelfUserInfo] = useState<UserInfo>({ ...defaultUserInfo, name });
   const selfUserInfoRef = useRef(selfUserInfo);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
+  const history = useHistory();
 
   const [network, setNetwork] = useState<Network>(null as unknown as Network);
 
@@ -44,6 +49,18 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const updateVisualizer = (_visualizer) => {
     visualizerRef.current = _visualizer;
     setVisualizer(_visualizer);
+  };
+
+  const toggleMute = () => {
+    updateSelfUserInfo({ ...selfUserInfoRef.current, mute: !selfUserInfoRef.current.mute });
+  };
+
+  const toggleActive = () => {
+    updateSelfUserInfo({
+      ...selfUserInfoRef.current,
+      active: !selfUserInfoRef.current.active,
+      mute: selfUserInfoRef.current.active,
+    });
   };
 
   // announce and set a new user on join
@@ -78,6 +95,24 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     });
 
     updateVisualizer(new AudioVisualizer(onAudioActivity));
+
+    window.onbeforeunload = () => {
+      console.log("unmount");
+      socket.emit("LEAVE");
+      network.close();
+      stream.getTracks().forEach((track) => track.stop());
+    };
+    const onKey = (e) => {
+      if (e.key === "m") {
+        toggleMute();
+      } else if (e.code === "Space") {
+        toggleActive();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+    };
   }, []);
 
   useEffect(() => {
@@ -85,20 +120,30 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, [userInfos]);
 
   useEffect(() => {
-    if (network) {
-      network.updateAllTracks(stream.getAudioTracks()[0]);
-    }
-    if (visualizerRef.current) {
-      visualizerRef.current.setStream(stream);
+    if (stream) {
+      if (network) {
+        network.updateAllTracks(stream.getAudioTracks()[0]);
+      }
+      if (visualizerRef.current) {
+        visualizerRef.current.setStream(stream);
+      }
     }
   }, [stream]);
 
   // update remote position when avatar is dragged
   useEffect(() => {
+    stream.getAudioTracks()[0].enabled = !selfUserInfoRef.current.mute;
     if (network) {
       network.updateInfo(selfUserInfoRef.current);
+      network.updateAllTracks(stream.getAudioTracks()[0]);
     }
   }, [selfUserInfoRef.current]);
+
+  useEffect(() => {
+    if (network) {
+      network.toggleDeaf(!selfUserInfoRef.current.active);
+    }
+  }, [selfUserInfoRef.current.active]);
 
   return (
     <RoomTemplate
@@ -132,6 +177,29 @@ function RoomPage({ name }: { name: string }): JSX.Element {
             setSelfUserInfo={updateSelfUserInfo}
             userInfos={Object.values(userInfos)}
           />
+        </Div>
+        <Div pos="absolute" w="40%" left="30%" bottom="1rem" d="flex">
+          <Button
+            title="Press spacebar to toggle status"
+            w="20%"
+            m="0.5%"
+            bg={selfUserInfoRef.current.active ? "success700" : "danger700"}
+            onClick={() => toggleActive()}
+          >
+            {selfUserInfoRef.current.active ? "Active" : "Inactive"}
+          </Button>
+          <Button
+            title="Press m to mute/unmute"
+            w="10%"
+            m="0.5%"
+            bg="rgb(0 0 0 / 60%)"
+            onClick={() => toggleMute()}
+          >
+            {selfUserInfoRef.current.mute ? <MicOffIcon /> : <MicIcon />}
+          </Button>
+          <Button w="70%" m="0.5%" onClick={() => history.go(0)} bg="red">
+            Leave
+          </Button>
         </Div>
       </>
     </RoomTemplate>

@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import { Icon } from "atomize";
+import MicOffIcon from "@material-ui/icons/MicOff";
 
 function AvatarDOM({
   onPointerDown,
@@ -8,6 +10,8 @@ function AvatarDOM({
   _backgroundColor,
   _borderColor,
   initial,
+  active,
+  mute,
 }: {
   onPointerDown: (PointerEvent) => void;
   pos: [number, number];
@@ -16,6 +20,8 @@ function AvatarDOM({
   _backgroundColor: string;
   _borderColor: string;
   initial: string;
+  active: boolean;
+  mute: boolean;
 }): JSX.Element {
   useEffect(() => {
     const avatardom = document.querySelector(".avatar");
@@ -57,6 +63,38 @@ function AvatarDOM({
       >
         {initial}
       </div>
+      {active ? (
+        mute ? (
+          <div
+            style={{
+              position: "absolute",
+              bottom: "0",
+              right: "0",
+              width: "25px",
+              height: "25px",
+              color: "#0000008c",
+            }}
+          >
+            <MicOffIcon />
+          </div>
+        ) : (
+          <></>
+        )
+      ) : (
+        <div
+          style={{
+            position: "absolute",
+            bottom: "0",
+            right: "0",
+            width: "25px",
+            height: "25px",
+            background: "white",
+            borderRadius: "100%",
+          }}
+        >
+          <Icon name="RemoveSolid" color="danger700" size="25px" />
+        </div>
+      )}
     </div>
   );
 }

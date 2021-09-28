@@ -5,21 +5,24 @@ import { DeviceSelector } from "../components/DeviceSelector";
 import { AudioVisualizer } from "../classes/AudioVisualizer";
 import PropTypes from "prop-types";
 import { Input } from "../components/atomize_wrapper";
-import { Div } from "atomize";
+import { Div, Notification, Icon } from "atomize";
 import { Button, Card, Text } from "../components/atomize_wrapper";
 import { BaseTemplate } from "../templates";
 import { colors } from "../constants/colors";
 
 const JoinPage = ({
+  name,
   setName,
   setJoined,
 }: {
+  name: string;
   setName: (string) => void;
   setJoined: (string) => void;
 }): JSX.Element => {
   const { socket } = useContext(SocketContext);
   const { stream, setStream } = useContext(DeviceContext);
   const { room_id } = useParams<{ room_id: string }>();
+  const [showNotification, setShowNotification] = useState(false);
   const history = useHistory();
 
   const [gain, setGain] = useState(0);
@@ -27,8 +30,12 @@ const JoinPage = ({
 
   const onJoinClicked = () => {
     if (socket) {
-      setJoined(true);
-      visualizer.stop();
+      if (name != "") {
+        setJoined(true);
+        visualizer.stop();
+      } else {
+        setShowNotification(true);
+      }
     }
   };
 
@@ -59,6 +66,14 @@ const JoinPage = ({
               Room ID: <b>{room_id}</b>
             </Text>
             <Div>
+              <Notification
+                isOpen={showNotification}
+                bg={"danger700"}
+                onClose={() => setShowNotification(false)}
+                prefix={<Icon name="CloseSolid" color="white" size="18px" m={{ r: "0.5rem" }} />}
+              >
+                Please choose a username.
+              </Notification>
               <Input
                 placeholder="Name"
                 type="text"
@@ -83,7 +98,14 @@ const JoinPage = ({
               <Button w="45%" onClick={() => onJoinClicked()}>
                 Join
               </Button>
-              <Button w="45%" onClick={() => history.push("/")} bg="gray">
+              <Button
+                w="45%"
+                onClick={() => {
+                  history.push("/");
+                  history.go(0);
+                }}
+                bg="gray"
+              >
                 Back
               </Button>
             </Div>

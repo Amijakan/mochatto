@@ -1,7 +1,7 @@
 import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "./AudioVisualizer";
 import { Socket } from "socket.io-client";
-import { timeout, DCLabel, Pack } from "./Network";
+import { DCLabel, Pack } from "./Network";
 
 export interface DataPackage {
   position: [number, number];
@@ -43,10 +43,6 @@ export class PeerProcessor {
     // listener for when a peer adds a track
     this.peerConnection.ontrack = (event) => {
       this.updateLocalTrack(event.track);
-    };
-
-    this.peerConnection.onnegotiationneeded = () => {
-      this.sendOffer();
     };
 
     this.peerConnection.ondatachannel = (event) => {
@@ -99,13 +95,6 @@ export class PeerProcessor {
           };
 
           this.socket.emit("OFFER", JSON.stringify(offerPack));
-
-          setTimeout(() => {
-            if (this.peerConnection.connectionState != "connected") {
-              console.warn("Timed out, retrying connection");
-              this.peerConnection.restartIce();
-            }
-          }, timeout);
         }
       })
       .catch((e) => {

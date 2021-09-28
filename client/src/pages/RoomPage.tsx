@@ -33,6 +33,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const selfUserInfoRef = useRef(selfUserInfo);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
   const history = useHistory();
+  const [showModal, setShowModal] = useState(false);
 
   const [network, setNetwork] = useState<Network>(null as unknown as Network);
 
@@ -97,16 +98,29 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     updateVisualizer(new AudioVisualizer(onAudioActivity));
 
     window.onbeforeunload = () => {
-      console.log("unmount");
       socket.emit("LEAVE");
       network.close();
       stream.getTracks().forEach((track) => track.stop());
     };
     const onKey = (e) => {
-      if (e.key === "m") {
-        toggleMute();
-      } else if (e.code === "Space") {
-        toggleActive();
+      switch (e.key) {
+        case "m":
+          toggleMute();
+          break;
+        case ",":
+          setShowModal(true);
+          break;
+        case "Escape":
+          setShowModal(false);
+          break;
+        case "L":
+          history.go(0);
+          break;
+        case "s":
+          toggleActive();
+          break;
+        default:
+          break;
       }
     };
     document.addEventListener("keydown", onKey);
@@ -132,7 +146,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // update remote position when avatar is dragged
   useEffect(() => {
-    stream.getAudioTracks()[0].enabled = !selfUserInfoRef.current.mute;
+    if (stream.getAudioTracks().length) {
+      stream.getAudioTracks()[0].enabled = !selfUserInfoRef.current.mute;
+    }
     if (network) {
       network.updateInfo(selfUserInfoRef.current);
       network.updateAllTracks(stream.getAudioTracks()[0]);
@@ -145,8 +161,19 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     }
   }, [selfUserInfoRef.current.active]);
 
+  const buttonStyle = {
+    m: "0.3rem",
+    bg: "none",
+    h: "2.5rem",
+    w: "2.5rem",
+    hoverBg: "#ffffff29",
+    rounded: "circle",
+  };
+
   return (
     <RoomTemplate
+      showModal={showModal}
+      setShowModal={setShowModal}
       sideDrawerComponent={
         <Div>
           <Text>Choose your audio input source.</Text>
@@ -171,35 +198,45 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         >
           {announcement}
         </Notification>
-        <Div w="50%" p={{ x: "1.25rem", y: "1.25rem" }}>
-          <AvatarCanvas
-            selfUserInfo={selfUserInfoRef.current}
-            setSelfUserInfo={updateSelfUserInfo}
-            userInfos={Object.values(userInfos)}
-          />
-        </Div>
-        <Div pos="absolute" w="40%" left="30%" bottom="1rem" d="flex">
-          <Button
-            title="Press spacebar to toggle status"
-            w="20%"
-            m="0.5%"
-            bg={selfUserInfoRef.current.active ? "success700" : "danger700"}
-            onClick={() => toggleActive()}
-          >
-            {selfUserInfoRef.current.active ? "Active" : "Inactive"}
-          </Button>
-          <Button
-            title="Press m to mute/unmute"
-            w="10%"
-            m="0.5%"
-            bg="rgb(0 0 0 / 60%)"
-            onClick={() => toggleMute()}
-          >
-            {selfUserInfoRef.current.mute ? <MicOffIcon /> : <MicIcon />}
-          </Button>
-          <Button w="70%" m="0.5%" onClick={() => history.go(0)} bg="red">
-            Leave
-          </Button>
+        <AvatarCanvas
+          selfUserInfo={selfUserInfoRef.current}
+          setSelfUserInfo={updateSelfUserInfo}
+          userInfos={Object.values(userInfos)}
+        />
+        <Div d="flex" h="100%" flexDir="column">
+          <Div d="flex" justify="center" m={{ t: "auto" }}>
+            <Div d="inline-block">
+              <Div rounded="circle" bg="#000000ba" d="flex" p={{ x: "1rem", y: "0.3rem" }}>
+                <Button title="Settings (,)" {...buttonStyle} onClick={() => setShowModal(true)}>
+                  <Icon name="SettingsSolid" color="white" size="24px" />
+                </Button>
+                <Button
+                  title="Status (s)"
+                  {...buttonStyle}
+                  textColor={selfUserInfoRef.current.active ? "success700" : "danger700"}
+                  onClick={() => toggleActive()}
+                >
+                  {selfUserInfoRef.current.active ? (
+                    <Icon name="Status" color="success700" size="22px" />
+                  ) : (
+                    <Icon name="RemoveSolid" color="danger700" size="26px" />
+                  )}
+                </Button>
+                <Button title="Toggle mute (m)" {...buttonStyle} onClick={() => toggleMute()}>
+                  {selfUserInfoRef.current.mute ? <MicOffIcon /> : <MicIcon />}
+                </Button>
+                <Button
+                  title="Leave room (L)"
+                  {...buttonStyle}
+                  w="4rem"
+                  onClick={() => history.go(0)}
+                  textColor="red"
+                >
+                  Leave
+                </Button>
+              </Div>
+            </Div>
+          </Div>
         </Div>
       </>
     </RoomTemplate>

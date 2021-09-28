@@ -3,9 +3,9 @@
 # Pretty much what it does is yarn install on server and client before docker-compose up
 ROOT=$PWD
 cd $ROOT/server
-yarn
+yarn install --frozen-lockfile
 
 cd $ROOT/client
-yarn
+yarn install --frozen-lockfile
 
 

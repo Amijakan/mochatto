@@ -76,7 +76,7 @@ io.of((nsp, query, next) => {
     if (rooms[socket.nsp.name] === 0) {
       delete rooms[socket.nsp.name];
     }
-    io.of(socket.nsp.name).emit("LEAVE", { id: socket.id });
+    io.of(socket.nsp.name).emit("DISCONNECT", { id: socket.id });
     console.log(socket.id + " has disconnected.");
 
   });

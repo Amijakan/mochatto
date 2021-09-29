@@ -95,6 +95,12 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       onLeave(id);
     });
 
+    socket.on("DISCONNECT", ({ id }) => {
+      if(globalUserInfos[id]){
+        onLeave(id);
+      }
+    });
+
     updateVisualizer(new AudioVisualizer(onAudioActivity));
 
     window.onbeforeunload = () => {

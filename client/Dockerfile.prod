@@ -4,6 +4,6 @@ ENV PORT=4500
 
 COPY . /
 
-RUN yarn install --frozen-lockfile && yarn build
+RUN yarn && yarn build
 
 ENTRYPOINT ["yarn", "serve"]

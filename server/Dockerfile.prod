@@ -5,7 +5,7 @@ EXPOSE 4000
 
 # Installing node modules
 COPY . /
-RUN yarn install --frozen-lockfile
+RUN yarn
 
 ENTRYPOINT ["yarn", "start"]
 

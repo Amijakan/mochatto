@@ -17,7 +17,7 @@ const RoomTemplate = ({
   const history = useHistory();
   return (
     <Div
-      bgImg={process.env.PUBLIC_URL + "/background.jpg"}
+      bgImg={import.meta.env.PUBLIC_URL + "/background.jpg"}
       bgSize="cover"
       position="fixed"
       d="flex"
@@ -28,13 +28,21 @@ const RoomTemplate = ({
       p={{ b: "1rem" }}
     >
       <Div d="inline">
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} h="auto" align="center" rounded="md">
-        {sideDrawerComponent}
-        <Div d="flex" justify="center" m={{ t: "2rem" }}>
-          <Button bg="gray200" textColor="medium" onClick={() => setShowModal(false)}>Close</Button>
-        </Div>
-      </Modal>
-    </Div>
+        <Modal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          h="auto"
+          align="center"
+          rounded="md"
+        >
+          {sideDrawerComponent}
+          <Div d="flex" justify="center" m={{ t: "2rem" }}>
+            <Button bg="gray200" textColor="medium" onClick={() => setShowModal(false)}>
+              Close
+            </Button>
+          </Div>
+        </Modal>
+      </Div>
       <Div>
         <Row>
           <Col

@@ -1,7 +1,5 @@
 FROM node:14.17.3
-EXPOSE 4500
-ENV PORT=4500
 
 WORKDIR /app
 
-ENTRYPOINT yarn start
+ENTRYPOINT yarn dev --host

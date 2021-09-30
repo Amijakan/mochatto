@@ -25,12 +25,12 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "PORT=4500 react-scripts start",
-    "build": "react-scripts build",
+    "dev": "vite --port 4500",
+    "build": "tsc && vite build",
     "devTest": "yarn run cypress open",
     "test": "npx cypress run --record --key 7af4c11b-fe02-4012-bfde-b35c55f2306b",
     "eject": "react-scripts eject",
-    "serve": "serve -s ./build"
+    "serve": "serve -l 4500 -s ./dist"
   },
   "eslintConfig": {
     "extends": [
@@ -55,11 +55,13 @@
     "@types/superagent": "^4.1.12",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
+    "@vitejs/plugin-react": "^1.0.0",
     "cypress": "^8.2.0",
     "eslint": "^7.32.0",
     "eslint-plugin-cypress": "^2.11.3",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "serve": "^12.0.0"
+    "serve": "^12.0.1",
+    "vite": "^2.6.0"
   }
 }

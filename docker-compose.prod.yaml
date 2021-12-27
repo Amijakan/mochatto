@@ -3,7 +3,8 @@ services:
   server:
     build:
       context: ./server
-      dockerfile: ./Dockerfile.prod
+      dockerfile: ./Dockerfile
+      target: prod
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
     command:

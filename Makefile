@@ -17,19 +17,19 @@ help:
 ## Prepares the dev environment
 dev: 
 	./bin/pre-up
-	docker-compose build
+	docker-compose --profile dev build
 
 ## Starts the dev environment (Mounts local folder)
 dev-up:
-	docker-compose up
+	docker-compose --profile dev up
 
 ## Builds the prod environment
 prod:
-	docker-compose -f ./docker-compose.prod.yaml build
+	docker-compose --profile prod build
 
 ## Starts the prod environment in daemon
 prod-up:
-	docker-compose -f ./docker-compose.prod.yaml up -d
+	docker-compose --profile prod up
 
 ## Cleans containers
 clean:

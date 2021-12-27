@@ -1,6 +1,8 @@
 version: "3.6"
 services:
-  server:
+  server-dev:
+    profiles:
+      - dev
     build:
       context: ./server
       dockerfile: ./Dockerfile
@@ -12,7 +14,9 @@ services:
     command:
       yarn start
 
-  client:
+  client-dev:
+    profiles:
+      - dev
     build:
       context: ./client
       dockerfile: ./Dockerfile
@@ -25,5 +29,42 @@ services:
       REACT_APP_SERVER_URL: "http://localhost:4000"
     command:
       yarn start
+
+  # Prod containers    
+  server-prod:
+    profiles:
+      - prod
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile
+      target: prod
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+    command:
+      yarn start
+    environment:
+      HTTPS: 'true'
+      SSL_CRT_FILE: '/etc/letsencrypt/live/mochatto.com/cert.pem'
+      SSL_KEY_FILE: '/etc/letsencrypt/live/mochatto.com/privkey.pem'
+      SSL_CA_FILE: '/etc/letsencrypt/live/mochatto.com/fullchain.pem'
+    ports:
+      - '4000:4000'
+  client-prod:
+    profiles:
+      - prod
+    build:
+      context: ./client
+      dockerfile: ./Dockerfile
+      target: prod
+      args:
+        serverurl: https://mochatto.com:4000
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+    ports:
+      - '443:4500'
+    environment:
+      REACT_APP_SERVER_URL: 'https://mochatto.com:4000'
+    command:
+      npx serve -s ./build --ssl-key /etc/letsencrypt/live/mochatto.com/privkey.pem --ssl-cert /etc/letsencrypt/live/mochatto.com/cert.pem
 
       

@@ -7,8 +7,9 @@ WORKDIR /app
 
 # --- PROD
 FROM base as prod
-ARG server-url
-ENV REACT_APP_SERVER_URL=$server-url
+ARG serverurl
+RUN echo "$serverurl"
+ENV REACT_APP_SERVER_URL=$serverurl
 COPY . /app
 RUN yarn && yarn build
 

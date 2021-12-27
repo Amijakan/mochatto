@@ -29,8 +29,7 @@
     "build": "react-scripts build",
     "devTest": "yarn run cypress open",
     "test": "npx cypress run --record --key 7af4c11b-fe02-4012-bfde-b35c55f2306b",
-    "eject": "react-scripts eject",
-    "serve": "serve -s ./build --ssl-key /etc/letsencrypt/live/mochatto.com/privkey.pem --ssl-cert /etc/letsencrypt/live/mochatto.com/cert.pem"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

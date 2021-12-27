@@ -5,14 +5,14 @@ services:
       context: ./server
       dockerfile: ./Dockerfile.prod
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
+      - /etc/letsencrypt/live/mochatto.com:/certificates
     command:
       yarn start
     environment:
       HTTPS: 'true'
-      SSL_CRT_FILE: '/etc/letsencrypt/live/mochatto.com/cert.pem'
-      SSL_KEY_FILE: '/etc/letsencrypt/live/mochatto.com/privkey.pem'
-      SSL_CA_FILE: '/etc/letsencrypt/live/mochatto.com/fullchain.pem'
+      SSL_CRT_FILE: '/certificates/cert.pem'
+      SSL_KEY_FILE: '/certificates/privkey.pem'
+      SSL_CA_FILE: '/certificates/fullchain.pem'
     ports:
       - '4000:4000'
   client:
@@ -21,14 +21,14 @@ services:
       dockerfile: ./Dockerfile
       target: prod
       args:
-        server-url: https://mochatto.com:4000
+        serverurl: https://mochatto.com:4000
     volumes:
-      - /etc/letsencrypt/live/mochatto.com:/etc/letsencrypt/live/mochatto.com
+      - /etc/letsencrypt/live/mochatto.com:/certificates
     ports:
       - '443:4500'
     environment:
       REACT_APP_SERVER_URL: 'https://mochatto.com:4000'
     command:
-      yarn serve
+      serve -s ./build --ssl-key /certificates/privkey.pem --ssl-cert /certificates/cert.pem
 
       

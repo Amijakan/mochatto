@@ -1,4 +1,4 @@
-version: "3.0"
+version: "3.6"
 services:
   server:
     build:
@@ -18,9 +18,12 @@ services:
   client:
     build:
       context: ./client
-      dockerfile: ./Dockerfile.prod
+      dockerfile: ./Dockerfile
+      target: prod
+      args:
+        server-url: https://mochatto.com:4000
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
+      - /etc/letsencrypt/live/mochatto.com:/etc/letsencrypt/live/mochatto.com
     ports:
       - '443:4500'
     environment:

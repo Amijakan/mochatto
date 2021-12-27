@@ -2,6 +2,7 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import { Div, Row, Col, Modal, Button } from "atomize";
 import { Logo } from "../components";
+import backgroundImg from "../assets/imgs/background.jpg";
 
 const RoomTemplate = ({
   children,
@@ -17,7 +18,7 @@ const RoomTemplate = ({
   const history = useHistory();
   return (
     <Div
-      bgImg={import.meta.env.PUBLIC_URL + "/background.jpg"}
+      bgImg={backgroundImg}
       bgSize="cover"
       position="fixed"
       d="flex"

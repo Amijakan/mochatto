@@ -29,7 +29,7 @@ prod:
 
 ## Starts the prod environment in daemon
 prod-up:
-	docker-compose --profile prod up
+	docker-compose --profile prod up -d
 
 ## Cleans containers
 clean:

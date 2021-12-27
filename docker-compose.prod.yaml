@@ -29,6 +29,6 @@ services:
     environment:
       REACT_APP_SERVER_URL: 'https://mochatto.com:4000'
     command:
-      serve -s ./build --ssl-key /certificates/privkey.pem --ssl-cert /certificates/cert.pem
+      npx serve -s ./build --ssl-key /certificates/privkey.pem --ssl-cert /certificates/cert.pem
 
       

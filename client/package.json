@@ -50,13 +50,10 @@
     "@types/superagent": "^4.1.12",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
-<<<<<<< HEAD
     "@vitejs/plugin-react": "^1.0.0",
-=======
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
->>>>>>> main
     "cypress": "^8.2.0",
     "typescript": "^4.1.2",
     "eslint": "^7.32.0",

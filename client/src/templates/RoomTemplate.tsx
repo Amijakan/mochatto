@@ -2,7 +2,7 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import { Div, Row, Col, Modal, Button } from "atomize";
 import { Logo } from "../components";
-import backgroundImg from "../assets/imgs/background.jpg";
+import b64bg from "../assets/imgs/background_b64";
 
 const RoomTemplate = ({
   children,
@@ -18,7 +18,7 @@ const RoomTemplate = ({
   const history = useHistory();
   return (
     <Div
-      bgImg={backgroundImg}
+      bgImg={`data:image/png;base64,${b64bg}`}
       bgSize="cover"
       position="fixed"
       d="flex"
@@ -38,7 +38,11 @@ const RoomTemplate = ({
         >
           {sideDrawerComponent}
           <Div d="flex" justify="center" m={{ t: "2rem" }}>
-            <Button bg="gray200" textColor="medium" onClick={() => setShowModal(false)}>
+            <Button
+              bg="gray200"
+              textColor="medium"
+              onClick={() => setShowModal(false)}
+            >
               Close
             </Button>
           </Div>

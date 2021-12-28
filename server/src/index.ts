@@ -1,24 +1,35 @@
 import express from "express";
 import { Server } from "socket.io";
-import { createServer } from "http";
 import cors from "cors";
+import https from "https";
+import fs from "fs";
 
 const app = express();
 const port = 4000;
-const server = app.listen(port, () => {
+let server = (
+  process.env.HTTPS
+    ? https.createServer(
+        {
+          key: fs.readFileSync(process.env.SSL_KEY_FILE),
+          cert: fs.readFileSync(process.env.SSL_CRT_FILE),
+          ca: fs.readFileSync(process.env.SSL_CA_FILE),
+        },
+        app
+      )
+    : app
+).listen(port, () => {
   return console.log(`server is listening on ${port}`);
 });
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:4500", "http://localhost:4600"],
+    origin: process.env.HTTPS ? "*" : ["http://localhost:4500", "http://localhost:4600"],
   },
 });
 
 app.get("/", (req, res) => {
   res.send({ body: "Hello world, 3" });
 });
-
 
 const rooms: { [key: string]: number } = {};
 
@@ -78,6 +89,5 @@ io.of((nsp, query, next) => {
     }
     io.of(socket.nsp.name).emit("DISCONNECT", { id: socket.id });
     console.log(socket.id + " has disconnected.");
-
   });
 });

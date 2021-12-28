@@ -26,7 +26,7 @@ services:
     volumes:
       - './client:/app'
     environment:
-      REACT_APP_SERVER_URL: "http://localhost:4000"
+      VITE_SERVER_URL: "http://localhost:4000"
     command:
       yarn dev --host
 
@@ -62,8 +62,6 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt
     ports:
       - '443:4500'
-    environment:
-      REACT_APP_SERVER_URL: 'https://mochatto.com:4000'
     command:
       npx serve -l 4500 -s ./dist --ssl-key /etc/letsencrypt/live/mochatto.com/privkey.pem --ssl-cert /etc/letsencrypt/live/mochatto.com/cert.pem
 

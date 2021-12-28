@@ -6,4 +6,3 @@ COPY . /
 
 RUN yarn && yarn build
 
-ENTRYPOINT ["yarn", "serve"]

@@ -4,15 +4,28 @@ services:
     build:
       context: ./server
       dockerfile: ./Dockerfile.prod
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+    command:
+      yarn start
+    environment:
+      HTTPS: 'true'
+      SSL_CRT_FILE: '/etc/letsencrypt/live/mochatto.com/cert.pem'
+      SSL_KEY_FILE: '/etc/letsencrypt/live/mochatto.com/privkey.pem'
+      SSL_CA_FILE: '/etc/letsencrypt/live/mochatto.com/fullchain.pem'
     ports:
       - '4000:4000'
   client:
     build:
       context: ./client
       dockerfile: ./Dockerfile.prod
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
     ports:
-      - '4500:4500'
+      - '443:4500'
     environment:
-      REACT_APP_SERVER_URL: 'https://jimanaka.com:4000'
+      REACT_APP_SERVER_URL: 'https://mochatto.com:4000'
+    command:
+      yarn serve
 
       

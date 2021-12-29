@@ -1,6 +1,13 @@
 node_modules/
 dist/
+build/
 
 *.sw[n-r]
 
 
+*.crt
+*.cert
+*.key
+*.pem
+*.log
+.env*

@@ -9,7 +9,6 @@ WORKDIR /app
 FROM base as prod
 ARG serverurl
 RUN echo "$serverurl"
-ENV REACT_APP_SERVER_URL=$serverurl
+ENV VITE_SERVER_URL=$serverurl
 COPY . /app
 RUN yarn && yarn build
-

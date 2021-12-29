@@ -38,7 +38,11 @@ const RoomTemplate = ({
         >
           {sideDrawerComponent}
           <Div d="flex" justify="center" m={{ t: "2rem" }}>
-            <Button bg="gray200" textColor="medium" onClick={() => setShowModal(false)}>
+            <Button
+              bg="gray200"
+              textColor="medium"
+              onClick={() => setShowModal(false)}
+            >
               Close
             </Button>
           </Div>

@@ -1,6 +1,7 @@
 version: "3.6"
 services:
   server-dev:
+    user: ${CURRENT_UID}
     profiles:
       - dev
     build:
@@ -12,9 +13,10 @@ services:
     volumes:
       - './server:/app'
     command:
-      yarn start
+      bash -c "yarn && yarn dev"
 
   client-dev:
+    user: ${CURRENT_UID}
     profiles:
       - dev
     build:
@@ -28,7 +30,7 @@ services:
     environment:
       VITE_SERVER_URL: "http://localhost:4000"
     command:
-      yarn dev --host
+      bash -c "yarn && yarn dev --host"
 
   # Prod containers    
   server-prod:

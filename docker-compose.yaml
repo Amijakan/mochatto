@@ -1,6 +1,7 @@
 version: "3.6"
 services:
   server-dev:
+    user: ${CURRENT_UID}
     profiles:
       - dev
     build:
@@ -12,7 +13,7 @@ services:
     volumes:
       - './server:/app'
     command:
-      yarn start
+      bash -c "yarn && yarn dev"
 
   client-dev:
     user: ${CURRENT_UID}

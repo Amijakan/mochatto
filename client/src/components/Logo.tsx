@@ -6,7 +6,9 @@ const Logo = ({ height = "20" }: { width?: string; height?: string }): JSX.Eleme
     <Div d="flex" p="0.7rem" align="center">
       <img
         style={{
-          filter: "brightness(100)",
+          backgroundColor: "#ffffff88",
+          borderRadius: 8,
+          padding: 8,
         }}
         height={height}
         src="https://github.com/Amijakan/mochatto/blob/main/logo/logo_light.png?raw=true"

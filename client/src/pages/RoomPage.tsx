@@ -11,6 +11,7 @@ import { RoomTemplate } from "../templates";
 import { Button } from "../components/atomize_wrapper";
 import MicIcon from "@material-ui/icons/Mic";
 import MicOffIcon from "@material-ui/icons/MicOff";
+import ScreenShareWindow from "../components/ScreenShareWindow";
 
 import PropTypes from "prop-types";
 
@@ -96,7 +97,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     });
 
     socket.on("DISCONNECT", ({ id }) => {
-      if(globalUserInfos[id]){
+      if (globalUserInfos[id]) {
         onLeave(id);
       }
     });
@@ -188,6 +189,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       }
     >
       <>
+        <ScreenShareWindow />
         <Notification
           isOpen={showNotification}
           bg={`${notificationColors[notificationTheme].color}100`}

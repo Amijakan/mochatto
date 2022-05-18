@@ -10,6 +10,7 @@ const HomePage = (): JSX.Element => {
   const [roomExists, setRoomExists] = useState(false);
   const [roomId, setRoomId] = useState("");
   const history = useHistory();
+  const responsiveWidth = { xs: "80%", md: "40%" }
 
   useEffect(() => {
     if (socket) {
@@ -41,7 +42,7 @@ const HomePage = (): JSX.Element => {
             A peer-to-peer voice chat app focused on simplicity.
           </Text>
         </Div>
-        <Div flexDir="column" p={{ b: "1rem" }} d="flex" justify="center" w="30%">
+        <Div flexDir="column" p={{ b: "1rem" }} d="flex" justify="center" w={responsiveWidth}>
           <Input
             textAlign="center"
             placeholder="Room ID"
@@ -59,7 +60,7 @@ const HomePage = (): JSX.Element => {
           />
         </Div>
         <Button
-          w="30%"
+          w={responsiveWidth}
           onClick={() => {
             history.push(roomId);
             history.go(0);

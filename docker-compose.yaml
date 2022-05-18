@@ -57,12 +57,9 @@ services:
       dockerfile: ./Dockerfile
       target: prod
       args:
-        serverurl: https://mochatto.com:4000
+        serverurl: https://${API_URL}
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-    ports:
-      - '443:4500'
-    command:
-      npx serve -l 4500 -s ./dist --ssl-key /etc/letsencrypt/live/mochatto.com/privkey.pem --ssl-cert /etc/letsencrypt/live/mochatto.com/cert.pem
-
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    expose:
+      - 80
       

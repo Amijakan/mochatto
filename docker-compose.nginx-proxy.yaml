@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  client-prod: # <- Change it with your container name
+    profiles:
+      - prod
+    expose:
+      - ${APP_PORT}
+    environment:
+      VIRTUAL_HOST: ${APP_URL}
+      VIRTUAL_PORT: ${APP_PORT}
+      LETSENCRYPT_HOST: ${APP_URL}
+      LETSENCRYPT_EMAIL: ${EMAIL}
+
+networks:
+    default:
+        external:
+            name: nginx-proxy
+
+

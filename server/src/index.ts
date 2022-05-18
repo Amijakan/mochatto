@@ -5,14 +5,14 @@ import fs from "fs";
 
 const app = express();
 const port = 4000;
-const is_prod = process.env.MODE === "prod"
+const isProd = process.env.MODE === "prod"
 let server = app.listen(port, () => {
   return console.log(`server is listening on ${port}`);
 });
 
 const io = new Server(server, {
   cors: {
-    origin: is_prod ? "*" : ["http://localhost:4500", "http://localhost:4600"],
+    origin: isProd ? "*" : ["http://localhost:4500", "http://localhost:4600"],
   },
 });
 

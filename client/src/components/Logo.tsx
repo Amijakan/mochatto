@@ -2,13 +2,14 @@ import React from "react";
 // Icon from https://icons8.com/icons/set/m
 import { Div } from "atomize";
 const Logo = ({ height = "20" }: { width?: string; height?: string }): JSX.Element => {
+  const padding = 10
   return (
     <Div d="flex" p="0.7rem" align="center">
       <img
         style={{
           backgroundColor: "#ffffff88",
-          borderRadius: 8,
-          padding: 8,
+          borderRadius: `${padding + Number(height) / 2}px`,
+          padding: padding,
         }}
         height={height}
         src="https://github.com/Amijakan/mochatto/blob/main/logo/logo_light.png?raw=true"

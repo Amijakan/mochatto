@@ -15,6 +15,7 @@ services:
       yarn start
 
   client-dev:
+    user: ${CURRENT_UID}
     profiles:
       - dev
     build:
@@ -28,7 +29,7 @@ services:
     environment:
       VITE_SERVER_URL: "http://localhost:4000"
     command:
-      yarn dev --host
+      bash -c "yarn && yarn dev --host"
 
   # Prod containers    
   server-prod:

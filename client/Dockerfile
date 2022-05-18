@@ -6,9 +6,14 @@ ENV PORT=4500
 WORKDIR /app
 
 # --- PROD
-FROM base as prod
+FROM base as build
 ARG serverurl
 RUN echo "$serverurl"
 ENV VITE_SERVER_URL=$serverurl
 COPY . /app
 RUN yarn && yarn build
+
+FROM nginx:stable-alpine as prod
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

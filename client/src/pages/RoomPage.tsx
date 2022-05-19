@@ -34,8 +34,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
-  const network = null as unknown as Network;
-  const networkRef = useRef(network);
+  const networkRef = useRef(null as unknown as Network);
 
   // when new input is selected update all tracks and send a new offer out
   const onSelect = (_stream) => {

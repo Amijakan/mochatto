@@ -16,12 +16,11 @@ help:
 
 ## Prepares the dev environment
 dev: 
-	./bin/pre-up
-	docker-compose --profile dev build
+	CURRENT_UID=$$(id -u):$$(id -g) docker-compose --profile dev build
 
 ## Starts the dev environment (Mounts local folder)
 dev-up:
-	docker-compose --profile dev up
+	CURRENT_UID=$$(id -u):$$(id -g) docker-compose --profile dev up
 
 ## Builds the prod environment
 prod:

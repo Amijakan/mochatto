@@ -8,10 +8,14 @@ WORKDIR /app
 # --- PROD
 FROM base as build
 ARG serverurl
-RUN echo "$serverurl"
+
+COPY ./package.json /app/package.json
+COPY ./yarn.lock /app/yarn.lock
+RUN yarn
+
 ENV VITE_SERVER_URL=$serverurl
 COPY . /app
-RUN yarn && yarn build
+RUN yarn build
 
 FROM nginx:stable-alpine as prod
 COPY --from=build /app/dist /usr/share/nginx/html

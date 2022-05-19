@@ -28,7 +28,7 @@ prod:
 
 ## Starts the prod environment in daemon
 prod-up:
-	docker-compose --profile prod up -d
+	docker-compose -f ./docker-compose.yaml -f ./docker-compose.nginx-proxy.yaml --profile prod up -d
 
 ## Cleans containers
 clean:

@@ -34,7 +34,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
-  const [network, setNetwork] = useState<Network>(null as unknown as Network);
+  const network = null as unknown as Network;
   const networkRef = useRef(network);
 
   // when new input is selected update all tracks and send a new offer out
@@ -54,7 +54,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const updateNetwork = (_network) => {
     networkRef.current = _network;
-    setNetwork(_network);
   };
 
   const toggleMute = () => {

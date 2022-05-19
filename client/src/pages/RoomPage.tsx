@@ -79,6 +79,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const onLeave = (id: string) => {
     // Find the peer processor within the network and close the streams.
     networkRef.current.findPeerProcessorById(id).close();
+    // Remove user from network.
+    networkRef.current.removeFromNetwork(id);
     // Remove the avatar.
     removeUserInfo(id);
     // Set announcement.

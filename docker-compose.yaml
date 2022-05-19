@@ -44,8 +44,6 @@ services:
       target: prod
     environment:
       MODE: prod
-    expose:
-      - 4000
     command:
       yarn start
 
@@ -60,6 +58,4 @@ services:
         serverurl: https://${API_URL}
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-    expose:
-      - 80
       

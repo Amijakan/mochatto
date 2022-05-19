@@ -11,6 +11,8 @@ import { RoomTemplate } from "../templates";
 import { Button } from "../components/atomize_wrapper";
 import MicIcon from "@material-ui/icons/Mic";
 import MicOffIcon from "@material-ui/icons/MicOff";
+import ScreenShareIcon from "@material-ui/icons/ScreenShare";
+import StopScreenShareIcon from "@material-ui/icons/StopScreenShare";
 import ScreenShareWindow from "../components/ScreenShareWindow";
 
 import PropTypes from "prop-types";
@@ -35,6 +37,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
+  const [screenShareStream, setScreenShareStream] = useState(new MediaStream());
+  const screenShareStreamRef = useRef(screenShareStream);
 
   const [network, setNetwork] = useState<Network>(null as unknown as Network);
 
@@ -53,6 +57,11 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     setVisualizer(_visualizer);
   };
 
+  const updateScreenShareStream = (_screenShareStream) => {
+    screenShareStreamRef.current = _screenShareStream;
+    setScreenShareStream(_screenShareStream);
+  };
+
   const toggleMute = () => {
     updateSelfUserInfo({ ...selfUserInfoRef.current, mute: !selfUserInfoRef.current.mute });
   };
@@ -62,6 +71,17 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       ...selfUserInfoRef.current,
       active: !selfUserInfoRef.current.active,
       mute: selfUserInfoRef.current.active,
+    });
+  };
+
+  const toggleScreenShare = () => {
+    // If currently screen sharing, end the stream.
+    if (selfUserInfoRef.current.isScreenSharing) {
+      endScreenSharing();
+    }
+    updateSelfUserInfo({
+      ...selfUserInfoRef.current,
+      isScreenSharing: !selfUserInfoRef.current.isScreenSharing,
     });
   };
 
@@ -82,6 +102,24 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const onAudioActivity = (gain: number) => {
     const newMultiplier = gainToMultiplier(gain);
     updateSelfUserInfo({ ...selfUserInfoRef.current, multiplier: newMultiplier });
+  };
+
+  const onStartScreenSharing = (_stream: MediaStream) => {
+    updateScreenShareStream(_stream);
+    updateSelfUserInfo({ ...selfUserInfoRef.current, isScreenSharing: true });
+  };
+
+  const onEndScreenSharing = () => {
+    endScreenSharing();
+    updateSelfUserInfo({ ...selfUserInfoRef.current, isScreenSharing: false });
+  };
+
+  const onFailedScreenSharing = (e) => {
+    updateSelfUserInfo({ ...selfUserInfoRef.current, isScreenSharing: false });
+  };
+
+  const endScreenSharing = () => {
+    screenShareStreamRef.current.getTracks().forEach((track) => track.stop());
   };
 
   // open all listeners on render
@@ -168,6 +206,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     }
   }, [selfUserInfoRef.current.active]);
 
+  useEffect(() => {}, [selfUserInfoRef.current.isScreenSharing]);
+
   const buttonStyle = {
     m: "0.3rem",
     bg: "none",
@@ -189,7 +229,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       }
     >
       <>
-        <ScreenShareWindow />
         <Notification
           isOpen={showNotification}
           bg={`${notificationColors[notificationTheme].color}100`}
@@ -211,6 +250,15 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           setSelfUserInfo={updateSelfUserInfo}
           userInfos={Object.values(userInfos)}
         />
+        {selfUserInfoRef.current.isScreenSharing ? (
+          <ScreenShareWindow
+            onStart={(_stream) => onStartScreenSharing(_stream)}
+            onEnd={() => onEndScreenSharing()}
+            onFailed={(e) => onFailedScreenSharing(e)}
+          />
+        ) : (
+          <></>
+        )}
         <Div d="flex" h="100%" flexDir="column">
           <Div d="flex" justify="center" m={{ t: "auto" }}>
             <Div d="inline-block">
@@ -232,6 +280,15 @@ function RoomPage({ name }: { name: string }): JSX.Element {
                 </Button>
                 <Button title="Toggle mute (m)" {...buttonStyle} onClick={() => toggleMute()}>
                   {selfUserInfoRef.current.mute ? <MicOffIcon /> : <MicIcon />}
+                </Button>
+                <Button title="Screen sharing" {...buttonStyle} onClick={() => toggleScreenShare()}>
+                  {selfUserInfoRef.current.isScreenSharing ? (
+                    <>
+                      <StopScreenShareIcon />
+                    </>
+                  ) : (
+                    <ScreenShareIcon />
+                  )}
                 </Button>
                 <Button
                   title="Leave room (L)"

@@ -48,7 +48,9 @@ export class Network {
           socket.emit("SDP_RECEIVED", peerId);
           socket.on("ICE_CANDIDATE", (dataString) => {
             const data = JSON.parse(dataString);
-            peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
+            if (peerConnection.signalingState != "closed") {
+              peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
+            }
           });
 
           peerConnection
@@ -124,7 +126,9 @@ export class Network {
           socket.emit("SDP_RECEIVED", peerId);
           socket.on("ICE_CANDIDATE", (dataString) => {
             const data = JSON.parse(dataString);
-            peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
+            if (peerConnection.signalingState != "closed") {
+              peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
+            }
           });
         })
         .catch((e) => {

@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  client-prod:
+    profiles:
+      - prod
+    expose:
+      - ${APP_PORT}
+    environment:
+      VIRTUAL_HOST: ${APP_URL}
+      VIRTUAL_PORT: ${APP_PORT}
+      LETSENCRYPT_HOST: ${APP_URL}
+      LETSENCRYPT_EMAIL: ${EMAIL}
+
+  server-prod:
+    profiles:
+      - prod
+    expose:
+      - ${API_PORT}
+    environment:
+      VIRTUAL_HOST: ${API_URL}
+      VIRTUAL_PORT: ${API_PORT}
+      LETSENCRYPT_HOST: ${API_URL}
+      LETSENCRYPT_EMAIL: ${EMAIL}
+
+networks:
+    default:
+        external:
+            name: nginx-proxy
+
+

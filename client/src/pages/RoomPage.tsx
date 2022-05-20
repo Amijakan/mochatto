@@ -39,8 +39,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const [showModal, setShowModal] = useState(false);
   const [screenShareStream, setScreenShareStream] = useState(new MediaStream());
   const screenShareStreamRef = useRef(screenShareStream);
-
-  const [network, setNetwork] = useState<Network>(null as unknown as Network);
+  const networkRef = useRef(null as unknown as Network);
 
   // when new input is selected update all tracks and send a new offer out
   const onSelect = (_stream) => {
@@ -60,6 +59,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const updateScreenShareStream = (_screenShareStream) => {
     screenShareStreamRef.current = _screenShareStream;
     setScreenShareStream(_screenShareStream);
+  };
+
+  const updateNetwork = (_network) => {
+    networkRef.current = _network;
   };
 
   const toggleMute = () => {
@@ -92,9 +95,16 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     setShowNotification(true);
   };
 
+  // When a user leaves.
   const onLeave = (id: string) => {
-    setAnnouncement(globalUserInfos[id].name + " has left.");
+    // Find the peer processor within the network and close the streams.
+    networkRef.current.findPeerProcessorById(id).close();
+    // Remove user from network.
+    networkRef.current.removeFromNetwork(id);
+    // Remove the avatar.
     removeUserInfo(id);
+    // Set announcement.
+    setAnnouncement(globalUserInfos[id].name + " has left.");
     setNotificationTheme("leave");
     setShowNotification(true);
   };
@@ -125,7 +135,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // open all listeners on render
   useEffect(() => {
-    setNetwork(new Network(socket, name, addUserInfo, selfUserInfoRef.current, stream));
+    updateNetwork(new Network(socket, name, addUserInfo, selfUserInfoRef.current, stream));
 
     socket.on("JOIN", ({ name }) => {
       onJoin(name);
@@ -145,7 +155,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
     window.onbeforeunload = () => {
       socket.emit("LEAVE");
-      network.close();
+      networkRef.current.close();
       stream.getTracks().forEach((track) => track.stop());
     };
     const onKey = (e) => {
@@ -181,8 +191,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   useEffect(() => {
     if (stream) {
-      if (network) {
-        network.updateAllTracks(stream.getAudioTracks()[0]);
+      if (networkRef.current) {
+        networkRef.current.updateAllTracks(stream.getAudioTracks()[0]);
       }
       if (visualizerRef.current) {
         visualizerRef.current.setStream(stream);
@@ -195,14 +205,15 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     if (stream.getAudioTracks().length) {
       stream.getAudioTracks()[0].enabled = !selfUserInfoRef.current.mute;
     }
-    if (network) {
-      network.updateInfo(selfUserInfoRef.current);
+    if (networkRef.current) {
+      networkRef.current.updateInfo(selfUserInfoRef.current);
+      networkRef.current.updateAllTracks(stream.getAudioTracks()[0]);
     }
   }, [selfUserInfoRef.current]);
 
   useEffect(() => {
-    if (network) {
-      network.toggleDeaf(!selfUserInfoRef.current.active);
+    if (networkRef.current) {
+      networkRef.current.toggleDeaf(!selfUserInfoRef.current.active);
     }
   }, [selfUserInfoRef.current.active]);
 

@@ -16,12 +16,11 @@ help:
 
 ## Prepares the dev environment
 dev: 
-	./bin/pre-up
-	docker-compose --profile dev build
+	CURRENT_UID=$$(id -u):$$(id -g) docker-compose --profile dev build
 
 ## Starts the dev environment (Mounts local folder)
 dev-up:
-	docker-compose --profile dev up
+	CURRENT_UID=$$(id -u):$$(id -g) docker-compose --profile dev up
 
 ## Builds the prod environment
 prod:
@@ -29,7 +28,7 @@ prod:
 
 ## Starts the prod environment in daemon
 prod-up:
-	docker-compose --profile prod up -d
+	docker-compose -f ./docker-compose.yaml -f ./docker-compose.nginx-proxy.yaml --profile prod up -d
 
 ## Cleans containers
 clean:

@@ -117,7 +117,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const onStartScreenSharing = (_stream: MediaStream) => {
     updateScreenShareStream(_stream);
     updateSelfUserInfo({ ...selfUserInfoRef.current, isScreenSharing: true });
-    network.updateAllTracks(_stream.getVideoTracks()[0]);
+    networkRef.current.updateAllTracks(_stream.getVideoTracks()[0]);
   };
 
   const onEndScreenSharing = () => {

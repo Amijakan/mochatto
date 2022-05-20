@@ -1,20 +1,22 @@
 import React, { useEffect, useState, useRef } from "react";
 
 function ScreenShareWindow({
+  videoPlayer,
   onStart,
   onEnd,
   onFailed,
 }: {
+  videoPlayer: HTMLVideoElement;
   onStart: (stream) => void;
   onEnd: () => void;
   onFailed: (e) => void;
 }): JSX.Element {
   useEffect(() => {
     navigator.mediaDevices
+      // @ts-ignore getDisplayMedia is not defined in TypeScript
       .getDisplayMedia()
       .then((stream) => {
         onStart(stream);
-        const videoPlayer = document.getElementById("videoPlayer") || new HTMLMediaElement();
         videoPlayer.srcObject = stream;
         stream.getVideoTracks()[0].onended = () => {
           onEnd();
@@ -25,11 +27,7 @@ function ScreenShareWindow({
       });
   }, []);
 
-  return (
-    <>
-      <video id="videoPlayer" autoPlay></video>
-    </>
-  );
+  return <></>;
 }
 
 export default ScreenShareWindow;

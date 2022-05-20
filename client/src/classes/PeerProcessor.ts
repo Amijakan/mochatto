@@ -12,10 +12,12 @@ export class PeerProcessor {
   peerConnection: RTCPeerConnection;
   dataChannel: RTCDataChannel;
   socket: Socket;
-  sender: RTCRtpSender;
+  audioSender: RTCRtpSender;
+  videoSender: RTCRtpSender;
   peerId: string;
   stream: MediaStream;
-  player: HTMLAudioElement;
+  audioPlayer: HTMLAudioElement;
+  videoPlayer: HTMLVideoElement;
   visualizer: AudioVisualizer;
   multiplier: number;
   // a function to update the positions array context
@@ -24,7 +26,8 @@ export class PeerProcessor {
   peerUserInfo: UserInfo;
   constructor(peerId: string, socket: Socket, addUserInfo: (info) => void) {
     this.peerId = peerId;
-    this.sender = null as unknown as RTCRtpSender;
+    this.audioSender = null as unknown as RTCRtpSender;
+    this.videoSender = null as unknown as RTCRtpSender;
     this.dataChannel = null as unknown as RTCDataChannel;
     // initialize with a free public STUN server to find out public ip, NAT type, and internet side port
     this.peerConnection = new RTCPeerConnection({
@@ -33,7 +36,9 @@ export class PeerProcessor {
     this.multiplier = 0;
     this.stream = new MediaStream();
     this.visualizer = null as unknown as AudioVisualizer;
-    this.player = new Audio();
+    this.audioPlayer = new Audio();
+    this.videoPlayer = document.createElement("video");
+    document.body.appendChild(this.videoPlayer);
     // the function is re-assigned during the user's initialization
     this.addUserInfo = addUserInfo;
     this.selfUserInfo = defaultUserInfo;
@@ -181,48 +186,83 @@ export class PeerProcessor {
   // sets volume for this peer user
   setVolume(volume: number): void {
     if (volume >= 0 && volume <= 1) {
-      this.player.volume = volume;
+      this.audioPlayer.volume = volume;
     } else {
       console.warn("Volume needs to be within 0 and 1");
     }
   }
 
-  // keeping note of the track to remove later
-  setSender(s: RTCRtpSender): void {
-    this.sender = s;
+  // Sets the sender for the audio track
+  setAudioSender(s: RTCRtpSender): void {
+    this.audioSender = s;
   }
 
-  // updates the local track when the peer user (this) adds a new track
+  // Sets the sender for the video track
+  setVideoSender(s: RTCRtpSender): void {
+    this.videoSender = s;
+  }
+
+  // Updates the local audio track when the peer user (this) adds a new track.
   updateLocalTrack(track: MediaStreamTrack): boolean {
     if (!track.readyState) {
       return false;
     }
-    // if there's already a track assigned to the stream, remove it
-    if (this.stream.getAudioTracks()[0]) {
-      this.stream.removeTrack(this.stream.getAudioTracks()[0]);
-    }
-    // add the track
-    this.stream.addTrack(track);
+    switch (track.kind) {
+      case "audio":
+        // if there's already a track assigned to the stream, remove it
+        if (this.stream.getAudioTracks()[0]) {
+          this.stream.removeTrack(this.stream.getAudioTracks()[0]);
+        }
+        // add the track
+        this.stream.addTrack(track);
 
-    if (this.visualizer) {
-      this.visualizer.setStream(this.stream);
-    }
+        if (this.visualizer) {
+          this.visualizer.setStream(this.stream);
+        }
 
-    // set the new stream as the audio source and play
-    this.player.srcObject = this.stream;
-    this.player.play();
-    this.player.autoplay = true;
+        // set the new stream as the audio source and play
+        this.audioPlayer.srcObject = this.stream;
+        this.audioPlayer.play();
+        this.audioPlayer.autoplay = true;
+        break;
+      case "video":
+        // if there's already a track assigned to the stream, remove it
+        if (this.stream.getVideoTracks()[0]) {
+          this.stream.removeTrack(this.stream.getVideoTracks()[0]);
+        }
+        // add the track
+        this.stream.addTrack(track);
+
+        // set the new stream as the video source and play
+        this.videoPlayer.srcObject = this.stream;
+        this.videoPlayer.play();
+        this.videoPlayer.autoplay = true;
+        break;
+    }
     return true;
   }
 
-  // Update the shared mediastream to the new audio input
+  // Update the shared mediastream to the new audio input.
   updateRemoteTrack(track: MediaStreamTrack): void {
-    if (this.sender) {
-      this.sender.replaceTrack(track).catch((e) => {
-        console.warn(e);
-      });
-    } else {
-      this.setSender(this.peerConnection.addTrack(track));
+    switch (track.kind) {
+      case "audio":
+        if (this.audioSender) {
+          this.audioSender.replaceTrack(track).catch((e) => {
+            console.warn(e);
+          });
+        } else {
+          this.setAudioSender(this.peerConnection.addTrack(track));
+        }
+        break;
+      case "video":
+        if (this.videoSender) {
+          this.videoSender.replaceTrack(track).catch((e) => {
+            console.warn(e);
+          });
+        } else {
+          this.setVideoSender(this.peerConnection.addTrack(track));
+        }
+        break;
     }
   }
 }

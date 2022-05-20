@@ -107,6 +107,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const onStartScreenSharing = (_stream: MediaStream) => {
     updateScreenShareStream(_stream);
     updateSelfUserInfo({ ...selfUserInfoRef.current, isScreenSharing: true });
+    network.updateAllTracks(_stream.getVideoTracks()[0]);
   };
 
   const onEndScreenSharing = () => {
@@ -250,8 +251,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           setSelfUserInfo={updateSelfUserInfo}
           userInfos={Object.values(userInfos)}
         />
+        <video autoPlay />
         {selfUserInfoRef.current.isScreenSharing ? (
           <ScreenShareWindow
+            videoPlayer={document.querySelector("video") || new HTMLVideoElement()}
             onStart={(_stream) => onStartScreenSharing(_stream)}
             onEnd={() => onEndScreenSharing()}
             onFailed={(e) => onFailedScreenSharing(e)}

@@ -197,7 +197,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     }
     if (network) {
       network.updateInfo(selfUserInfoRef.current);
-      network.updateAllTracks(stream.getAudioTracks()[0]);
     }
   }, [selfUserInfoRef.current]);
 
@@ -206,8 +205,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       network.toggleDeaf(!selfUserInfoRef.current.active);
     }
   }, [selfUserInfoRef.current.active]);
-
-  useEffect(() => {}, [selfUserInfoRef.current.isScreenSharing]);
 
   const buttonStyle = {
     m: "0.3rem",

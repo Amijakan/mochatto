@@ -167,7 +167,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     }
     if (networkRef.current) {
       networkRef.current.updateInfo(selfUserInfoRef.current);
-      networkRef.current.updateAllTracks(stream.getAudioTracks()[0]);
     }
   }, [selfUserInfoRef.current]);
 

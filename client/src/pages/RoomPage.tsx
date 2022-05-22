@@ -37,8 +37,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
-  const [screenShareStream, setScreenShareStream] = useState(new MediaStream());
-  const screenShareStreamRef = useRef(screenShareStream);
   const networkRef = useRef(null as unknown as Network);
 
   // when new input is selected update all tracks and send a new offer out
@@ -54,11 +52,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const updateVisualizer = (_visualizer) => {
     visualizerRef.current = _visualizer;
     setVisualizer(_visualizer);
-  };
-
-  const updateScreenShareStream = (_screenShareStream) => {
-    screenShareStreamRef.current = _screenShareStream;
-    setScreenShareStream(_screenShareStream);
   };
 
   const updateNetwork = (_network) => {
@@ -116,10 +109,13 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const onStartScreenSharing = (_stream: MediaStream) => {
     const selfVideoPlayer = document.querySelector("video") || new HTMLVideoElement();
+    const screenShareTrack = _stream.getVideoTracks()[0];
+    const mixedStream = stream.clone();
+
     selfVideoPlayer.srcObject = _stream;
-    updateScreenShareStream(_stream);
     updateSelfUserInfo({ ...selfUserInfoRef.current, isScreenSharing: true });
-    networkRef.current.updateAllTracks(_stream.getVideoTracks()[0]);
+    mixedStream.addTrack(screenShareTrack);
+    setStream(mixedStream); // Seems reduntant but necessary to run the hook.
   };
 
   const onEndScreenSharing = () => {
@@ -132,7 +128,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const endScreenSharing = () => {
-    screenShareStreamRef.current.getTracks().forEach((track) => track.stop());
+    stream.getTracks().forEach((track) => track.kind === "video" && track.stop());
   };
 
   // open all listeners on render
@@ -192,24 +188,18 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, [userInfos]);
 
   useEffect(() => {
-    if (stream) {
-      if (networkRef.current) {
-        networkRef.current.updateAllTracks(stream.getAudioTracks()[0]);
-      }
-      if (visualizerRef.current) {
-        visualizerRef.current.setStream(stream);
-      }
-    }
+    networkRef.current?.replaceStream(stream);
+    networkRef.current?.updateAllTracks(stream && stream.getAudioTracks()[0]);
+    networkRef.current?.updateAllTracks(stream && stream.getVideoTracks()[0]);
+    visualizerRef.current?.setStream(stream);
   }, [stream]);
 
   // update remote position when avatar is dragged
   useEffect(() => {
-    if (stream.getAudioTracks().length) {
+    if (stream && stream.getAudioTracks().length) {
       stream.getAudioTracks()[0].enabled = !selfUserInfoRef.current.mute;
     }
-    if (networkRef.current) {
-      networkRef.current.updateInfo(selfUserInfoRef.current);
-    }
+    networkRef.current?.updateInfo(selfUserInfoRef.current);
   }, [selfUserInfoRef.current]);
 
   useEffect(() => {

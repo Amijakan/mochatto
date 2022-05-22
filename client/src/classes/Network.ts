@@ -17,19 +17,19 @@ export class Network {
   peerProcessors: PeerProcessor[];
   addUserInfo: (id) => (info: UserInfo) => void;
   selfUserInfo: UserInfo;
-  stream: MediaStream;
+  selfStream: MediaStream;
   constructor(
     socket: Socket,
     userName: string,
     addUserInfo: (id) => (info: UserInfo) => void,
     selfUserInfo: UserInfo,
-    stream: MediaStream
+    selfStream: MediaStream
   ) {
     this.socket = socket;
     this.peerProcessors = [];
     this.addUserInfo = addUserInfo;
     this.selfUserInfo = selfUserInfo;
-    this.stream = stream;
+    this.selfStream = selfStream;
 
     // AS A NEW COMER
     socket.emit("JOIN", userName);
@@ -137,6 +137,10 @@ export class Network {
     });
   }
 
+  replaceStream(stream: MediaStream) {
+    this.selfStream = stream;
+  }
+
   // add peerProcessor to the network
   pushToNetwork(id: string): PeerProcessor {
     const peerProcessor = new PeerProcessor(id, this.socket, this.addUserInfo(id));
@@ -145,9 +149,11 @@ export class Network {
       new AudioVisualizer(peerProcessor.onAudioActivity.bind(peerProcessor))
     );
     this.peerProcessors.push(peerProcessor);
-    if (this.stream) {
-      this.updateAllTracks(this.stream.getAudioTracks()[0]);
-    }
+
+    // If there are streams that need to be sent, send them to the peer.
+    this.updateAllTracks(this.selfStream?.getAudioTracks()[0]);
+    this.updateAllTracks(this.selfStream?.getVideoTracks()[0]);
+    // Send the user info to the peer as well.
     this.broadcastInfo(this.selfUserInfo);
     return peerProcessor;
   }

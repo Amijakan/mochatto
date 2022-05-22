@@ -15,7 +15,7 @@ export class PeerProcessor {
   audioSender: RTCRtpSender;
   videoSender: RTCRtpSender;
   peerId: string;
-  stream: MediaStream;
+  peerStream: MediaStream;
   audioPlayer: HTMLAudioElement;
   videoPlayer: HTMLVideoElement;
   visualizer: AudioVisualizer;
@@ -34,7 +34,7 @@ export class PeerProcessor {
       iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
     });
     this.multiplier = 0;
-    this.stream = new MediaStream();
+    this.peerStream = new MediaStream();
     this.visualizer = null as unknown as AudioVisualizer;
     this.audioPlayer = new Audio();
     this.videoPlayer = document.createElement("video");
@@ -161,7 +161,7 @@ export class PeerProcessor {
   close(): void {
     this.dataChannel.close();
     this.peerConnection.close();
-    this.stream.getTracks().forEach((track) => track.stop());
+    this.peerStream.getTracks().forEach((track) => track.stop());
   }
 
   updateSelfUserInfo(info: UserInfo): void {
@@ -213,31 +213,31 @@ export class PeerProcessor {
     switch (track.kind) {
       case "audio":
         // if there's already a track assigned to the stream, remove it
-        if (this.stream.getAudioTracks()[0]) {
-          this.stream.removeTrack(this.stream.getAudioTracks()[0]);
+        if (this.peerStream.getAudioTracks()[0]) {
+          this.peerStream.removeTrack(this.peerStream.getAudioTracks()[0]);
         }
         // add the track
-        this.stream.addTrack(track);
+        this.peerStream.addTrack(track);
 
         if (this.visualizer) {
-          this.visualizer.setStream(this.stream);
+          this.visualizer.setStream(this.peerStream);
         }
 
         // set the new stream as the audio source and play
-        this.audioPlayer.srcObject = this.stream;
+        this.audioPlayer.srcObject = this.peerStream;
         this.audioPlayer.play();
         this.audioPlayer.autoplay = true;
         break;
       case "video":
         // if there's already a track assigned to the stream, remove it
-        if (this.stream.getVideoTracks()[0]) {
-          this.stream.removeTrack(this.stream.getVideoTracks()[0]);
+        if (this.peerStream.getVideoTracks()[0]) {
+          this.peerStream.removeTrack(this.peerStream.getVideoTracks()[0]);
         }
         // add the track
-        this.stream.addTrack(track);
+        this.peerStream.addTrack(track);
 
         // set the new stream as the video source and play
-        this.videoPlayer.srcObject = this.stream;
+        this.videoPlayer.srcObject = this.peerStream;
         this.videoPlayer.play();
         this.videoPlayer.autoplay = true;
         break;

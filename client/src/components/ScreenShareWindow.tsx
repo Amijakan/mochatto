@@ -1,12 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 
 function ScreenShareWindow({
-  videoPlayer,
   onStart,
   onEnd,
   onFailed,
 }: {
-  videoPlayer: HTMLVideoElement;
   onStart: (stream) => void;
   onEnd: () => void;
   onFailed: (e) => void;
@@ -17,7 +15,6 @@ function ScreenShareWindow({
       .getDisplayMedia()
       .then((stream) => {
         onStart(stream);
-        videoPlayer.srcObject = stream;
         stream.getVideoTracks()[0].onended = () => {
           onEnd();
         };

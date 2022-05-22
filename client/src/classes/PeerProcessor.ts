@@ -39,6 +39,7 @@ export class PeerProcessor {
     this.audioPlayer = new Audio();
     this.videoPlayer = document.createElement("video");
     document.body.appendChild(this.videoPlayer);
+    this.videoPlayer.style.width = "50%";
     // the function is re-assigned during the user's initialization
     this.addUserInfo = addUserInfo;
     this.selfUserInfo = defaultUserInfo;
@@ -59,7 +60,9 @@ export class PeerProcessor {
   }
 
   sendOffer(): void {
-    this.initializeDataChannel(this.peerConnection.createDataChannel(DCLabel));
+    if (!this.dataChannel) {
+      this.initializeDataChannel(this.peerConnection.createDataChannel(DCLabel));
+    }
     this.peerConnection
       .createOffer()
       .then((offer) => {
@@ -261,6 +264,7 @@ export class PeerProcessor {
           });
         } else {
           this.setVideoSender(this.peerConnection.addTrack(track));
+          this.sendOffer();
         }
         break;
     }

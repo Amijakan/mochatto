@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react'
 import "./style.scss"
-import { UserInfoContext } from "../../contexts";
-import { Person, ChatBubble, Close } from "@material-ui/icons";
+import { UserInfoContext, UserInfo } from "../../contexts";
+import { Person, ChatBubble } from "@material-ui/icons";
 
 enum Utils {
   USERS = "USERS",
@@ -27,9 +27,7 @@ const UtilButton = ({ value, current, setValue, content }) => {
 
 const UtilButtons = ({ currentUtil, setCurrentUtil }) => {
   return (
-    <div className="sidebar--buttons"
-      data-open={currentUtil ? "open" : "close"}
-    >
+    <div className="sidebar--buttons">
       <UtilButton value={Utils.USERS} current={currentUtil} setValue={setCurrentUtil} content={<Person />} />
       <UtilButton value={Utils.CHAT} current={currentUtil} setValue={setCurrentUtil} content={<ChatBubble />} />
     </div>
@@ -37,17 +35,28 @@ const UtilButtons = ({ currentUtil, setCurrentUtil }) => {
 }
 
 const UtilBody = ({ currentUtil }) => {
-  const { userInfos } = useContext(UserInfoContext);
   return (
-    <div className="sidebar--body" data-util={currentUtil}>
-      {Object.values(userInfos).map(item => (
-        <div>{item.name}</div>
-      )
-      )}
+    <div className="sidebar--body">
+      {currentUtil === Utils.USERS && <UserList />}
+      {currentUtil === Utils.CHAT && <ChatHistory />}
     </div>
   )
-
 }
+
+const UserList = () => {
+  // TODO: Need to have selfUserInfo here as well
+  const { userInfos } = useContext(UserInfoContext);
+  // FIXME: Styling of user list
+  return (
+    <>
+      {Object.values(userInfos).map((item: UserInfo, index: number) => (
+        <div key={index} className="TBD">{item.name}</div>
+      ))}
+    </>
+  )
+}
+
+const ChatHistory = () => (<div>Chat History</div>)
 
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)

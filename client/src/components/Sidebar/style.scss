@@ -4,8 +4,7 @@ $background: #000000BA;
 $white: #FCFCFC;
 $default: 8px;
 $buttons-margin: 4px;
-$sidebar-width: calc(80px + 6 * $buttons-margin); // 2 margin for container, 2 margin for each button
-$sidebar-height: calc(43px + 2 * $buttons-margin);
+
 
 button {
   padding: $default;
@@ -31,34 +30,29 @@ button[data-active=inactive] {
   }
 }
 
-
-
 .sidebar {
   position: absolute;
+  z-index: 100;
   top: $default;
   right: $default;
   background-color: $background;
   color: $white;
   transition: width $transition-time, height $transition-time, transform $transition-time;
 
+  // TODO: extract to glass morphism
+  backdrop-filter: blur( 4px );
+  -webkit-backdrop-filter: blur( 4px );
+
   &--buttons {
     display: flex;
-    align-items: flex-end;
     justify-content: flex-end;
     margin: $buttons-margin;
   }
 
-  &--buttons[data-open=open] {
+  &--body {
+    padding: $default;
   }
 
-
-  &--body[data-util=USERS] {
-    content: attr(data-util);
-
-  }
-  &--body[data-util=CHAT] {
-    content: attr(data-util);
-  }
 }
 
 .sidebar[data-open=open] {
@@ -68,7 +62,16 @@ button[data-active=inactive] {
 }
 
 .sidebar[data-open=close] {
-  height: $sidebar-height;
-  width: $sidebar-width;
+  // MUI icon default width/height: 1em, font-size: 1.5rem, padding: 8px, margin: 0 4px;
+  // FIXME: need to change this when number of icon changes
+  $num-icons: 2;
+  $mui-icon-size: calc(1.5rem + 16px); // font-size: 1.5rem + padding: 8px;
+  $closed-sidebar-width: calc($num-icons * $mui-icon-size + 6 * $buttons-margin); // 2 margin for container, 2 margin for each button
+  $closed-sidebar-height: calc($mui-icon-size + 2 * $buttons-margin);
+  height: $closed-sidebar-height;
+  width: $closed-sidebar-width;
   border-radius: 16px;
+}
+
+.sidebar[data-open=close] {
 }

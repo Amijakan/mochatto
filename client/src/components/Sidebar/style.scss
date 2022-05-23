@@ -1,0 +1,74 @@
+$transition-time: 0.3s;
+$primary: #FC8030;
+$background: #000000BA;
+$white: #FCFCFC;
+$default: 8px;
+$buttons-margin: 4px;
+$sidebar-width: calc(80px + 6 * $buttons-margin); // 2 margin for container, 2 margin for each button
+$sidebar-height: calc(43px + 2 * $buttons-margin);
+
+button {
+  padding: $default;
+  border-radius: $default;
+  color: white;
+  transition: $transition-time;
+  margin: 0 $buttons-margin;
+  cursor: pointer;
+}
+
+button[data-active=active] {
+  background-color: $primary;
+
+  &:hover {
+  }
+}
+
+button[data-active=inactive] {
+  background-color: transparent;
+
+  &:hover {
+    background-color: #ffffff22;
+  }
+}
+
+
+
+.sidebar {
+  position: absolute;
+  top: $default;
+  right: $default;
+  background-color: $background;
+  color: $white;
+  transition: width $transition-time, height $transition-time, transform $transition-time;
+
+  &--buttons {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    margin: $buttons-margin;
+  }
+
+  &--buttons[data-open=open] {
+  }
+
+
+  &--body[data-util=USERS] {
+    content: attr(data-util);
+
+  }
+  &--body[data-util=CHAT] {
+    content: attr(data-util);
+  }
+}
+
+.sidebar[data-open=open] {
+  border-radius: 16px;
+  height: calc(100vh - 2 * $default);
+  width: 300px;
+}
+
+.sidebar[data-open=close] {
+  height: $sidebar-height;
+  width: $sidebar-width;
+  border-radius: 16px;
+}

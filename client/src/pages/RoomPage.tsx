@@ -9,6 +9,7 @@ import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "../classes/AudioVisualizer";
 import { RoomTemplate } from "../templates";
 import { Button } from "../components/atomize_wrapper";
+import { Sidebar } from '../components'
 import MicIcon from "@material-ui/icons/Mic";
 import MicOffIcon from "@material-ui/icons/MicOff";
 
@@ -255,6 +256,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           </Div>
         </Div>
       </>
+      <Sidebar />
     </RoomTemplate>
   );
 }

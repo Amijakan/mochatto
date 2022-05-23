@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react'
 import "./style.scss"
-import { UserInfoContext, UserInfo } from "../../contexts";
+import { UserInfoContext } from "../../contexts";
+import { UserInfo } from "../../contexts/UserInfoContext";
 import { Person, ChatBubble } from "@material-ui/icons";
 
 enum Utils {
@@ -49,8 +50,9 @@ const UserList = () => {
   // FIXME: Styling of user list
   return (
     <>
-      {Object.values(userInfos).map((item: UserInfo, index: number) => (
-        <div key={index} className="TBD">{item.name}</div>
+      {/*@ts-ignore */}
+      {Object.values(userInfos).map((value: UserInfo, index: number) => (
+        <div key={index} className="TBD">{value.name}</div>
       ))}
     </>
   )

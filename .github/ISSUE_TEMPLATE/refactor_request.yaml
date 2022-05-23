@@ -12,7 +12,7 @@ body:
     attributes:
       label: Refactor Request
       description: Is your refactor request related to a problem? Please describe.
-      placeholder: A clear and concise description of what the problem is. Ex. I'm having problems reading the code because [...] (nice to have file/line references too)
+      placeholder: A clear and concise description of what the problem is. Ex. I'm having problems reading the code because... (nice to have file/line references too)
       value: ""
     validations:
       required: true

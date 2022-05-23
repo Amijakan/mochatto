@@ -255,8 +255,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
             </Div>
           </Div>
         </Div>
+        <Sidebar />
       </>
-      <Sidebar />
     </RoomTemplate>
   );
 }

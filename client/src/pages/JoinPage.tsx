@@ -8,7 +8,6 @@ import { Input } from "../components/atomize_wrapper";
 import { Div, Notification, Icon } from "atomize";
 import { Button, Card, Text } from "../components/atomize_wrapper";
 import { BaseTemplate } from "../templates";
-import { colors } from "../constants/colors";
 
 const JoinPage = ({
   name,
@@ -91,12 +90,15 @@ const JoinPage = ({
                 style={{
                   width: gain.toString() + "px",
                   height: "10px",
-                  background: colors.bg,
+                  background: "#FDEEC8",
                 }}
               ></Div>
             </Div>
             <Div d="flex" justify="space-around" w="100%" m={{ t: "20px" }}>
-              <Button w="45%" onClick={() => onJoinClicked()}>
+              <Button 
+                w="45%" 
+                onClick={() => onJoinClicked()}
+              >
                 Join
               </Button>
               <Button

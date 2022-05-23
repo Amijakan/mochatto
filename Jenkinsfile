@@ -1,5 +1,7 @@
 pipeline {
-  agent { label "linux" }
+  agent { 
+    label "linux" 
+  }
   options {
     buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
     disableConcurrentBuilds()
@@ -10,19 +12,50 @@ pipeline {
         echo 'Hello'
       }
     }
-    stage('test') {
+    stage('build-frontend') {
+      agent {
+        dockerfile {
+          filename 'Dockerfile'
+          dir 'client'
+          label 'mochatto-frontend-build'
+          additionalBuildArgs '--build-arg serverurl=https://mochatto.com:4000'
+        }
+      }
       steps {
         sh '''
-          echo "Test"
+          echo "Build Frontend"
+          echo $PWD
+        '''
+      }
+    }
+    stage('build-backend') {
+      agent {
+        dockerfile {
+          filename 'Dockerfile'
+          dir 'server'
+          label 'mochatto-server-build'
+        }
+      }
+      steps {
+        sh '''
+          echo "Build Backend"
+          echo $PWD
+        '''
+      }
+    }
+    stage('test-frontend') {
+      steps {
+        sh '''
+          echo "Test Frontend"
           ls
         '''
       }
     }
-    stage('build') {
+    stage('test-backend') {
       steps {
         sh '''
-          echo "Build"
-          echo $PWD
+          echo "Test Backend"
+          ls
         '''
       }
     }

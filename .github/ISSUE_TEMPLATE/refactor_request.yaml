@@ -13,7 +13,6 @@ body:
       label: Refactor Request
       description: Is your refactor request related to a problem? Please describe.
       placeholder: A clear and concise description of what the problem is. Ex. I'm having problems reading the code because... (nice to have file/line references too)
-      value: ""
     validations:
       required: true
   - type: textarea
@@ -21,6 +20,5 @@ body:
     attributes:
       label: Describe the proposed solution
       description: If you have a solution in mind, please describe it.
-      value: ""
     validations:
       required: false

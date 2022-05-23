@@ -1,29 +1,18 @@
 import express from "express";
 import { Server } from "socket.io";
 import cors from "cors";
-import https from "https";
 import fs from "fs";
 
 const app = express();
 const port = 4000;
-let server = (
-  process.env.HTTPS
-    ? https.createServer(
-        {
-          key: fs.readFileSync(process.env.SSL_KEY_FILE),
-          cert: fs.readFileSync(process.env.SSL_CRT_FILE),
-          ca: fs.readFileSync(process.env.SSL_CA_FILE),
-        },
-        app
-      )
-    : app
-).listen(port, () => {
+const isProd = process.env.MODE === "prod"
+let server = app.listen(port, () => {
   return console.log(`server is listening on ${port}`);
 });
 
 const io = new Server(server, {
   cors: {
-    origin: process.env.HTTPS ? "*" : ["http://localhost:4500", "http://localhost:4600"],
+    origin: isProd ? "*" : ["http://localhost:4500", "http://localhost:4600"],
   },
 });
 

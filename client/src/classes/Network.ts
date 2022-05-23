@@ -48,7 +48,9 @@ export class Network {
           socket.emit("SDP_RECEIVED", peerId);
           socket.on("ICE_CANDIDATE", (dataString) => {
             const data = JSON.parse(dataString);
-            peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
+            if (peerConnection.signalingState != "closed") {
+              peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
+            }
           });
 
           peerConnection
@@ -124,7 +126,9 @@ export class Network {
           socket.emit("SDP_RECEIVED", peerId);
           socket.on("ICE_CANDIDATE", (dataString) => {
             const data = JSON.parse(dataString);
-            peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
+            if (peerConnection.signalingState != "closed") {
+              peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
+            }
           });
         })
         .catch((e) => {
@@ -141,7 +145,7 @@ export class Network {
       new AudioVisualizer(peerProcessor.onAudioActivity.bind(peerProcessor))
     );
     this.peerProcessors.push(peerProcessor);
-    if(this.stream){
+    if (this.stream) {
       this.updateAllTracks(this.stream.getAudioTracks()[0]);
     }
     this.broadcastInfo(this.selfUserInfo);
@@ -168,15 +172,15 @@ export class Network {
     return peerProcessor as PeerProcessor;
   }
 
-  toggleDeaf(deaf: boolean): void{
-    this.peerProcessors.forEach(peerProcessor => {
+  toggleDeaf(deaf: boolean): void {
+    this.peerProcessors.forEach((peerProcessor) => {
       peerProcessor.player.muted = deaf;
     });
   }
 
   // update tracks for all peer connections
   updateAllTracks(track: MediaStreamTrack): void {
-    if(track){
+    if (track) {
       this.peerProcessors.forEach((peerProcessor) => {
         peerProcessor.updateRemoteTrack(track);
       });

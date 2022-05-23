@@ -4,8 +4,6 @@ EXPOSE 4000
 
 WORKDIR /app
 
-ENTRYPOINT yarn dev
-
 # Prod
 FROM base as prod
 

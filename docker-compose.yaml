@@ -1,6 +1,7 @@
-version: "3.6"
+version: "3.8"
 services:
   server-dev:
+    user: ${CURRENT_UID}
     profiles:
       - dev
     build:
@@ -9,12 +10,15 @@ services:
       target: base
     ports:
       - '4000:4000'
+    environment:
+      MODE: dev
     volumes:
       - './server:/app'
     command:
-      yarn start
+      bash -c "yarn && yarn dev"
 
   client-dev:
+    user: ${CURRENT_UID}
     profiles:
       - dev
     build:
@@ -28,8 +32,10 @@ services:
     environment:
       VITE_SERVER_URL: "http://localhost:4000"
     command:
-      yarn dev --host
+      bash -c "yarn && yarn dev --host"
 
+
+  ###############################################
   # Prod containers    
   server-prod:
     profiles:
@@ -38,17 +44,11 @@ services:
       context: ./server
       dockerfile: ./Dockerfile
       target: prod
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
+    environment:
+      MODE: prod
     command:
       yarn start
-    environment:
-      HTTPS: 'true'
-      SSL_CRT_FILE: '/etc/letsencrypt/live/mochatto.com/cert.pem'
-      SSL_KEY_FILE: '/etc/letsencrypt/live/mochatto.com/privkey.pem'
-      SSL_CA_FILE: '/etc/letsencrypt/live/mochatto.com/fullchain.pem'
-    ports:
-      - '4000:4000'
+
   client-prod:
     profiles:
       - prod
@@ -57,12 +57,19 @@ services:
       dockerfile: ./Dockerfile
       target: prod
       args:
-        serverurl: https://mochatto.com:4000
+        serverurl: https://${API_URL}
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-    ports:
-      - '443:4500'
-    command:
-      npx serve -l 4500 -s ./dist --ssl-key /etc/letsencrypt/live/mochatto.com/privkey.pem --ssl-cert /etc/letsencrypt/live/mochatto.com/cert.pem
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
 
+  client-beta:
+    profiles:
+      - beta
+    build:
+      context: ./client
+      dockerfile: ./Dockerfile
+      target: prod
+      args:
+        serverurl: https://${BETA_API_URL}
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       

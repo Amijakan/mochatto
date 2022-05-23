@@ -17,7 +17,6 @@ pipeline {
         dockerfile {
           filename 'Dockerfile'
           dir 'client'
-          label 'mochatto-frontend-build'
           additionalBuildArgs '--build-arg serverurl=https://mochatto.com:4000'
         }
       }
@@ -33,7 +32,6 @@ pipeline {
         dockerfile {
           filename 'Dockerfile'
           dir 'server'
-          label 'mochatto-server-build'
         }
       }
       steps {

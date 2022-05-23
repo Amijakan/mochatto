@@ -1,32 +1,11 @@
 version: "3.8"
-
 services: 
-  docker:
-    image: docker:dind
-    container_name: jenkins-docker
-    # networks:
-    #   - jenkins
-    privileged: true
-    environment:
-      DOCKER_TLS_CERTDIR: /certs
-    volumes:
-      - jenkins-docker-certs:/certs/client
-      - jenkins-data:/var/jenkins_home
-    ports:
-      - "2376:2376"
-
   jenkins-blue-ocean:
     build:
       context: .
       dockerfile: ./Dockerfile
-      tag: 2.332.3-1
     restart: on-failure
-    # networks:
-    #   - jenkins
     environment:
-      DOCKER_HOST: tcp://docker:2376
-      DOCKER_CERT_PATH: /certs/client
-      DOCKER_TLS_VERIFY: 1
       VIRTUAL_HOST: jenkins.${DOMAIN}
       VIRTUAL_PORT: 8080
       LESTSENCRYPT_HOST: jenkins.${DOMAIN}
@@ -35,11 +14,13 @@ services:
       - "8080:8080"
       - "50000:50000"
     volumes:
-      - jenkins-docker-certs:/certs/client:ro
       - jenkins-data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock 
 
+volumes:
+  jenkins-data:
 
-network:
+networks:
   default:
     external:
       name: nginx-proxy

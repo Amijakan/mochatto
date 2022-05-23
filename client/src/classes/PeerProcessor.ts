@@ -24,7 +24,6 @@ export class PeerProcessor {
   addUserInfo: (info) => void;
   selfUserInfo: UserInfo;
   peerUserInfo: UserInfo;
-  isFirstMessageReceived: boolean;
   constructor(peerId: string, socket: Socket, addUserInfo: (info) => void) {
     this.peerId = peerId;
     this.audioSender = null as unknown as RTCRtpSender;
@@ -38,15 +37,12 @@ export class PeerProcessor {
     this.peerStream = new MediaStream();
     this.visualizer = null as unknown as AudioVisualizer;
     this.audioPlayer = new Audio();
-    this.videoPlayer = document.createElement("video");
-    this.videoPlayer.style.position = "absolute";
-    this.videoPlayer.style.width = "40rem";
+    this.videoPlayer = null as unknown as HTMLVideoElement;
     // the function is re-assigned during the user's initialization
     this.addUserInfo = addUserInfo;
     this.selfUserInfo = defaultUserInfo;
     this.peerUserInfo = defaultUserInfo;
     this.socket = socket;
-    this.isFirstMessageReceived = false;
 
     // listener for when a peer adds a track
     this.peerConnection.ontrack = (event) => {
@@ -147,10 +143,14 @@ export class PeerProcessor {
   onDataChannelMessage(event: MessageEvent): void {
     const info = JSON.parse(event.data);
     this.addUserInfo(info);
-    if (!this.isFirstMessageReceived) {
+    if (info.isScreenSharing) {
+      // If video player doesn't exist, create.
+      this.videoPlayer ??= document.createElement("video");
+      this.videoPlayer.style.position = "absolute";
+      this.videoPlayer.style.width = "40rem";
       document.getElementById("avatar-video-" + this.peerId)?.appendChild(this.videoPlayer);
-      document.getElementById("avatar-" + this.peerId)?.appendChild(this.audioPlayer);
-      this.isFirstMessageReceived = true;
+    } else {
+      this.videoPlayer.remove();
     }
     this.peerUserInfo = info;
     this.updateVolume();
@@ -243,7 +243,9 @@ export class PeerProcessor {
         // add the track
         this.peerStream.addTrack(track);
 
-        // set the new stream as the video source and play
+        // If video player doesn't exist, create.
+        this.videoPlayer ??= document.createElement("video");
+        // Set the new stream as the video source and play.
         this.videoPlayer.srcObject = this.peerStream;
         this.videoPlayer.play();
         this.videoPlayer.autoplay = true;

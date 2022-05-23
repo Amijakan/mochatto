@@ -125,6 +125,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const onEndScreenSharing = () => {
+    document.getElementById("avatar-video-" + socket.id)?.firstChild?.remove();
     endScreenSharing();
     updateSelfUserInfo({ ...selfUserInfoRef.current, isScreenSharing: false });
   };
@@ -204,7 +205,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     visualizerRef.current?.setStream(stream);
   }, [stream]);
 
-  // update remote position when avatar is dragged
+  // Update remote user info  when self info has been changed.
   useEffect(() => {
     if (stream && stream.getAudioTracks().length) {
       stream.getAudioTracks()[0].enabled = !selfUserInfoRef.current.mute;
@@ -213,9 +214,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, [selfUserInfoRef.current]);
 
   useEffect(() => {
-    if (networkRef.current) {
-      networkRef.current.toggleDeaf(!selfUserInfoRef.current.active);
-    }
+    networkRef.current?.toggleDeaf(!selfUserInfoRef.current.active);
   }, [selfUserInfoRef.current.active]);
 
   const buttonStyle = {

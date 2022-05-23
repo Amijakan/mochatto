@@ -7,9 +7,7 @@ pipeline {
   stages {
     stage('Hello') {
       steps {
-        echo "hello"
         echo $PWD
-        ls
       }
     }
   }

@@ -12,6 +12,7 @@ function AvatarDOM({
   initial,
   active,
   mute,
+  id,
 }: {
   onPointerDown: (PointerEvent) => void;
   pos: [number, number];
@@ -22,6 +23,7 @@ function AvatarDOM({
   initial: string;
   active: boolean;
   mute: boolean;
+  id: string;
 }): JSX.Element {
   useEffect(() => {
     const avatardom = document.querySelector(".avatar");
@@ -34,6 +36,7 @@ function AvatarDOM({
 
   return (
     <div
+      id={"avatar-" + id}
       className="avatar"
       onPointerDown={onPointerDown}
       style={{
@@ -91,6 +94,7 @@ function AvatarDOM({
           </div>
         )}
       </div>
+      <div id={"avatar-video-" + id} style={{ overflow: "hidden" }}></div>
     </div>
   );
 }

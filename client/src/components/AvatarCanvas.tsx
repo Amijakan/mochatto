@@ -61,6 +61,7 @@ function AvatarCanvas({
         initial={selfUserInfo.name[0]}
         active={selfUserInfo.active}
         mute={selfUserInfo.mute}
+        id={selfUserInfo.id}
       />
       {userInfos.map((info, index) => {
         if (!info) {
@@ -80,6 +81,7 @@ function AvatarCanvas({
             initial={info.name[0]}
             active={info.active}
             mute={info.mute}
+            id={info.id}
           />
         );
       })}

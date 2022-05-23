@@ -108,11 +108,17 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const onStartScreenSharing = (_stream: MediaStream) => {
-    const selfVideoPlayer = document.querySelector("video") || new HTMLVideoElement();
+    const videoPlayer = document.createElement("video");
     const screenShareTrack = _stream.getVideoTracks()[0];
     const mixedStream = stream.clone();
 
-    selfVideoPlayer.srcObject = _stream;
+    // Set video player configurations and append to self avatar
+    videoPlayer.style.position = "absolute";
+    videoPlayer.style.width = "40rem";
+    videoPlayer.srcObject = _stream;
+    videoPlayer.autoplay = true;
+    document.getElementById("avatar-video-" + socket.id)?.appendChild(videoPlayer);
+
     updateSelfUserInfo({ ...selfUserInfoRef.current, isScreenSharing: true });
     mixedStream.addTrack(screenShareTrack);
     setStream(mixedStream); // Seems reduntant but necessary to run the hook.
@@ -188,6 +194,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, [userInfos]);
 
   useEffect(() => {
+    updateSelfUserInfo({ ...selfUserInfoRef.current, id: socket.id });
+  }, [socket]);
+
+  useEffect(() => {
     networkRef.current?.replaceStream(stream);
     networkRef.current?.updateAllTracks(stream && stream.getAudioTracks()[0]);
     networkRef.current?.updateAllTracks(stream && stream.getVideoTracks()[0]);
@@ -250,7 +260,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           setSelfUserInfo={updateSelfUserInfo}
           userInfos={Object.values(userInfos)}
         />
-        <video style={{ width: "20%" }} autoPlay />
         {selfUserInfoRef.current.isScreenSharing ? (
           <ScreenShareWindow
             onStart={(_stream) => onStartScreenSharing(_stream)}
@@ -262,7 +271,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         )}
         <Div d="flex" h="100%" flexDir="column">
           <Div d="flex" justify="center" m={{ t: "auto" }}>
-            <Div d="inline-block">
+            <Div d="inline-block" style={{ zIndex: "1" }}>
               <Div rounded="circle" bg="#000000ba" d="flex" p={{ x: "1rem", y: "0.3rem" }}>
                 <Button title="Settings (,)" {...buttonStyle} onClick={() => setShowModal(true)}>
                   <Icon name="SettingsSolid" color="white" size="24px" />

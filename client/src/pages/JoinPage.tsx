@@ -8,6 +8,7 @@ import { Input } from "../components/atomize_wrapper";
 import { Div, Notification, Icon } from "atomize";
 import { Button, Card, Text } from "../components/atomize_wrapper";
 import { BaseTemplate } from "../templates";
+import "./JoinPage.scss";
 
 const JoinPage = ({
   name,
@@ -56,6 +57,17 @@ const JoinPage = ({
     setGain(_gain);
   };
 
+  function Visualizer() {
+    return (
+      <div
+        className="visualizer"
+        style={{
+          width: gain.toString() + "px",
+        }}
+      />
+    );
+  };
+
   return (
     <BaseTemplate>
       <Div d="flex" justify="space-around" p={{ t: "100px" }}>
@@ -86,14 +98,8 @@ const JoinPage = ({
             <Div m={{ t: "20px" }}>
               <Div>Select audio device:</Div>
               <DeviceSelector onSelect={onSelect} />
-              <Div
-                style={{
-                  width: gain.toString() + "px",
-                  height: "10px",
-                  background: "#FDEEC8",
-                }}
-              ></Div>
             </Div>
+            {Visualizer()}
             <Div d="flex" justify="space-around" w="100%" m={{ t: "20px" }}>
               <Button 
                 w="45%" 

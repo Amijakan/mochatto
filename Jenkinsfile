@@ -8,6 +8,8 @@ pipeline {
     stage('Hello') {
       steps {
         echo "hello"
+        echo $PWD
+        ls
       }
     }
   }

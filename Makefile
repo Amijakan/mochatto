@@ -27,7 +27,7 @@ prod-up:
 	docker-compose -f ./docker-compose.yaml -f ./docker-compose.nginx-proxy.yaml --profile prod up -d --build
 
 beta-up:
-	docker-compose -f ./docker-compose.yaml -f ./docker-compose.nginx-proxy.yaml --profile beta up -d --build
+	BETA_PREFIX=$$(git rev-parse --abbrev-ref HEAD) docker-compose -f ./docker-compose.yaml -f ./docker-compose.nginx-proxy.yaml --profile beta up -d --build
 
 ## Cleans containers
 clean:

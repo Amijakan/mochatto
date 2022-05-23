@@ -53,7 +53,7 @@ pipeline {
       steps {
         sh '''
           echo "Test Backend"
-          ls
+          make dev-up
         '''
       }
     }
@@ -73,7 +73,7 @@ pipeline {
       }
       steps {
         sh '''
-          echo "Deploy Main"
+          make prod-up
         '''
       }
     }

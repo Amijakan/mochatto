@@ -44,8 +44,7 @@ pipeline {
     stage('test-frontend') {
       steps {
         sh '''
-          echo "Test Frontend"
-          ls
+          make beta-up
         '''
       }
     }

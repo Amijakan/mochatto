@@ -60,6 +60,8 @@ services:
         serverurl: https://${API_URL}
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    command:
+      bash -c "nginx -g daemon off;"
 
   client-beta:
     profiles:
@@ -72,4 +74,6 @@ services:
         serverurl: https://${BETA_PREFIX}.dev-api.${APP_URL}
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    command:
+      bash -c "nginx -g daemon off;"
       

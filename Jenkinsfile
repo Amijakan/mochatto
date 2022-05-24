@@ -5,6 +5,9 @@ pipeline {
   }
   stages {
     stage('Hello') {
+      agent { 
+        label "linux" 
+      }
       steps {
         echo 'Hello'
       }

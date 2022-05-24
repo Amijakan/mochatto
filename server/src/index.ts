@@ -6,7 +6,7 @@ import fs from "fs";
 const app = express();
 const port = 4000;
 const isProd = process.env.MODE === "prod"
-let server = app.listen(port, () => {
+const server = app.listen(port, () => {
   return console.log(`server is listening on ${port}`);
 });
 

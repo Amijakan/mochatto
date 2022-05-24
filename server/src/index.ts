@@ -3,6 +3,8 @@ import { Server } from "socket.io";
 import cors from "cors";
 import fs from "fs";
 
+const stripTrailingSlash = (str: string) => str.replace(/\/$/, '')
+
 const app = express();
 const port = 4000;
 const isProd = process.env.MODE === "prod"
@@ -25,7 +27,8 @@ const rooms: { [key: string]: number } = {};
 const users: object[] = [];
 io.on("connection", (socket) => {
   socket.on("NUM_USERS", (nspName) => {
-    socket.emit("NUM_USERS", rooms[nspName]);
+    const roomName = stripTrailingSlash(nspName)
+    socket.emit("NUM_USERS", rooms[roomName]);
   });
 });
 
@@ -37,46 +40,47 @@ io.of((nsp, query, next) => {
   next(null, true);
 }).on("connection", (socket) => {
   console.log("new client: " + socket.id);
+  const roomName = stripTrailingSlash(socket.nsp.name)
   socket.on("JOIN", (name) => {
     const user = { name, id: socket.id };
     if (name !== "") {
-      if (rooms[socket.nsp.name]) {
-        rooms[socket.nsp.name] += 1;
+      if (rooms[roomName]) {
+        rooms[roomName] += 1;
       } else {
-        rooms[socket.nsp.name] = 1;
+        rooms[roomName] = 1;
       }
-      console.log(name + " (" + socket.id + ") has joined namespace " + socket.nsp.name);
-      io.of(socket.nsp.name).emit("JOIN", user);
+      console.log(name + " (" + socket.id + ") has joined namespace " + roomName);
+      io.of(roomName).emit("JOIN", user);
     }
   });
 
   socket.on("OFFER", (dataString) => {
     const targetId = JSON.parse(dataString).receiverId;
     console.log(socket.id + " has sent offer to " + targetId);
-    io.of(socket.nsp.name).to(targetId).emit("OFFER", dataString);
+    io.of(roomName).to(targetId).emit("OFFER", dataString);
   });
   socket.on("ANSWER", (dataString) => {
     const targetId = JSON.parse(dataString).receiverId;
     console.log(socket.id + " has sent answer to " + targetId);
-    io.of(socket.nsp.name).to(targetId).emit("ANSWER", dataString);
+    io.of(roomName).to(targetId).emit("ANSWER", dataString);
   });
   socket.on("ICE_CANDIDATE", (dataString) => {
     const targetId = JSON.parse(dataString).receiverId;
-    io.of(socket.nsp.name).to(targetId).emit("ICE_CANDIDATE", dataString);
+    io.of(roomName).to(targetId).emit("ICE_CANDIDATE", dataString);
   });
   socket.on("SDP_RECEIVED", (sdpSenderId) => {
-    io.of(socket.nsp.name).to(sdpSenderId).emit("SDP_RECEIVED");
+    io.of(roomName).to(sdpSenderId).emit("SDP_RECEIVED");
   });
   socket.on("LEAVE", () => {
     console.log("user's leaving");
-    io.of(socket.nsp.name).emit("LEAVE", { id: socket.id });
+    io.of(roomName).emit("LEAVE", { id: socket.id });
   });
   socket.on("disconnect", () => {
-    rooms[socket.nsp.name] -= 1;
-    if (rooms[socket.nsp.name] === 0) {
-      delete rooms[socket.nsp.name];
+    rooms[roomName] -= 1;
+    if (rooms[roomName] === 0) {
+      delete rooms[roomName];
     }
-    io.of(socket.nsp.name).emit("DISCONNECT", { id: socket.id });
+    io.of(roomName).emit("DISCONNECT", { id: socket.id });
     console.log(socket.id + " has disconnected.");
   });
 });

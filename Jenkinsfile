@@ -22,9 +22,7 @@ pipeline {
         }
       }
       steps {
-        sh '''
-          echo "Build Frontend"
-        '''
+        echo "Build Frontend"
       }
     }
     // stage('build-backend') {

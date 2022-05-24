@@ -3,22 +3,30 @@ name: Checks for build
 jobs:
   build-client:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: client
     steps:
       - uses: actions/checkout@v2
       - name: Install modules
-        run: cd ./client && yarn install --frozen-lockfile 
+        run: yarn install --frozen-lockfile 
       - name: Run ESLint
-        run: cd ./client && yarn lint
+        run: yarn lint
       - name: Run build
-        run: cd ./client && yarn build
+        run: yarn build
 
   build-server:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: server
     steps:
       - uses: actions/checkout@v2
       - name: Install modules
-        run: cd ./server && yarn install --frozen-lockfile 
+        run: yarn install --frozen-lockfile 
       - name: Run ESLint
-        run: cd ./server && yarn lint
+        run: yarn lint
       - name: Run build
-        run: cd ./server && yarn build
+        run: yarn build

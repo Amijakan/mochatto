@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import { BaseTemplate } from "../templates";
+import { BaseTemplate } from "@/templates";
 import { Div } from "atomize";
-import { Button, Text, Input } from "../components/atomize_wrapper";
-import { SocketContext } from "../contexts";
+import { Button, Text, Input } from "@/components/atomize_wrapper";
+import { SocketContext } from "@/contexts";
 import { useHistory } from "react-router-dom";
 
 const HomePage = (): JSX.Element => {

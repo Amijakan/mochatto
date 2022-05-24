@@ -1,0 +1,24 @@
+name: Checks for build
+'on': pull_request
+jobs:
+  build-client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install modules
+        run: cd ./client && yarn install --frozen-lockfile 
+      - name: Run ESLint
+        run: yarn lint
+      - name: Run build
+        run: yarn build
+
+  build-server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install modules
+        run: cd ./server && yarn install --frozen-lockfile 
+      - name: Run ESLint
+        run: yarn lint
+      - name: Run build
+        run: yarn build

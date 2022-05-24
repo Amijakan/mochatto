@@ -4,10 +4,10 @@ import MicIcon from "@material-ui/icons/Mic";
 import MicOffIcon from "@material-ui/icons/MicOff";
 
 type ButtonsBarProps = {
-  settingsCallback: () => void,
-  statusCallback: () => void,
-  muteCallback: () => void,
-  leaveCallback: () => void,
+  onSettingsClicked: () => void,
+  onStatusClicked: () => void,
+  onMuteClicked: () => void,
+  onLeaveClicked: () => void,
   userInfoRef: any
 }
 
@@ -23,24 +23,24 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
   };
   
   const SettingsButton = () => {
-    const { settingsCallback } = props;
+    const { onSettingsClicked } = props;
 
     return (
-      <Button title="Settings (,)" {...defaultButtonStyle} onClick={settingsCallback}>
+      <Button title="Settings (,)" {...defaultButtonStyle} onClick={onSettingsClicked}>
         <Icon name="SettingsSolid" color="white" size="24px" />
       </Button>
     );
   };
     
   const StatusButton = () => {
-    const { statusCallback, userInfoRef } = props;
+    const { onStatusClicked, userInfoRef } = props;
     
     return (
       <Button
         title="Status (s)"
         {...defaultButtonStyle}
         textColor={userInfoRef.current.active ? "success700" : "danger700"}
-        onClick={statusCallback}
+        onClick={onStatusClicked}
       >
         {userInfoRef.current.active ? (
           <Icon name="Status" color="success700" size="22px" />
@@ -52,24 +52,24 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
   };
           
   const MuteButton = () => {
-    const { muteCallback, userInfoRef } = props;
+    const { onMuteClicked, userInfoRef } = props;
     
     return (
-      <Button title="Toggle mute (m)" {...defaultButtonStyle} onClick={muteCallback}>
+      <Button title="Toggle mute (m)" {...defaultButtonStyle} onClick={onMuteClicked}>
         {userInfoRef.current.mute ? <MicOffIcon /> : <MicIcon />}
       </Button>
     );
   }
     
   const LeaveButton = () => {
-    const { leaveCallback } = props;
+    const { onLeaveClicked } = props;
     
     return (
       <Button
         title="Leave room (L)"
         {...defaultButtonStyle}
         w="4rem"
-        onClick={leaveCallback}
+        onClick={onLeaveClicked}
         textColor="red"
       >
         Leave

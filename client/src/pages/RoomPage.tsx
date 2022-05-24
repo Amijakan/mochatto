@@ -208,10 +208,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           userInfos={Object.values(userInfos)}
         />
         <ButtonsBar 
-          settingsCallback={() => setShowModal(true)}
-          statusCallback={() => toggleActive()}
-          muteCallback={() => toggleMute()}
-          leaveCallback={() => history.go(0)}
+          onSettingsClicked={() => setShowModal(true)}
+          onStatusClicked={() => toggleActive()}
+          onMuteClicked={() => toggleMute()}
+          onLeaveClicked={() => history.go(0)}
           userInfoRef={selfUserInfoRef}
         />
       </>

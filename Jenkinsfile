@@ -18,7 +18,7 @@ pipeline {
         dockerfile {
           filename 'Dockerfile'
           dir 'client'
-          additionalBuildArgs '--build-arg serverurl=https://mochatto.com:4000'
+          additionalBuildArgs '--build-arg UID=113 serverurl=https://mochatto.com:4000'
         }
       }
       steps {

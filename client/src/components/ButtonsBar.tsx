@@ -22,9 +22,9 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
     rounded: "circle",
   };
   
-  function SettingsButton() {
+  const SettingsButton = () => {
     const { settingsCallback } = props;
-    
+
     return (
       <Button title="Settings (,)" {...defaultButtonStyle} onClick={settingsCallback}>
         <Icon name="SettingsSolid" color="white" size="24px" />
@@ -32,7 +32,7 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
     );
   };
     
-  function StatusButton() {
+  const StatusButton = () => {
     const { statusCallback, userInfoRef } = props;
     
     return (
@@ -51,7 +51,7 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
     );
   };
           
-  function MuteButton() {
+  const MuteButton = () => {
     const { muteCallback, userInfoRef } = props;
     
     return (
@@ -61,7 +61,7 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
     );
   }
     
-  function LeaveButton() {
+  const LeaveButton = () => {
     const { leaveCallback } = props;
     
     return (

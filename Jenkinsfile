@@ -46,7 +46,6 @@ pipeline {
       steps {
         sh '''
           echo "Test Backend"
-          make dev-up
         '''
       }
     }

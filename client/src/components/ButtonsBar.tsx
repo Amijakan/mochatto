@@ -3,12 +3,14 @@ import { Button, Div, Icon } from "atomize";
 import MicIcon from "@material-ui/icons/Mic";
 import MicOffIcon from "@material-ui/icons/MicOff";
 
+import PropTypes from "prop-types";
+
 type ButtonsBarProps = {
   onSettingsClicked: () => void,
   onStatusClicked: () => void,
   onMuteClicked: () => void,
   onLeaveClicked: () => void,
-  userInfoRef: any
+  userInfoRef: unknown,
 }
 
 export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
@@ -53,7 +55,8 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
           
   const MuteButton = () => {
     const { onMuteClicked, userInfoRef } = props;
-    
+    console.log(userInfoRef);
+
     return (
       <Button title="Toggle mute (m)" {...defaultButtonStyle} onClick={onMuteClicked}>
         {userInfoRef.current.mute ? <MicOffIcon /> : <MicIcon />}
@@ -91,6 +94,14 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
       </Div>
     </Div>
   );
- };
+};
+
+ButtonsBar.propTypes = {
+  onSettingsClicked: PropTypes.func.isRequired,
+  onLeaveClicked: PropTypes.func.isRequired,
+  onMuteClicked: PropTypes.func.isRequired,
+  onStatusClicked: PropTypes.func.isRequired,
+  userInfoRef: PropTypes.any,
+};
               
 export default ButtonsBar;

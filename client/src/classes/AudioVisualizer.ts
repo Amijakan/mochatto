@@ -11,7 +11,12 @@ export class AudioVisualizer {
   }
 
   setStream(stream: MediaStream): void {
-    if (!stream || !stream.active || !stream.getAudioTracks().length) {
+    if (
+      !stream ||
+      !stream.active ||
+      !stream.getAudioTracks().length ||
+      !stream.getAudioTracks()[0].readyState === "live"
+    ) {
       return;
     }
     const context = new AudioContext();

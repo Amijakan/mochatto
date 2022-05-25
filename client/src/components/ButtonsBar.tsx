@@ -10,7 +10,8 @@ type ButtonsBarProps = {
   onStatusClicked: () => void,
   onMuteClicked: () => void,
   onLeaveClicked: () => void,
-  userInfoRef: unknown,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  userInfoRef: any,
 }
 
 export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {

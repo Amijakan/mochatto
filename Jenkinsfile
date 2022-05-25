@@ -38,7 +38,7 @@ pipeline {
     stage('test-frontend') {
       steps {
         sh '''
-          make beta-up
+          echo "Test Frontend"
         '''
       }
     }
@@ -51,11 +51,12 @@ pipeline {
     }
     stage('dev-deploy') {
       when {
-        branch "dev"
+        branch "dev *jenkins"
       }
       steps {
         sh '''
-          echo "Deploy Main"
+          echo "Deploy Dev"
+          make beta-up
         '''
       }
     }

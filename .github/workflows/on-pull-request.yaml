@@ -3,7 +3,7 @@ name: Checks for build
 jobs:
   test-client:
     runs-on: ubuntu-latest
-    defualts:
+    defaults:
       run:
         shell: bash
         working-directory: client

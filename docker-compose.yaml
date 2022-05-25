@@ -61,7 +61,7 @@ services:
     volumes:
       - ./nginx:/etc/nginx
     command:
-      bash -c "nginx -g daemon off;"
+      nginx -g daemon off
 
   client-beta:
     profiles:
@@ -75,5 +75,5 @@ services:
     volumes:
       - ./nginx:/etc/nginx
     command:
-      bash -c "nginx -g daemon off;"
+      nginx -g daemon off
       

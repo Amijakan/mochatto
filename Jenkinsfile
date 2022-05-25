@@ -28,7 +28,7 @@ pipeline {
     }
     stage('dev-deploy') {
       when {
-        branch "dev *jenkins"
+        branch "setup-jenkins"
       }
       steps {
         sh '''

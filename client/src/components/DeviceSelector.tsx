@@ -2,9 +2,9 @@ import React, { useEffect, useContext } from "react";
 import Select from "react-select";
 import PropTypes from "prop-types";
 import { Device, listInputDevices, selectInputDevice } from "./DeviceSelectorHelper";
-import { DeviceContext } from "../contexts";
+import { DeviceContext } from "@/contexts";
 import { Checkbox, Div } from "atomize";
-import { Label } from "../components/atomize_wrapper";
+import { Label } from "@/components/atomize_wrapper";
 
 // drop down menu for selecting an input device
 function DeviceSelector({ onSelect }: { onSelect: (MediaStream) => void }): JSX.Element {

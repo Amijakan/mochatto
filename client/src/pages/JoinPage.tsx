@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { SocketContext, DeviceContext } from "../contexts";
-import { DeviceSelector } from "../components/DeviceSelector";
-import { AudioVisualizer } from "../classes/AudioVisualizer";
+import { SocketContext, DeviceContext } from "@/contexts";
+import { DeviceSelector } from "@/components/DeviceSelector";
+import { AudioVisualizer } from "@/classes/AudioVisualizer";
 import PropTypes from "prop-types";
-import { Input } from "../components/atomize_wrapper";
+import { Input } from "@/components/atomize_wrapper";
 import { Div, Notification, Icon } from "atomize";
-import { Button, Card, Text } from "../components/atomize_wrapper";
-import { BaseTemplate } from "../templates";
-import { colors } from "../constants/colors";
+import { Button, Card, Text } from "@/components/atomize_wrapper";
+import { BaseTemplate } from "@/templates";
+import { colors } from "@/constants/colors";
 
 const JoinPage = ({
   name,

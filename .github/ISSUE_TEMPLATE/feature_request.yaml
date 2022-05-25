@@ -13,6 +13,5 @@ body:
       label: What feature?
       description: What feature do you think could improve this product?
       placeholder: Tell us what you would like to see!
-      value: "Feature"
     validations:
       required: true

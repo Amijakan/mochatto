@@ -58,10 +58,6 @@ services:
       target: prod
       args:
         serverurl: https://${API_URL}
-    volumes:
-      - type: bind
-        source: ./nginx/nginx.conf
-        target: /etc/nginx/nginx.conf
     command:
       nginx -g 'daemon off;'
 
@@ -74,10 +70,6 @@ services:
       target: prod
       args:
         serverurl: https://${BETA_PREFIX}.dev-api.${APP_URL}
-    volumes:
-      - type: bind
-        source: ./nginx/nginx.conf
-        target: /etc/nginx/nginx.conf
     command:
       nginx -g 'daemon off;'
       

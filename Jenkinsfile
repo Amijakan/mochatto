@@ -12,29 +12,6 @@ pipeline {
         echo 'Hello'
       }
     }
-    stage('build-frontend') {
-      agent {
-        dockerfile {
-          filename 'Dockerfile'
-          dir 'client'
-          additionalBuildArgs '--build-arg UID=113 --build-arg serverurl=https://mochatto.com:4000'
-        }
-      }
-      steps {
-        echo "Build Frontend"
-      }
-    }
-    stage('build-backend') {
-      agent {
-        dockerfile {
-          filename 'Dockerfile'
-          dir 'server'
-        }
-      }
-      steps {
-        echo "Build Backend"
-      }
-    }
     stage('test-frontend') {
       steps {
         sh '''

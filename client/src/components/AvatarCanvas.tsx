@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import AvatarDOM from "./AvatarDOM";
-import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
+import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
 
 // for dragging and rendering avatars
 function AvatarCanvas({

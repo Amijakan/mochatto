@@ -1,14 +1,16 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import { SocketContext, DeviceContext, UserInfoContext } from "../contexts";
+import { SocketContext, DeviceContext, UserInfoContext } from "@/contexts";
 import { useHistory } from "react-router-dom";
-import { DeviceSelector } from "../components/DeviceSelector";
+import { DeviceSelector } from "@/components/DeviceSelector";
 import { Div, Notification, Icon, Text } from "atomize";
-import AvatarCanvas from "../components/AvatarCanvas";
-import ButtonsBar from "../components/ButtonsBar";
-import { Network } from "../classes/Network";
-import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
-import { AudioVisualizer, gainToMultiplier } from "../classes/AudioVisualizer";
-import { RoomTemplate } from "../templates";
+import AvatarCanvas from "@/components/AvatarCanvas";
+import { Network } from "@/classes/Network";
+import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
+import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
+import { RoomTemplate } from "@/templates";
+import { Button } from "@/components/atomize_wrapper";
+import MicIcon from "@material-ui/icons/Mic";
+import MicOffIcon from "@material-ui/icons/MicOff";
 
 import PropTypes from "prop-types";
 

@@ -9,6 +9,9 @@ jobs:
         working-directory: client
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
       - name: Install modules
         run: yarn install --frozen-lockfile 
       - name: Run ESLint
@@ -24,6 +27,9 @@ jobs:
         working-directory: server
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
       - name: Install modules
         run: yarn install --frozen-lockfile 
       - name: Run TSLint

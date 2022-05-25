@@ -59,7 +59,9 @@ services:
       args:
         serverurl: https://${API_URL}
     volumes:
-      - ${PWD}/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - type: bind
+        source: ${PWD}/nginx/nginx.conf
+        target: /etc/nginx/nginx.conf
     command:
       nginx -g 'daemon off;'
 
@@ -73,7 +75,9 @@ services:
       args:
         serverurl: https://${BETA_PREFIX}.dev-api.${APP_URL}
     volumes:
-      - ${PWD}/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - type: bind
+        source: ${PWD}/nginx/nginx.conf
+        target: /etc/nginx/nginx.conf
     command:
       nginx -g 'daemon off;'
       

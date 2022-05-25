@@ -18,5 +18,7 @@ COPY . /app
 RUN yarn build
 
 FROM nginx:stable-alpine as prod
+# Making sure that the directory exists
+RUN mkdir -p /etc/nginx
 COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 80

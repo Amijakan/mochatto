@@ -15,7 +15,7 @@ export class AudioVisualizer {
       !stream ||
       !stream.active ||
       !stream.getAudioTracks().length ||
-      !stream.getAudioTracks()[0].readyState === "live"
+      stream.getAudioTracks()[0].readyState != "live"
     ) {
       return;
     }

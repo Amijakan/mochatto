@@ -1,7 +1,7 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { Div, Row, Col } from "atomize";
-import { Logo } from "../components";
+import { Logo } from "@/components";
 
 const BaseTemplate = ({ children }: { children: JSX.Element }): JSX.Element => {
   const history = useHistory();

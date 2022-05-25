@@ -1,0 +1,24 @@
+name: Refactor Request
+description: Suggest something that needs to be refactored
+title: "[Refactor]: "
+labels: [refactor]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the feature request!
+  - type: textarea
+    id: request
+    attributes:
+      label: Refactor Request
+      description: Is your refactor request related to a problem? Please describe.
+      placeholder: A clear and concise description of what the problem is. Ex. I'm having problems reading the code because... (nice to have file/line references too)
+    validations:
+      required: true
+  - type: textarea
+    id: propose
+    attributes:
+      label: Describe the proposed solution
+      description: If you have a solution in mind, please describe it.
+    validations:
+      required: false

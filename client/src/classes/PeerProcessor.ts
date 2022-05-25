@@ -1,7 +1,7 @@
-import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
-import { AudioVisualizer, gainToMultiplier } from "./AudioVisualizer";
+import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
+import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import { Socket } from "socket.io-client";
-import { DCLabel, Pack } from "./Network";
+import { DCLabel, Pack } from "@/classes/Network";
 
 export interface DataPackage {
   position: [number, number];
@@ -168,7 +168,7 @@ export class PeerProcessor {
   getVolume(selfPosition: [number, number], peerPosition: [number, number]): number {
     const distance = Math.sqrt(
       Math.pow(selfPosition[0] - peerPosition[0], 2) +
-        Math.pow(selfPosition[1] - peerPosition[1], 2)
+      Math.pow(selfPosition[1] - peerPosition[1], 2)
     );
     const max = 600;
     let volume = 0;

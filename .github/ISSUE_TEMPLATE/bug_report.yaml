@@ -13,7 +13,6 @@ body:
       label: Expected Behaviour
       description: What did you expect to happen?
       placeholder: Tell us about the expected behaviour
-      value: "Expected Behaviour"
     validations:
       required: true
   - type: textarea
@@ -22,7 +21,6 @@ body:
       label: Actual Behaviour
       description: What actually happened?
       placeholder: Tell us about what you did and what happened?
-      value: "What happened?"
     validations:
       required: true
   - type: textarea
@@ -31,7 +29,6 @@ body:
       label: How to Reproduce the problem
       description: How exactly did you make that bug appear? (Videos would be nice too!)
       placeholder: How did the bug occured?
-      value: "How did it occur?"
     validations:
       required: false
   - type: textarea
@@ -40,7 +37,6 @@ body:
       label: Additional Info
       description: Any additional info? (Any way to reproduce the bug, which version/commit hash it happened? OS)
       placeholder: Give us any additional info.
-      value: "Additional Info?"
     validations:
       required: false
   - type: textarea

@@ -1,7 +1,7 @@
 import { useHistory } from "react-router-dom";
 import { Div, Row, Col, Modal, Button } from "atomize";
-import { Logo } from "../components";
-import b64bg from "../assets/imgs/background_b64";
+import { Logo } from "@/components";
+import b64bg from "@/assets/imgs/background_b64";
 
 const RoomTemplate = ({
   children,

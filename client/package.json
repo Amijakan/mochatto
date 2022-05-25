@@ -24,7 +24,8 @@
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "build": "tsc && vite build",
     "devTest": "yarn run cypress open",
-    "test": "npx cypress run --record --key 7af4c11b-fe02-4012-bfde-b35c55f2306b",
+    "test": "npx playwright test",
+    "test-headed": "npx playwright test --headed",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

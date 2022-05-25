@@ -38,6 +38,8 @@ pipeline {
     stage('test-frontend') {
       steps {
         sh '''
+          ls
+          ls nginx
           make beta-up
         '''
       }

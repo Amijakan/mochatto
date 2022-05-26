@@ -60,14 +60,10 @@ function AvatarDOM({
       onPointerDown={onPointerDown}
       style={calculateSpecificStyles()}
     >
-      <div
-        className="avatar-initial"
-      >
+      <div className="avatar-initial">
         {initial}
       </div>
-      <div
-        className="avatar-active"
-      >
+      <div className="avatar-active">
         {renderStatusIcon()}
       </div>
     </div>

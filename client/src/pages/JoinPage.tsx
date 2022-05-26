@@ -66,7 +66,7 @@ const JoinPage = ({
         }}
       />
     );
-  };
+  }
 
   return (
     <BaseTemplate>

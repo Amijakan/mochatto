@@ -56,7 +56,6 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
           
   const MuteButton = () => {
     const { onMuteClicked, userInfoRef } = props;
-    console.log(userInfoRef);
 
     return (
       <Button title="Toggle mute (m)" {...defaultButtonStyle} onClick={onMuteClicked}>

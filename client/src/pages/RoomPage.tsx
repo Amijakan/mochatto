@@ -9,6 +9,7 @@ import { Network } from "@/classes/Network";
 import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import { RoomTemplate } from "@/templates";
+import WhiteboardingLayer from "@/components/WhiteboardingLayer";
 
 import PropTypes from "prop-types";
 
@@ -186,6 +187,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       }
     >
       <>
+        <WhiteboardingLayer />
         <Notification
           isOpen={showNotification}
           bg={`${notificationColors[notificationTheme].color}100`}

@@ -4,7 +4,6 @@ import { Div } from "atomize";
 import "./Logo.scss";
 
 const Logo = ({ height = "20" }: { width?: string; height?: string }): JSX.Element => {
-  const padding = 10
   return (
     <Div d="flex" p="0.7rem" align="center">
       <img

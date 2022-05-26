@@ -1,3 +1,4 @@
+import React from "react";
 import { useHistory } from "react-router-dom";
 import { Div, Row, Col, Modal, Button } from "atomize";
 import { Logo } from "@/components";

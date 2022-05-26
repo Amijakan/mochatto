@@ -1,0 +1,34 @@
+.avatar-outer {
+    touch-action: none;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 100%;
+    position: absolute;
+    display: table;
+
+    .avatar-initial {
+        user-select: none;
+        color: white;
+        vertical-align: middle;
+        text-align: center;
+        display: table-cell;
+        font-family: helvetica;
+        font-size: 2rem;
+        cursor: default;
+    }
+
+    .avatar-active {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 1.5rem;
+        height: 1.5rem;
+
+        .active-icon {
+            background: white;
+            border-radius: 100%;
+            width: 100%;
+            height: 100%;
+        }
+    }
+}

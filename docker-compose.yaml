@@ -34,6 +34,15 @@ services:
     command:
       bash -c "yarn && yarn dev --host"
 
+  client-test:
+    build:
+      context: ./client
+      dockerfile: ./Dockerfile
+      target: test
+    profiles:
+      - test
+    command:
+      yarn test
 
   ###############################################
   # Prod containers    

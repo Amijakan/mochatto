@@ -24,7 +24,8 @@
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "build": "tsc && vite build",
     "devTest": "yarn run cypress open",
-    "test": "npx cypress run --record --key 7af4c11b-fe02-4012-bfde-b35c55f2306b",
+    "test": "npx playwright test",
+    "test-headed": "npx playwright test --headed",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -46,22 +47,22 @@
     ]
   },
   "devDependencies": {
+    "@playwright/test": "^1.22.2",
     "@testing-library/user-event": "^12.1.10",
+    "@types/node": "^12.0.0",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
     "@types/react-router-dom": "^5.1.9",
     "@types/superagent": "^4.1.12",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
     "@vitejs/plugin-react": "^1.0.0",
-    "@types/node": "^12.0.0",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
-    "cypress": "^8.2.0",
-    "typescript": "^4.1.2",
     "eslint": "^7.32.0",
     "eslint-plugin-cypress": "^2.11.3",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
     "serve": "^12.0.1",
+    "typescript": "^4.1.2",
     "vite": "^2.6.0"
   }
 }

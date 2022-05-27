@@ -16,7 +16,7 @@ export type UserInfo = {
 
 export const defaultUserInfo = {
   name: "",
-  avatarColor: { background: "gray", border: "black" },
+  avatarColor: { background: "rgb(0 0 0 / 0%)", border: "rgb(0 0 0 / 0%)" },
   multiplier: 0,
   position: [100, 100] as Position,
   active: true,

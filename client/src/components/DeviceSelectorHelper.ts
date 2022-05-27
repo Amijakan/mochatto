@@ -15,11 +15,10 @@ export const listInputDevices = (
 ): Promise<{ value: string; label: string }[]> => (
   navigator.mediaDevices
     .enumerateDevices()
-    .then((devices) => devices.map((device) => {
-      if (device.kind === "audioinput") {
-        return { label: device.label, value: device.deviceId }
-      }
-    }))
+    .then((devices) => devices
+      .filter((device) => device.kind === "audioinput")
+      .map((device) => ({ label: device.label, value: device.deviceId }))
+    )
     .catch((e) => {
       onError(e);
       return [Device()];

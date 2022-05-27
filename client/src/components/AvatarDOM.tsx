@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Icon } from "atomize";
 import MicOffIcon from "@material-ui/icons/MicOff";
 import cx from "classnames";
 
-import './AvatarDOM.scss';
+import "./AvatarDOM.scss";
 
 function AvatarDOM({
   onPointerDown,
@@ -26,6 +26,7 @@ function AvatarDOM({
   active: boolean;
   mute: boolean;
 }): JSX.Element {
+  const [isRendered, setIsRendered] = useState(false);
   function calculateSpecificStyles() {
     return {
       boxShadow: "0 0 0 " + (1 + multiplier * 10).toString() + "px " + _borderColor,
@@ -36,6 +37,7 @@ function AvatarDOM({
   }
 
   useEffect(() => {
+    setIsRendered(true);
     const avatardom = document.querySelector(".avatar");
     if (avatardom) {
       if (isSelf) {
@@ -56,16 +58,12 @@ function AvatarDOM({
 
   return (
     <div
-      className={cx("avatar", "avatar-outer")}
+      className={cx("avatar", "avatar-outer", { "no-show": !isRendered })}
       onPointerDown={onPointerDown}
       style={calculateSpecificStyles()}
     >
-      <div className="avatar-initial">
-        {initial}
-      </div>
-      <div className="avatar-active">
-        {renderStatusIcon()}
-      </div>
+      <div className="avatar-initial">{initial}</div>
+      <div className="avatar-active">{renderStatusIcon()}</div>
     </div>
   );
 }

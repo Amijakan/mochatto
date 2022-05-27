@@ -10,7 +10,8 @@ export enum SIOChannel {
   DISCONNECT = "DISCONNECT",
   SDP_RECEIVED = "SDP_RECEIVED",
   ICE_CANDIDATE = "ICE_CANDIDATE",
-  ANSWER = "ANSWER"
+  ANSWER = "ANSWER",
+  OFFER = "OFFER"
 }
 
 export const SocketContext = createContext<{ socket: Socket }>({

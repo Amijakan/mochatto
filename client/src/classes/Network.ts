@@ -1,6 +1,6 @@
-import { PeerProcessor } from "./PeerProcessor";
-import { AudioVisualizer } from "./AudioVisualizer";
-import { UserInfo } from "../contexts/UserInfoContext";
+import { PeerProcessor } from "@/classes/PeerProcessor";
+import { AudioVisualizer } from "@/classes/AudioVisualizer";
+import { UserInfo } from "@/contexts/UserInfoContext";
 import { Socket } from "socket.io-client";
 
 export const DCLabel = "DATACHANNEL";

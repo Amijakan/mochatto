@@ -4,12 +4,21 @@ import PropTypes from "prop-types";
 
 const stripTrailingSlash = (str: string) => str.replace(/\/$/, '')
 
+export enum SIOChannel {
+  JOIN = "JOIN",
+  LEAVE = "LEAVE",
+  DISCONNECT = "DISCONNECT",
+  SDP_RECEIVED = "SDP_RECEIVED",
+  ICE_CANDIDATE = "ICE_CANDIDATE",
+  ANSWER = "ANSWER"
+}
+
 export const SocketContext = createContext<{ socket: Socket }>({
   socket: null as unknown as Socket,
 });
 
-export const SocketProvider = ({ children }: { children: JSX.Element }): JSX.Element => {
-  const [socket, setSocket] = useState(null as unknown as Socket);
+export const SocketProvider = ({ children }: { children: React.ReactNode }): React.ReactNode => {
+  const [socket, setSocket] = useState<Socket>(null as unknown as Socket);
 
   useEffect(() => {
     const pathname = window.location.pathname;

@@ -131,7 +131,6 @@ export class PeerProcessor {
 
   // runs when the data channel closes
   onDataChannelClose(): void {
-    this.visualizer.stop();
   }
 
   onDataChannelMessage(event: MessageEvent): void {

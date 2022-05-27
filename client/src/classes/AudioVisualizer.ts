@@ -1,16 +1,7 @@
 export class AudioVisualizer {
-  requestId: number;
   onAudioActivity: (gain: number) => void;
   constructor(_onAudioActivity: (gain: number) => void) {
-    this.requestId = null as unknown as number;
     this.onAudioActivity = _onAudioActivity;
-  }
-
-  stop(): void {
-    if (this.requestId) {
-      window.cancelAnimationFrame(this.requestId);
-      this.requestId = null as unknown as number;
-    }
   }
 
   setStream(stream: MediaStream): void {
@@ -38,7 +29,7 @@ export class AudioVisualizer {
           if (average != 0) {
             this.onAudioActivity(average);
           }
-          this.requestId = this.requestId ?? window.requestAnimationFrame(draw);
+          window.requestAnimationFrame(draw);
         };
         draw();
       }

@@ -18,7 +18,7 @@ export const SocketContext = createContext<{ socket: Socket }>({
   socket: null as unknown as Socket,
 });
 
-export const SocketProvider = ({ children }: { children: React.ReactNode }): React.ReactNode => {
+export const SocketProvider = ({ children }: { children: JSX.Element }): JSX.Element => {
   const [socket, setSocket] = useState<Socket>(null as unknown as Socket);
 
   useEffect(() => {

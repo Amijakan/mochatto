@@ -120,17 +120,13 @@ export class PeerProcessor {
     }
     this.dataChannel = dc;
     this.dataChannel.onopen = this.onDataChannelOpen.bind(this);
-    this.dataChannel.onclose = this.onDataChannelClose.bind(this);
+    // this.dataChannel.onclose = this.onDataChannelClose.bind(this);
     this.dataChannel.onmessage = this.onDataChannelMessage.bind(this);
   }
 
   // runs when the data channel opens
   onDataChannelOpen(): void {
     this.send(this.selfUserInfo);
-  }
-
-  // runs when the data channel closes
-  onDataChannelClose(): void {
   }
 
   onDataChannelMessage(event: MessageEvent): void {

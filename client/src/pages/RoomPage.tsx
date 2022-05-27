@@ -9,7 +9,8 @@ import { Network } from "@/classes/Network";
 import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import { RoomTemplate } from "@/templates";
-import WhiteboardingLayer from "@/components/WhiteboardingLayer";
+import Draggable from "@/components/Draggable";
+import DraggableLayer from "@/components/DraggableLayer";
 
 import PropTypes from "prop-types";
 
@@ -175,6 +176,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     }
   }, [selfUserInfoRef.current.active]);
 
+  const draggableChild = <div style={{ height: '150px', width: '150px', backgroundColor: 'red'}}></div>;
+
   return (
     <RoomTemplate
       showModal={showModal}
@@ -187,7 +190,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       }
     >
       <>
-        <WhiteboardingLayer />
+        <DraggableLayer>
+          {draggableChild}
+        </DraggableLayer>
         <Notification
           isOpen={showNotification}
           bg={`${notificationColors[notificationTheme].color}100`}

@@ -24,7 +24,7 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
     hoverBg: "#ffffff29",
     rounded: "circle",
   };
-  
+
   const SettingsButton = () => {
     const { onSettingsClicked } = props;
 
@@ -34,10 +34,10 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
       </Button>
     );
   };
-    
+
   const StatusButton = () => {
     const { onStatusClicked, userInfoRef } = props;
-    
+
     return (
       <Button
         title="Status (s)"
@@ -53,7 +53,7 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
       </Button>
     );
   };
-          
+
   const MuteButton = () => {
     const { onMuteClicked, userInfoRef } = props;
     console.log(userInfoRef);
@@ -64,10 +64,10 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
       </Button>
     );
   }
-    
+
   const LeaveButton = () => {
     const { onLeaveClicked } = props;
-    
+
     return (
       <Button
         title="Leave room (L)"
@@ -80,7 +80,7 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
       </Button>
     );
   };
-  
+
   return (
     <Div d="flex" h="100%" flexDir="column">
       <Div d="flex" justify="center" m={{ t: "auto" }}>
@@ -104,5 +104,5 @@ ButtonsBar.propTypes = {
   onStatusClicked: PropTypes.func.isRequired,
   userInfoRef: PropTypes.any,
 };
-              
+
 export default ButtonsBar;

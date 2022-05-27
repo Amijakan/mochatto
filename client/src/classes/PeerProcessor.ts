@@ -24,6 +24,7 @@ export class PeerProcessor {
   addUserInfo: (info) => void;
   selfUserInfo: UserInfo;
   peerUserInfo: UserInfo;
+  screenShareTrigger: boolean;
   constructor(peerId: string, socket: Socket, addUserInfo: (info) => void) {
     this.peerId = peerId;
     this.audioSender = null as unknown as RTCRtpSender;
@@ -38,6 +39,7 @@ export class PeerProcessor {
     this.visualizer = null as unknown as AudioVisualizer;
     this.audioPlayer = new Audio();
     this.videoPlayer = null as unknown as HTMLVideoElement;
+    this.screenShareTrigger = false;
     // the function is re-assigned during the user's initialization
     this.addUserInfo = addUserInfo;
     this.selfUserInfo = defaultUserInfo;
@@ -144,13 +146,19 @@ export class PeerProcessor {
     const info = JSON.parse(event.data);
     this.addUserInfo(info);
     if (info.isScreenSharing) {
-      // If video player doesn't exist, create.
-      this.videoPlayer ??= document.createElement("video");
-      this.videoPlayer.style.position = "absolute";
-      this.videoPlayer.style.width = "40rem";
-      document.getElementById("avatar-video-" + this.peerId)?.appendChild(this.videoPlayer);
+      if (!this.screenShareTrigger) {
+        this.screenShareTrigger = true;
+        // If video player doesn't exist, create.
+        this.videoPlayer ??= document.createElement("video");
+        this.videoPlayer.style.position = "absolute";
+        this.videoPlayer.style.width = "40rem";
+        document.getElementById("avatar-video-" + this.peerId)?.appendChild(this.videoPlayer);
+      }
     } else {
-      this.videoPlayer.remove();
+      if (this.screenShareTrigger) {
+        this.screenShareTrigger = false;
+        this.videoPlayer?.remove();
+      }
     }
     this.peerUserInfo = info;
     this.updateVolume();
@@ -183,7 +191,7 @@ export class PeerProcessor {
   getVolume(selfPosition: [number, number], peerPosition: [number, number]): number {
     const distance = Math.sqrt(
       Math.pow(selfPosition[0] - peerPosition[0], 2) +
-      Math.pow(selfPosition[1] - peerPosition[1], 2)
+        Math.pow(selfPosition[1] - peerPosition[1], 2)
     );
     const max = 600;
     let volume = 0;

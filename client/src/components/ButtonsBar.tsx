@@ -106,6 +106,7 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
             {SettingsButton()}
             {StatusButton()}
             {MuteButton()}
+            {ScreenShareButton()}
             {LeaveButton()}
           </Div>
         </Div>

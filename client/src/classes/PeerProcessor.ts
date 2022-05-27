@@ -150,8 +150,6 @@ export class PeerProcessor {
         this.screenShareTrigger = true;
         // If video player doesn't exist, create.
         this.videoPlayer ??= document.createElement("video");
-        this.videoPlayer.style.position = "absolute";
-        this.videoPlayer.style.width = "40rem";
         document.getElementById("avatar-video-" + this.peerId)?.appendChild(this.videoPlayer);
       }
     } else {

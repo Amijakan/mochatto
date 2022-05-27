@@ -8,7 +8,7 @@ import { Input } from "@/components/atomize_wrapper";
 import { Div, Notification, Icon } from "atomize";
 import { Button, Card, Text } from "@/components/atomize_wrapper";
 import { BaseTemplate } from "@/templates";
-import "./JoinPage.scss";
+import "./style.scss";
 
 const JoinPage = ({
   name,
@@ -101,8 +101,8 @@ const JoinPage = ({
             </Div>
             {Visualizer()}
             <Div d="flex" justify="space-around" w="100%" m={{ t: "20px" }}>
-              <Button 
-                w="45%" 
+              <Button
+                w="45%"
                 onClick={() => onJoinClicked()}
               >
                 Join

@@ -207,7 +207,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           setSelfUserInfo={updateSelfUserInfo}
           userInfos={Object.values(userInfos)}
         />
-        <ButtonsBar 
+        <ButtonsBar
           onSettingsClicked={() => setShowModal(true)}
           onStatusClicked={() => toggleActive()}
           onMuteClicked={() => toggleMute()}

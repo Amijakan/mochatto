@@ -2,17 +2,20 @@ import React, { FunctionComponent } from "react";
 import { Button, Div, Icon } from "atomize";
 import MicIcon from "@material-ui/icons/Mic";
 import MicOffIcon from "@material-ui/icons/MicOff";
+import ScreenShareIcon from "@material-ui/icons/ScreenShare";
+import StopScreenShareIcon from "@material-ui/icons/StopScreenShare";
 
 import PropTypes from "prop-types";
 
 type ButtonsBarProps = {
-  onSettingsClicked: () => void,
-  onStatusClicked: () => void,
-  onMuteClicked: () => void,
-  onLeaveClicked: () => void,
+  onSettingsClicked: () => void;
+  onStatusClicked: () => void;
+  onMuteClicked: () => void;
+  onScreenShareClicked: () => void;
+  onLeaveClicked: () => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  userInfoRef: any,
-}
+  userInfoRef: any;
+};
 
 export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
   const defaultButtonStyle = {
@@ -24,7 +27,7 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
     hoverBg: "#ffffff29",
     rounded: "circle",
   };
-  
+
   const SettingsButton = () => {
     const { onSettingsClicked } = props;
 
@@ -34,10 +37,10 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
       </Button>
     );
   };
-    
+
   const StatusButton = () => {
     const { onStatusClicked, userInfoRef } = props;
-    
+
     return (
       <Button
         title="Status (s)"
@@ -53,21 +56,35 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
       </Button>
     );
   };
-          
+
   const MuteButton = () => {
     const { onMuteClicked, userInfoRef } = props;
-    console.log(userInfoRef);
 
     return (
       <Button title="Toggle mute (m)" {...defaultButtonStyle} onClick={onMuteClicked}>
         {userInfoRef.current.mute ? <MicOffIcon /> : <MicIcon />}
       </Button>
     );
-  }
-    
+  };
+
+  const ScreenShareButton = () => {
+    const { onScreenShareClicked, userInfoRef } = props;
+    return (
+      <Button title="Screen sharing" {...defaultButtonStyle} onClick={onScreenShareClicked}>
+        {userInfoRef.current.isScreenSharing ? (
+          <>
+            <StopScreenShareIcon />
+          </>
+        ) : (
+          <ScreenShareIcon />
+        )}
+      </Button>
+    );
+  };
+
   const LeaveButton = () => {
     const { onLeaveClicked } = props;
-    
+
     return (
       <Button
         title="Leave room (L)"
@@ -80,7 +97,7 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
       </Button>
     );
   };
-  
+
   return (
     <Div d="flex" h="100%" flexDir="column">
       <Div d="flex" justify="center" m={{ t: "auto" }}>
@@ -99,10 +116,11 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
 
 ButtonsBar.propTypes = {
   onSettingsClicked: PropTypes.func.isRequired,
-  onLeaveClicked: PropTypes.func.isRequired,
-  onMuteClicked: PropTypes.func.isRequired,
   onStatusClicked: PropTypes.func.isRequired,
+  onMuteClicked: PropTypes.func.isRequired,
+  onScreenShareClicked: PropTypes.func.isRequired,
+  onLeaveClicked: PropTypes.func.isRequired,
   userInfoRef: PropTypes.any,
 };
-              
+
 export default ButtonsBar;

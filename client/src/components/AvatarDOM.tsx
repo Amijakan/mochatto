@@ -65,7 +65,7 @@ function AvatarDOM({
     >
       <div className="avatar-initial">{initial}</div>
       <div className="avatar-active">{renderStatusIcon()}</div>
-      <div id={"avatar-video-" + id} style={{ overflow: "hidden" }}></div>
+      <div className="video-container" id={"avatar-video-" + id}></div>
     </div>
   );
 }

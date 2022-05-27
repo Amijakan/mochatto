@@ -109,8 +109,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     const mixedStream = stream.clone();
 
     // Set video player configurations and append to self avatar
-    videoPlayer.style.position = "absolute";
-    videoPlayer.style.width = "40rem";
     videoPlayer.srcObject = _stream;
     videoPlayer.autoplay = true;
     document.getElementById("avatar-video-" + socket.id)?.appendChild(videoPlayer);

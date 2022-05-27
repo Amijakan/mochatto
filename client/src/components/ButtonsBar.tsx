@@ -4,6 +4,7 @@ import MicIcon from "@material-ui/icons/Mic";
 import MicOffIcon from "@material-ui/icons/MicOff";
 import ScreenShareIcon from "@material-ui/icons/ScreenShare";
 import StopScreenShareIcon from "@material-ui/icons/StopScreenShare";
+import "./ButtonsBar.scss";
 
 import PropTypes from "prop-types";
 
@@ -101,7 +102,7 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
   return (
     <Div d="flex" h="100%" flexDir="column">
       <Div d="flex" justify="center" m={{ t: "auto" }}>
-        <Div d="inline-block">
+        <Div className="buttons-container">
           <Div rounded="circle" bg="#000000ba" d="flex" p={{ x: "1rem", y: "0.3rem" }}>
             {SettingsButton()}
             {StatusButton()}

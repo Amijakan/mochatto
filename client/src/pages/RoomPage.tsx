@@ -69,7 +69,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const toggleScreenShare = () => {
     // If currently screen sharing, end the stream.
     if (selfUserInfoRef.current.isScreenSharing) {
-      endScreenSharing();
+      onEndScreenSharing();
     }
     updateSelfUserInfo({
       ...selfUserInfoRef.current,
@@ -120,16 +120,11 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const onEndScreenSharing = () => {
     document.getElementById("avatar-video-" + socket.id)?.firstChild?.remove();
-    endScreenSharing();
-    updateSelfUserInfo({ ...selfUserInfoRef.current, isScreenSharing: false });
+    stream.getTracks().forEach((track) => track.kind === "video" && track.stop());
   };
 
   const onFailedScreenSharing = (e) => {
     updateSelfUserInfo({ ...selfUserInfoRef.current, isScreenSharing: false });
-  };
-
-  const endScreenSharing = () => {
-    stream.getTracks().forEach((track) => track.kind === "video" && track.stop());
   };
 
   // open all listeners on render

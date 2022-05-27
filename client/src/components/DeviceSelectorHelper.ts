@@ -4,7 +4,7 @@ export const Device = (): { value: string; label: string } => {
   return { value, label };
 };
 
-const defaultOnError = (e: MediaStreamError): void => {
+const defaultOnError = (e: EndOfStreamError): void => {
   console.warn(e);
   return;
 };
@@ -38,7 +38,7 @@ export const listInputDevices = (
 export const selectInputDevice = (
   id: string,
   useStream: (MediaStream) => void,
-  options: {autoGainControl: boolean, echoCancellation: boolean, noiseSuppression: boolean},
+  options: { autoGainControl: boolean; echoCancellation: boolean; noiseSuppression: boolean },
   onError: (MediaStreamError) => void = defaultOnError
 ): void => {
   navigator.mediaDevices

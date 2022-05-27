@@ -11,7 +11,6 @@ function ScreenShareWindow({
 }): JSX.Element {
   useEffect(() => {
     navigator.mediaDevices
-      // @ts-ignore getDisplayMedia is not defined in TypeScript
       .getDisplayMedia()
       .then((stream) => {
         onStart(stream);

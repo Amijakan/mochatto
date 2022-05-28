@@ -61,7 +61,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     history.go(0)
   }, [])
 
-  const handleShowSettingClicked = useCallback(() => {
+  const handleSettingClicked = useCallback(() => {
     setShowModal(true)
   }, [])
 
@@ -216,7 +216,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           userInfos={Object.values(userInfos)}
         />
         <ButtonsBar
-          onSettingsClicked={handleShowSettingClicked}
+          onSettingsClicked={handleSettingClicked}
           onStatusClicked={toggleActive}
           onMuteClicked={toggleMute}
           onLeaveClicked={handleLeaveClicked}

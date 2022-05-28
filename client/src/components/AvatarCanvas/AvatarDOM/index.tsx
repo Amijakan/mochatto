@@ -3,7 +3,7 @@ import { Icon } from "atomize";
 import MicOffIcon from "@material-ui/icons/MicOff";
 import cx from "classnames";
 
-import "./AvatarDOM.scss";
+import "./style.scss";
 
 function AvatarDOM({
   onPointerDown,

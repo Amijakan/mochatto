@@ -2,6 +2,8 @@ import React, { createContext, useState, useEffect } from "react";
 import io, { Socket } from "socket.io-client";
 import PropTypes from "prop-types";
 
+const stripTrailingSlash = (str: string) => str.replace(/\/$/, '')
+
 export const SocketContext = createContext<{ socket: Socket }>({
   socket: null as unknown as Socket,
 });
@@ -11,7 +13,7 @@ export const SocketProvider = ({ children }: { children: JSX.Element }): JSX.Ele
 
   useEffect(() => {
     const pathname = window.location.pathname;
-    const ENDPOINT = (import.meta.env.VITE_SERVER_URL || "http://localhost:4000") + pathname;
+    const ENDPOINT = (import.meta.env.VITE_SERVER_URL || "http://localhost:4000") + stripTrailingSlash(pathname);
     setSocket(io(ENDPOINT));
   }, []);
 

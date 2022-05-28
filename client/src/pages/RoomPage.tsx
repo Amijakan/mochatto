@@ -1,17 +1,15 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import { SocketContext, DeviceContext, UserInfoContext } from "../contexts";
+import { SocketContext, DeviceContext, UserInfoContext } from "@/contexts";
 import { useHistory } from "react-router-dom";
-import { DeviceSelector } from "../components/DeviceSelector";
+import { DeviceSelector } from "@/components/DeviceSelector";
 import { Div, Notification, Icon, Text } from "atomize";
-import AvatarCanvas from "../components/AvatarCanvas";
-import { Network } from "../classes/Network";
-import { UserInfo, defaultUserInfo } from "../contexts/UserInfoContext";
-import { AudioVisualizer, gainToMultiplier } from "../classes/AudioVisualizer";
-import { RoomTemplate } from "../templates";
-import { Button } from "../components/atomize_wrapper";
-import { Sidebar } from '../components'
-import MicIcon from "@material-ui/icons/Mic";
-import MicOffIcon from "@material-ui/icons/MicOff";
+import AvatarCanvas from "@/components/AvatarCanvas";
+import { ButtonsBar } from "@/components/ButtonsBar";
+import { Sidebar } from "@/components";
+import { Network } from "@/classes/Network";
+import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
+import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
+import { RoomTemplate } from "@/templates";
 
 import PropTypes from "prop-types";
 
@@ -168,7 +166,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     }
     if (networkRef.current) {
       networkRef.current.updateInfo(selfUserInfoRef.current);
-      networkRef.current.updateAllTracks(stream.getAudioTracks()[0]);
     }
   }, [selfUserInfoRef.current]);
 
@@ -177,15 +174,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       networkRef.current.toggleDeaf(!selfUserInfoRef.current.active);
     }
   }, [selfUserInfoRef.current.active]);
-
-  const buttonStyle = {
-    m: "0.3rem",
-    bg: "none",
-    h: "2.5rem",
-    w: "2.5rem",
-    hoverBg: "#ffffff29",
-    rounded: "circle",
-  };
 
   return (
     <RoomTemplate
@@ -220,41 +208,13 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           setSelfUserInfo={updateSelfUserInfo}
           userInfos={Object.values(userInfos)}
         />
-        <Div d="flex" h="100%" flexDir="column">
-          <Div d="flex" justify="center" m={{ t: "auto" }}>
-            <Div d="inline-block">
-              <Div rounded="circle" bg="#000000ba" d="flex" p={{ x: "1rem", y: "0.3rem" }}>
-                <Button title="Settings (,)" {...buttonStyle} onClick={() => setShowModal(true)}>
-                  <Icon name="SettingsSolid" color="white" size="24px" />
-                </Button>
-                <Button
-                  title="Status (s)"
-                  {...buttonStyle}
-                  textColor={selfUserInfoRef.current.active ? "success700" : "danger700"}
-                  onClick={() => toggleActive()}
-                >
-                  {selfUserInfoRef.current.active ? (
-                    <Icon name="Status" color="success700" size="22px" />
-                  ) : (
-                    <Icon name="RemoveSolid" color="danger700" size="26px" />
-                  )}
-                </Button>
-                <Button title="Toggle mute (m)" {...buttonStyle} onClick={() => toggleMute()}>
-                  {selfUserInfoRef.current.mute ? <MicOffIcon /> : <MicIcon />}
-                </Button>
-                <Button
-                  title="Leave room (L)"
-                  {...buttonStyle}
-                  w="4rem"
-                  onClick={() => history.go(0)}
-                  textColor="red"
-                >
-                  Leave
-                </Button>
-              </Div>
-            </Div>
-          </Div>
-        </Div>
+        <ButtonsBar
+          onSettingsClicked={() => setShowModal(true)}
+          onStatusClicked={() => toggleActive()}
+          onMuteClicked={() => toggleMute()}
+          onLeaveClicked={() => history.go(0)}
+          userInfoRef={selfUserInfoRef}
+        />
         <Sidebar />
       </>
     </RoomTemplate>

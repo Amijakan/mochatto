@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { SocketContext, DeviceContext } from "../contexts";
-import { DeviceSelector } from "../components/DeviceSelector";
-import { AudioVisualizer } from "../classes/AudioVisualizer";
+import { SocketContext, DeviceContext } from "@/contexts";
+import { DeviceSelector } from "@/components/DeviceSelector";
+import { AudioVisualizer } from "@/classes/AudioVisualizer";
 import PropTypes from "prop-types";
-import { Input } from "../components/atomize_wrapper";
+import { Input } from "@/components/atomize_wrapper";
 import { Div, Notification, Icon } from "atomize";
-import { Button, Card, Text } from "../components/atomize_wrapper";
-import { BaseTemplate } from "../templates";
-import { colors } from "../constants/colors";
+import { Button, Card, Text } from "@/components/atomize_wrapper";
+import { BaseTemplate } from "@/templates";
+import "./JoinPage.scss";
 
 const JoinPage = ({
   name,
@@ -57,6 +57,17 @@ const JoinPage = ({
     setGain(_gain);
   };
 
+  function Visualizer() {
+    return (
+      <div
+        className="visualizer"
+        style={{
+          width: gain.toString() + "px",
+        }}
+      />
+    );
+  }
+
   return (
     <BaseTemplate>
       <Div d="flex" justify="space-around" p={{ t: "100px" }}>
@@ -87,16 +98,13 @@ const JoinPage = ({
             <Div m={{ t: "20px" }}>
               <Div>Select audio device:</Div>
               <DeviceSelector onSelect={onSelect} />
-              <Div
-                style={{
-                  width: gain.toString() + "px",
-                  height: "10px",
-                  background: colors.bg,
-                }}
-              ></Div>
             </Div>
+            {Visualizer()}
             <Div d="flex" justify="space-around" w="100%" m={{ t: "20px" }}>
-              <Button w="45%" onClick={() => onJoinClicked()}>
+              <Button 
+                w="45%" 
+                onClick={() => onJoinClicked()}
+              >
                 Join
               </Button>
               <Button

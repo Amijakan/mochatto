@@ -1,8 +1,8 @@
 import React from "react";
-import Pages from "./pages";
-import HomePage from "./pages/HomePages";
+import Pages from "@/pages";
+import HomePage from "@/pages/HomePages";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import Providers from "./contexts";
+import Providers from "@/contexts";
 
 const App = (): JSX.Element => {
   return (

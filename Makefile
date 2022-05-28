@@ -22,13 +22,15 @@ dev:
 dev-up:
 	CURRENT_UID=$$(id -u):$$(id -g) docker-compose --profile dev up
 
-## Builds the prod environment
-prod:
-	docker-compose --profile prod build
-
 ## Starts the prod environment in daemon
 prod-up:
-	docker-compose -f ./docker-compose.yaml -f ./docker-compose.nginx-proxy.yaml --profile prod up -d
+	docker-compose -f ./docker-compose.yaml -f ./docker-compose.nginx-proxy.yaml --profile prod up -d --build
+
+beta-up:
+	docker-compose -f ./docker-compose.yaml -f ./docker-compose.nginx-proxy.yaml --profile beta up -d --build
+
+test:
+	docker-compose run --rm client-test
 
 ## Cleans containers
 clean:

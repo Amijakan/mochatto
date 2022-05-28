@@ -14,7 +14,7 @@ type ButtonsBarProps = {
   userInfoRef: any;
 };
 
-export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
+const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
   const defaultButtonStyle = {
     p: "1rem",
     m: "0.3rem",

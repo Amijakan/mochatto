@@ -25,6 +25,8 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
     rounded: "circle",
   };
 
+  console.log("RENDER")
+
   const SettingsButton = () => {
     const { onSettingsClicked } = props;
 
@@ -104,4 +106,12 @@ ButtonsBar.propTypes = {
   userInfoRef: PropTypes.any,
 };
 
-export default ButtonsBar;
+const areEqual = (prev, next): boolean => {
+  return (prev.userInfoRef.current === next.userInfoRef.current &&
+    prev.onSettingsClicked === next.onSettingsClicked &&
+    prev.onStatusClicked === next.onStatusClicked &&
+    prev.onMuteClicked === next.onMuteClicked &&
+    prev.onLeaveClicked === next.onLeaveClicked)
+}
+
+export default React.memo(ButtonsBar, areEqual);

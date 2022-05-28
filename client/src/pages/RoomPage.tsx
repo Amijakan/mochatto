@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useRef, useEffect, useContext, useCallback } from "react";
 import { SocketContext, DeviceContext, UserInfoContext } from "@/contexts";
 import { useHistory } from "react-router-dom";
 import { DeviceSelector } from "@/components/DeviceSelector";
@@ -53,17 +53,25 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     networkRef.current = _network;
   };
 
-  const toggleMute = () => {
+  const toggleMute = useCallback(() => {
     updateSelfUserInfo({ ...selfUserInfoRef.current, mute: !selfUserInfoRef.current.mute });
-  };
+  }, [selfUserInfoRef.current.mute]);
 
-  const toggleActive = () => {
+  const handleLeaveClicked = useCallback(() => {
+    history.go(0)
+  }, [])
+
+  const handleShowSettingClicked = useCallback(() => {
+    setShowModal(true)
+  }, [])
+
+  const toggleActive = useCallback(() => {
     updateSelfUserInfo({
       ...selfUserInfoRef.current,
       active: !selfUserInfoRef.current.active,
       mute: selfUserInfoRef.current.active,
     });
-  };
+  }, [selfUserInfoRef.current.active]);
 
   // announce and set a new user on join
   const onJoin = (name) => {
@@ -207,11 +215,11 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           setSelfUserInfo={updateSelfUserInfo}
           userInfos={Object.values(userInfos)}
         />
-        <ButtonsBar 
-          onSettingsClicked={() => setShowModal(true)}
-          onStatusClicked={() => toggleActive()}
-          onMuteClicked={() => toggleMute()}
-          onLeaveClicked={() => history.go(0)}
+        <ButtonsBar
+          onSettingsClicked={handleShowSettingClicked}
+          onStatusClicked={toggleActive}
+          onMuteClicked={toggleMute}
+          onLeaveClicked={handleLeaveClicked}
           userInfoRef={selfUserInfoRef}
         />
       </>

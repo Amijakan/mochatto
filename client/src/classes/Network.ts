@@ -1,6 +1,7 @@
 import { PeerProcessor } from "@/classes/PeerProcessor";
 import { AudioVisualizer } from "@/classes/AudioVisualizer";
 import { UserInfo } from "@/contexts/UserInfoContext";
+import { SIOChannel } from "@/contexts/SocketIOContext"
 import { Socket } from "socket.io-client";
 
 export const DCLabel = "DATACHANNEL";
@@ -15,13 +16,13 @@ export interface Pack {
 export class Network {
   socket: Socket;
   peerProcessors: PeerProcessor[];
-  addUserInfo: (id) => (info: UserInfo) => void;
+  addUserInfo: (id: string) => (info: UserInfo) => void;
   selfUserInfo: UserInfo;
   stream: MediaStream;
   constructor(
     socket: Socket,
     userName: string,
-    addUserInfo: (id) => (info: UserInfo) => void,
+    addUserInfo: (id: string) => (info: UserInfo) => void,
     selfUserInfo: UserInfo,
     stream: MediaStream
   ) {
@@ -32,9 +33,9 @@ export class Network {
     this.stream = stream;
 
     // AS A NEW COMER
-    socket.emit("JOIN", userName);
+    socket.emit(SIOChannel.JOIN, userName);
 
-    socket.on("OFFER", (dataString) => {
+    socket.on(SIOChannel.OFFER, (dataString: string) => {
       const offerPack = JSON.parse(dataString);
       const peerId = offerPack.userId;
       let peerProcessor = this.findPeerProcessorById(peerId);
@@ -45,8 +46,8 @@ export class Network {
       peerConnection
         .setRemoteDescription(offerPack.sdp) // set remote description as the peerProcessor's
         .then(() => {
-          socket.emit("SDP_RECEIVED", peerId);
-          socket.on("ICE_CANDIDATE", (dataString) => {
+          socket.emit(SIOChannel.SDP_RECEIVED, peerId);
+          socket.on(SIOChannel.ICE_CANDIDATE, (dataString: string) => {
             const data = JSON.parse(dataString);
             if (peerConnection.signalingState != "closed") {
               peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));
@@ -66,10 +67,10 @@ export class Network {
                     iceCandidates.push(event.candidate);
                   }
                 };
-                socket.on("SDP_RECEIVED", () => {
+                socket.on(SIOChannel.SDP_RECEIVED, () => {
                   iceCandidates.forEach((iceCandidate) => {
                     socket.emit(
-                      "ICE_CANDIDATE",
+                      SIOChannel.ICE_CANDIDATE,
                       JSON.stringify({ ice: iceCandidate, receiverId: peerId })
                     );
                   });
@@ -77,7 +78,7 @@ export class Network {
                     if (peerConnection.iceGatheringState === "gathering") {
                       if (event.candidate) {
                         socket.emit(
-                          "ICE_CANDIDATE",
+                          SIOChannel.ICE_CANDIDATE,
                           JSON.stringify({ ice: event.candidate, receiverId: peerId })
                         );
                       }
@@ -92,7 +93,7 @@ export class Network {
                   kind: "answer",
                 };
 
-                socket.emit("ANSWER", JSON.stringify(answerPack));
+                socket.emit(SIOChannel.ANSWER, JSON.stringify(answerPack));
               }
             })
             .catch((e) => {
@@ -105,26 +106,26 @@ export class Network {
     });
 
     // AS AN EXISTING USER
-    socket.on("JOIN", ({ id }) => {
+    socket.on(SIOChannel.JOIN, ({ id }) => {
       if (id != socket.id) {
         const peerProcessor = this.pushToNetwork(id);
         peerProcessor.sendOffer();
       }
     });
 
-    socket.on("LEAVE", ({ id }) => {
+    socket.on(SIOChannel.LEAVE, ({ id }) => {
       this.removeFromNetwork(id);
     });
 
-    socket.on("ANSWER", (dataString) => {
+    socket.on(SIOChannel.ANSWER, (dataString: string) => {
       const answerPack = JSON.parse(dataString);
       const peerId = answerPack.userId;
       const peerConnection = this.findPeerProcessorById(peerId).peerConnection;
       peerConnection
         .setRemoteDescription(answerPack.sdp)
         .then(() => {
-          socket.emit("SDP_RECEIVED", peerId);
-          socket.on("ICE_CANDIDATE", (dataString) => {
+          socket.emit(SIOChannel.SDP_RECEIVED, peerId);
+          socket.on(SIOChannel.ICE_CANDIDATE, (dataString: string) => {
             const data = JSON.parse(dataString);
             if (peerConnection.signalingState != "closed") {
               peerConnection.addIceCandidate(data.ice).catch((e) => console.warn(e));

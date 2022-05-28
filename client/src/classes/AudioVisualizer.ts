@@ -21,10 +21,7 @@ export class AudioVisualizer {
           const array = new Uint8Array(analyser.fftSize);
           analyser.getByteFrequencyData(array);
 
-          let sum = 0;
-          array.forEach((e) => {
-            sum += e * 4;
-          });
+          const sum = array.reduce((current, next) => current + next * 4);
           const average = sum / array.length;
           if (average != 0) {
             this.onAudioActivity(average);

@@ -14,7 +14,7 @@ type ButtonsBarProps = {
   userInfoRef: any;
 };
 
-export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
+const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
   const defaultButtonStyle = {
     p: "1rem",
     m: "0.3rem",
@@ -104,4 +104,12 @@ ButtonsBar.propTypes = {
   userInfoRef: PropTypes.any,
 };
 
-export default ButtonsBar;
+const areEqual = (prev, next): boolean => {
+  return (prev.userInfoRef.current === next.userInfoRef.current &&
+    prev.onSettingsClicked === next.onSettingsClicked &&
+    prev.onStatusClicked === next.onStatusClicked &&
+    prev.onMuteClicked === next.onMuteClicked &&
+    prev.onLeaveClicked === next.onLeaveClicked)
+}
+
+export default React.memo(ButtonsBar, areEqual);

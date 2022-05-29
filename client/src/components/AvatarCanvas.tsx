@@ -62,7 +62,7 @@ function AvatarCanvas({
         active={selfUserInfo.active}
         mute={selfUserInfo.mute}
       />
-      {userInfos.map((info, index) => {
+      {userInfos.filter(info => info.id !== "self").map((info, index) => {
         if (!info) {
           info = defaultUserInfo;
         }

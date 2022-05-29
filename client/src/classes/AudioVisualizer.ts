@@ -5,6 +5,7 @@ export class AudioVisualizer {
   }
 
   setStream(stream: MediaStream): void {
+    // Check to see whether there's an active audio track.
     if (
       !stream ||
       !stream.active ||
@@ -13,33 +14,30 @@ export class AudioVisualizer {
     ) {
       return;
     }
+
     const context = new AudioContext();
     const source = context.createMediaStreamSource(stream);
     const analyser = context.createAnalyser();
     analyser.smoothingTimeConstant = 0.3;
-    analyser.fftSize = 1024;
+    analyser.fftSize = 256;
 
     // chain mic -> analyser -> processor -> context
-    source.connect(analyser); // feed mic audio into analyser
+    // Feed mic. audio into the analyser.
+    source.connect(analyser);
 
-    if (this.intervalId) {
-      window.clearInterval(this.intervalId);
-      this.onAudioActivity(0);
-    }
+    this.onAudioActivity(0);
     const draw = () => {
       const array = new Uint8Array(analyser.fftSize);
       analyser.getByteFrequencyData(array);
 
-      let sum = 0;
-      array.forEach((e) => {
-        sum += e * 4;
-      });
+      const sum = array.reduce((current, next) => current + next * 4);
       const average = sum / array.length;
       if (average != 0) {
         this.onAudioActivity(average);
       }
+      window.requestAnimationFrame(draw);
     };
-    this.intervalId = window.setInterval(draw, 50);
+    draw();
   }
 }
 export const gainToMultiplier = (gain: number): number => {

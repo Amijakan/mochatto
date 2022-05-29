@@ -23,3 +23,4 @@ const Pages = (): JSX.Element => {
 };
 
 export default Pages;
+export { default as HomePage } from "./HomePage";

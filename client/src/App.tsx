@@ -1,6 +1,6 @@
 import React from "react";
 import Pages from "@/pages";
-import HomePage from "@/pages/HomePages";
+import { HomePage } from "@/pages";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Providers from "@/contexts";
 

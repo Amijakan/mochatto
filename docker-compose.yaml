@@ -2,8 +2,6 @@ version: "3.8"
 services:
   server-dev:
     user: ${CURRENT_UID}
-    profiles:
-      - dev
     build:
       context: ./server
       dockerfile: ./Dockerfile
@@ -19,8 +17,6 @@ services:
 
   client-dev:
     user: ${CURRENT_UID}
-    profiles:
-      - dev
     build:
       context: ./client
       dockerfile: ./Dockerfile
@@ -39,16 +35,12 @@ services:
       context: ./client
       dockerfile: ./Dockerfile
       target: test
-    profiles:
-      - test
     command:
       yarn test
 
   ###############################################
   # Prod containers    
   server-prod:
-    profiles:
-      - prod
     build:
       context: ./server
       dockerfile: ./Dockerfile
@@ -59,8 +51,6 @@ services:
       yarn start
 
   client-prod:
-    profiles:
-      - prod
     build:
       context: ./client
       dockerfile: ./Dockerfile
@@ -71,8 +61,6 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
 
   client-beta:
-    profiles:
-      - beta
     build:
       context: ./client
       dockerfile: ./Dockerfile

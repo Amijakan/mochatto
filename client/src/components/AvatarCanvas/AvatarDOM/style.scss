@@ -1,5 +1,9 @@
 @import "../constants/style";
 
+.no-show {
+  display: none !important;
+}
+
 .avatar-outer {
     touch-action: none;
     width: $avatar-size;

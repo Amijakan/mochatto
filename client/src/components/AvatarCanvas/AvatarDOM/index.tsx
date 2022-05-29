@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Icon } from "atomize";
 import MicOffIcon from "@material-ui/icons/MicOff";
 import cx from "classnames";
 
-import "./AvatarDOM.scss";
+import "./style.scss";
 
 function AvatarDOM({
   onPointerDown,
@@ -28,6 +28,7 @@ function AvatarDOM({
   mute: boolean;
   id: string;
 }): JSX.Element {
+  const [isRendered, setIsRendered] = useState(false);
   function calculateSpecificStyles() {
     return {
       boxShadow: "0 0 0 " + (1 + multiplier * 10).toString() + "px " + _borderColor,
@@ -38,6 +39,7 @@ function AvatarDOM({
   }
 
   useEffect(() => {
+    setIsRendered(true);
     const avatardom = document.querySelector(".avatar");
     if (avatardom) {
       if (isSelf) {
@@ -59,7 +61,7 @@ function AvatarDOM({
   return (
     <div
       id={"avatar-" + id}
-      className={cx("avatar", "avatar-outer")}
+      className={cx("avatar", "avatar-outer", { "no-show": !isRendered })}
       onPointerDown={onPointerDown}
       style={calculateSpecificStyles()}
     >
@@ -70,4 +72,18 @@ function AvatarDOM({
   );
 }
 
-export default AvatarDOM;
+const areEqual = (prev, next) => {
+  return (
+    prev.active === next.active &&
+    prev._backgroundColor === next._backgroundColor &&
+    prev._borderColor === next._borderColor &&
+    prev.pos[0] === next.pos[0] &&
+    prev.pos[1] === next.pos[1] &&
+    prev.initial[1] === next.initial[1] &&
+    prev.active === next.active &&
+    prev.mute === next.mute &&
+    prev.multiplier === next.multiplier
+  );
+};
+
+export default React.memo(AvatarDOM, areEqual);

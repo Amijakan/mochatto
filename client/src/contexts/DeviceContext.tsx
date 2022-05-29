@@ -1,5 +1,5 @@
 import React, { createContext, useState } from "react";
-import { Device } from "@/components/DeviceSelectorHelper";
+import { Device } from "@/components/DeviceSelector";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const DeviceContext = createContext<any>({});

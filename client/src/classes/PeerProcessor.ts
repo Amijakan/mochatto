@@ -2,6 +2,7 @@ import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import { Socket } from "socket.io-client";
 import { DCLabel, Pack } from "@/classes/Network";
+import { SIOChannel } from "@/contexts/SocketIOContext"
 
 export interface DataPackage {
   position: [number, number];
@@ -76,10 +77,10 @@ export class PeerProcessor {
               iceCandidates.push(event.candidate);
             }
           };
-          this.socket.on("SDP_RECEIVED", () => {
+          this.socket.on(SIOChannel.SDP_RECEIVED, () => {
             iceCandidates.forEach((iceCandidate) => {
               this.socket.emit(
-                "ICE_CANDIDATE",
+                SIOChannel.ICE_CANDIDATE,
                 JSON.stringify({ ice: iceCandidate, receiverId: this.peerId })
               );
             });
@@ -87,7 +88,7 @@ export class PeerProcessor {
               if (this.peerConnection.iceGatheringState === "gathering") {
                 if (event.candidate) {
                   this.socket.emit(
-                    "ICE_CANDIDATE",
+                    SIOChannel.ICE_CANDIDATE,
                     JSON.stringify({ ice: event.candidate, receiverId: this.peerId })
                   );
                 }
@@ -102,7 +103,7 @@ export class PeerProcessor {
             kind: "offer",
           };
 
-          this.socket.emit("OFFER", JSON.stringify(offerPack));
+          this.socket.emit(SIOChannel.OFFER, JSON.stringify(offerPack));
         }
       })
       .catch((e) => {
@@ -128,18 +129,13 @@ export class PeerProcessor {
     }
     this.dataChannel = dc;
     this.dataChannel.onopen = this.onDataChannelOpen.bind(this);
-    this.dataChannel.onclose = this.onDataChannelClose.bind(this);
+    // this.dataChannel.onclose = this.onDataChannelClose.bind(this);
     this.dataChannel.onmessage = this.onDataChannelMessage.bind(this);
   }
 
   // runs when the data channel opens
   onDataChannelOpen(): void {
     this.send(this.selfUserInfo);
-  }
-
-  // runs when the data channel closes
-  onDataChannelClose(): void {
-    this.visualizer.stop();
   }
 
   onDataChannelMessage(event: MessageEvent): void {

@@ -1,11 +1,8 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useRef, useEffect, useContext, useCallback } from "react";
 import { SocketContext, DeviceContext, UserInfoContext } from "@/contexts";
 import { useHistory } from "react-router-dom";
-import { DeviceSelector } from "@/components/DeviceSelector";
 import { Div, Notification, Icon, Text } from "atomize";
-import ScreenShareWindow from "@/components/ScreenShareWindow";
-import AvatarCanvas from "@/components/AvatarCanvas";
-import { ButtonsBar } from "@/components/ButtonsBar";
+import { AvatarCanvas, ButtonsBar, DeviceSelector } from "@/components";
 import { Network } from "@/classes/Network";
 import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
@@ -54,17 +51,25 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     networkRef.current = _network;
   };
 
-  const toggleMute = () => {
+  const toggleMute = useCallback(() => {
     updateSelfUserInfo({ ...selfUserInfoRef.current, mute: !selfUserInfoRef.current.mute });
-  };
+  }, [selfUserInfoRef.current.mute]);
 
-  const toggleActive = () => {
+  const handleLeaveClicked = useCallback(() => {
+    history.go(0);
+  }, []);
+
+  const handleSettingClicked = useCallback(() => {
+    setShowModal(true);
+  }, []);
+
+  const toggleActive = useCallback(() => {
     updateSelfUserInfo({
       ...selfUserInfoRef.current,
       active: !selfUserInfoRef.current.active,
       mute: selfUserInfoRef.current.active,
     });
-  };
+  }, [selfUserInfoRef.current.active]);
 
   const toggleScreenShare = () => {
     // If currently screen sharing, end the stream.
@@ -206,6 +211,22 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     networkRef.current?.toggleDeaf(!selfUserInfoRef.current.active);
   }, [selfUserInfoRef.current.active]);
 
+  useEffect(() => {
+    if (selfUserInfoRef.current.isScreenSharing) {
+      navigator.mediaDevices
+        .getDisplayMedia()
+        .then((stream) => {
+          onStartScreenSharing(stream);
+          stream.getVideoTracks()[0].onended = () => {
+            onEndScreenSharing();
+          };
+        })
+        .catch((e) => {
+          onFailedScreenSharing(e);
+        });
+    }
+  }, [selfUserInfoRef.current.isScreenSharing]);
+
   return (
     <RoomTemplate
       showModal={showModal}
@@ -239,21 +260,12 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           setSelfUserInfo={updateSelfUserInfo}
           userInfos={Object.values(userInfos)}
         />
-        {selfUserInfoRef.current.isScreenSharing ? (
-          <ScreenShareWindow
-            onStart={(_stream) => onStartScreenSharing(_stream)}
-            onEnd={() => onEndScreenSharing()}
-            onFailed={(e) => onFailedScreenSharing(e)}
-          />
-        ) : (
-          <></>
-        )}
         <ButtonsBar
-          onSettingsClicked={() => setShowModal(true)}
-          onStatusClicked={() => toggleActive()}
-          onMuteClicked={() => toggleMute()}
+          onSettingsClicked={handleSettingClicked}
+          onStatusClicked={toggleActive}
+          onMuteClicked={toggleMute}
           onScreenShareClicked={() => toggleScreenShare()}
-          onLeaveClicked={() => history.go(0)}
+          onLeaveClicked={handleLeaveClicked}
           userInfoRef={selfUserInfoRef}
         />
       </>

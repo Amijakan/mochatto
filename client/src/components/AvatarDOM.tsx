@@ -68,4 +68,18 @@ function AvatarDOM({
   );
 }
 
-export default AvatarDOM;
+const areEqual = (prev, next) => {
+  return (
+    prev.active === next.active &&
+    prev._backgroundColor === next._backgroundColor &&
+    prev._borderColor === next._borderColor &&
+    prev.pos[0] === next.pos[0] &&
+    prev.pos[1] === next.pos[1] &&
+    prev.initial[1] === next.initial[1] &&
+    prev.active === next.active &&
+    prev.mute === next.mute &&
+    prev.multiplier === next.multiplier
+  )
+}
+
+export default React.memo(AvatarDOM, areEqual);

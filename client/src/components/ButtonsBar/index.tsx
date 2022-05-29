@@ -4,7 +4,7 @@ import MicIcon from "@material-ui/icons/Mic";
 import MicOffIcon from "@material-ui/icons/MicOff";
 import ScreenShareIcon from "@material-ui/icons/ScreenShare";
 import StopScreenShareIcon from "@material-ui/icons/StopScreenShare";
-import "./ButtonsBar.scss";
+import "./style.scss";
 
 import PropTypes from "prop-types";
 

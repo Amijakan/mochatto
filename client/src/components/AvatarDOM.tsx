@@ -39,7 +39,7 @@ function AvatarDOM({
     const avatardom = document.querySelector(".avatar");
     if (avatardom) {
       if (isSelf) {
-        (avatardom as HTMLElement).style.zIndex = "1";
+        (avatardom as HTMLElement).style.zIndex = "1001";
       }
     }
   }, []);

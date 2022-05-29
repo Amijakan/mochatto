@@ -1,41 +1,59 @@
-import React, { Component, MouseEvent, ReactNode } from "react";
+import React, { Children, Component, MouseEvent, ReactNode } from "react";
+import Draggable from "./Draggable";
 import "./DraggableLayer.scss";
 
 type DraggableLayerProps = {
-    children: React.ReactNode | React.ReactNode[],
+    children: ReactNode | ReactNode[],
 };
 
 class DraggableLayer extends Component<DraggableLayerProps> {
-    mouseDownHandler = (event: MouseEvent<HTMLDivElement>): void => {
-        const { children } = this.props;
-        React.Children.map(children, (child : ReactNode) => {
-            console.log(child);
+    childRefs: Array<React.RefObject<Draggable>>;
+    draggableChildren: Array<JSX.Element> | null | undefined;
+
+    constructor(props: Readonly<DraggableLayerProps>) {
+        super(props);
+
+        this.childRefs = [];
+        this.draggableChildren = Children.map(props.children, (child: ReactNode) => {
+            const ref: React.RefObject<Draggable> = React.createRef();
+            this.childRefs.push(ref);
+            return <Draggable x={150} y={150} ref={ref} node={child} />;
         });
-        console.log(event);
+    }
+
+    // componentDidMount(): void {
+    // }
+
+    mouseDownHandler = (event: MouseEvent<HTMLDivElement>): void => {
+        this.childRefs.map((child) => {
+            console.log(child);
+            if (child.current?.containsPoint(event.clientX, event.clientY)) {
+                child.current.isDragging = true;
+            }
+        });
     }
 
     mouseMoveHandler = (event: MouseEvent<HTMLDivElement>): void => {
-        const { children } = this.props;
-        React.Children.map(children, (child : ReactNode) => {
-            console.log(child);
+        this.childRefs.map((child) => {
+            if (child.current?.isDragging) {
+                child.current.x = event.clientX;
+                child.current.y = event.clientY;
+            }
         });
-        console.log(event);
     }
 
-    mouseUpHandler = (event: MouseEvent<HTMLDivElement>): void => {
-        const { children } = this.props;
-        React.Children.map(children, (child : ReactNode) => {
-            console.log(child);
+    mouseUpHandler = (): void => {
+        this.childRefs.map((child) => {
+            if (child.current) {
+                child.current.isDragging = false;
+            }
         });
-        console.log(event);
     }
 
     render(): JSX.Element {
-        console.log(this.props.children);
-
         return (
             <div className="overlay" onMouseDown={this.mouseDownHandler} onMouseMove={this.mouseMoveHandler} onMouseUp={this.mouseUpHandler}>
-                {"yeah"}
+                {this.draggableChildren}
             </div>
         );
     }

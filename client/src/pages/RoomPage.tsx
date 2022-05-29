@@ -9,10 +9,10 @@ import { Network } from "@/classes/Network";
 import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import { RoomTemplate } from "@/templates";
-import Draggable from "@/components/Draggable";
 import DraggableLayer from "@/components/DraggableLayer";
 
 import PropTypes from "prop-types";
+import cx from "classnames";
 
 const notificationColors = {
   join: { color: "success", icon: "Success" },
@@ -176,8 +176,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     }
   }, [selfUserInfoRef.current.active]);
 
-  const draggableChild = <div style={{ height: '150px', width: '150px', backgroundColor: 'red'}}></div>;
-
   return (
     <RoomTemplate
       showModal={showModal}
@@ -191,7 +189,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     >
       <>
         <DraggableLayer>
-          {draggableChild}
+          <div>
+            <div style={{ width: '150px', height: '150px', backgroundColor: 'blue' }}></div>
+          </div>
+          <div style={{ width: '100px', height: '100px', backgroundColor: 'red' }}></div>
         </DraggableLayer>
         <Notification
           isOpen={showNotification}

@@ -25,8 +25,6 @@ const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
     rounded: "circle",
   };
 
-  console.debug("RENDER")
-
   const SettingsButton = () => {
     const { onSettingsClicked } = props;
 

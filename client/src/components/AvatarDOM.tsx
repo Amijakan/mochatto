@@ -36,8 +36,6 @@ function AvatarDOM({
     };
   }
 
-  console.debug("RENDER USER", initial)
-
   useEffect(() => {
     setIsRendered(true);
     const avatardom = document.querySelector(".avatar");

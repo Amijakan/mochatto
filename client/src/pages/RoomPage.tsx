@@ -42,6 +42,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const updateSelfUserInfo = (info) => {
     selfUserInfoRef.current = info;
     setSelfUserInfo(info);
+    addUserInfo("self")(info)
   };
 
   const updateVisualizer = (_visualizer) => {

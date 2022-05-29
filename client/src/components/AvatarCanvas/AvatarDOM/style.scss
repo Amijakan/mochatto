@@ -9,6 +9,7 @@
     border-radius: 100%;
     position: absolute;
     display: table;
+    transition: box-shadow 0.4s;
 
     .avatar-initial {
         user-select: none;

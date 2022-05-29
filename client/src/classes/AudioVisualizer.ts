@@ -16,6 +16,8 @@ export class AudioVisualizer {
         // chain mic -> analyser -> processor -> context
         source.connect(analyser); // feed mic audio into analyser
 
+        // Previous average to compare to current.
+        let prevAverage = 0;
         this.onAudioActivity(0);
         const draw = () => {
           const array = new Uint8Array(analyser.fftSize);
@@ -23,9 +25,10 @@ export class AudioVisualizer {
 
           const sum = array.reduce((current, next) => current + next * 4);
           const average = sum / array.length;
-          if (average != 0) {
+          if (isSignificantlyDifferent(prevAverage, average, 15)) {
             this.onAudioActivity(average);
           }
+          prevAverage = average;
           window.requestAnimationFrame(draw);
         };
         draw();
@@ -33,13 +36,16 @@ export class AudioVisualizer {
     }
   }
 }
+
+export const isSignificantlyDifferent = (
+  prev: number,
+  curr: number,
+  threshold: number
+): boolean => {
+  return Math.abs(prev - curr) > threshold;
+};
+
 export const gainToMultiplier = (gain: number): number => {
-  const max = 150;
-  let _multiplier = 0;
-  if (gain < max) {
-    _multiplier = gain / max;
-  } else {
-    _multiplier = 1;
-  }
-  return _multiplier;
+  const max = 200;
+  return gain < max ? gain / max : 1;
 };

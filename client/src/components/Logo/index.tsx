@@ -1,7 +1,7 @@
 import React from "react";
 // Icon from https://icons8.com/icons/set/m
 import { Div } from "atomize";
-import "./Logo.scss";
+import "./style.scss";
 
 const Logo = ({ height = "20" }: { width?: string; height?: string }): JSX.Element => {
   return (

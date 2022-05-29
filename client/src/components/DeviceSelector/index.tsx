@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from "react";
 import Select from "react-select";
 import PropTypes from "prop-types";
-import { Device, listInputDevices, selectInputDevice } from "./DeviceSelectorHelper";
+import { Device, listInputDevices, selectInputDevice } from "./helper";
 import { DeviceContext } from "@/contexts";
 import { Checkbox, Div } from "atomize";
 import { Label } from "@/components/atomize_wrapper";
@@ -81,4 +81,5 @@ DeviceSelector.propTypes = {
   onSelect: PropTypes.func,
 };
 
-export { Device, DeviceSelector };
+export default DeviceSelector
+export { Device };

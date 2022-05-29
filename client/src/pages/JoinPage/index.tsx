@@ -31,7 +31,6 @@ const JoinPage = ({
     if (socket) {
       if (name != "") {
         setJoined(true);
-        visualizer.stop();
       } else {
         setShowNotification(true);
       }

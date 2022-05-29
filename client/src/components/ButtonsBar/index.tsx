@@ -6,15 +6,15 @@ import MicOffIcon from "@material-ui/icons/MicOff";
 import PropTypes from "prop-types";
 
 type ButtonsBarProps = {
-  onSettingsClicked: () => void,
-  onStatusClicked: () => void,
-  onMuteClicked: () => void,
-  onLeaveClicked: () => void,
+  onSettingsClicked: () => void;
+  onStatusClicked: () => void;
+  onMuteClicked: () => void;
+  onLeaveClicked: () => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  userInfoRef: any,
-}
+  userInfoRef: any;
+};
 
-export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
+const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
   const defaultButtonStyle = {
     p: "1rem",
     m: "0.3rem",
@@ -56,14 +56,13 @@ export const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
 
   const MuteButton = () => {
     const { onMuteClicked, userInfoRef } = props;
-    console.log(userInfoRef);
 
     return (
       <Button title="Toggle mute (m)" {...defaultButtonStyle} onClick={onMuteClicked}>
         {userInfoRef.current.mute ? <MicOffIcon /> : <MicIcon />}
       </Button>
     );
-  }
+  };
 
   const LeaveButton = () => {
     const { onLeaveClicked } = props;
@@ -105,4 +104,12 @@ ButtonsBar.propTypes = {
   userInfoRef: PropTypes.any,
 };
 
-export default ButtonsBar;
+const areEqual = (prev, next): boolean => {
+  return (prev.userInfoRef.current === next.userInfoRef.current &&
+    prev.onSettingsClicked === next.onSettingsClicked &&
+    prev.onStatusClicked === next.onStatusClicked &&
+    prev.onMuteClicked === next.onMuteClicked &&
+    prev.onLeaveClicked === next.onLeaveClicked)
+}
+
+export default React.memo(ButtonsBar, areEqual);

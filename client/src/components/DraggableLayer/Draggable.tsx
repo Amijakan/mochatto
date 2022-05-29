@@ -10,6 +10,8 @@ type DraggableState = {
     x: number,
     y: number,
     isDragging: boolean,
+    draggingOffsetX: number,
+    draggingOffsetY: number,
 };
 
 class Draggable extends Component<DraggableProps, DraggableState> {
@@ -21,7 +23,9 @@ class Draggable extends Component<DraggableProps, DraggableState> {
         this.state = { 
             x: props.x || 0,
             y: props.y || 0,
-            isDragging: false 
+            isDragging: false,
+            draggingOffsetX: 0,
+            draggingOffsetY: 0,
         };
         this.ref = React.createRef();
     }
@@ -58,8 +62,17 @@ class Draggable extends Component<DraggableProps, DraggableState> {
         return this.state.isDragging;
     }
 
-    set isDragging(isDragging: boolean) {
-        this.setState({ isDragging: isDragging });
+    startDrag(offsetX: number, offsetY: number): void {
+        this.setState({ isDragging: true, draggingOffsetX: offsetX, draggingOffsetY: offsetY });
+    }
+
+    redraw(xNoOffset: number, yNoOffset: number): void {
+        const { draggingOffsetX, draggingOffsetY } = this.state;
+        this.setState({ x: xNoOffset - draggingOffsetX, y: yNoOffset - draggingOffsetY });
+    }
+
+    stopDrag(): void {
+        this.setState({ isDragging: false, draggingOffsetX: 0, draggingOffsetY: 0 });
     }
 
     containsPoint(x: number, y: number): boolean {

@@ -2,15 +2,13 @@ import React, { useState, useRef, useEffect, useContext, useCallback } from "rea
 import { SocketContext, DeviceContext, UserInfoContext } from "@/contexts";
 import { useHistory } from "react-router-dom";
 import { Div, Notification, Icon, Text } from "atomize";
-import { AvatarCanvas, ButtonsBar, DeviceSelector } from "@/components";
+import { AvatarCanvas, ButtonsBar, DeviceSelector, DraggableLayer } from "@/components";
 import { Network } from "@/classes/Network";
 import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import { RoomTemplate } from "@/templates";
-import DraggableLayer from "@/components/DraggableLayer";
 
 import PropTypes from "prop-types";
-import cx from "classnames";
 
 const notificationColors = {
   join: { color: "success", icon: "Success" },
@@ -199,6 +197,13 @@ function RoomPage({ name }: { name: string }): JSX.Element {
             <div style={{ width: '150px', height: '150px', backgroundColor: 'blue' }}></div>
           </div>
           <div style={{ width: '100px', height: '100px', backgroundColor: 'red' }}></div>
+          <ButtonsBar
+            onSettingsClicked={handleSettingClicked}
+            onStatusClicked={toggleActive}
+            onMuteClicked={toggleMute}
+            onLeaveClicked={handleLeaveClicked}
+            userInfoRef={selfUserInfoRef}
+          />
         </DraggableLayer>
         <Notification
           isOpen={showNotification}
@@ -220,13 +225,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           selfUserInfo={selfUserInfoRef.current}
           setSelfUserInfo={updateSelfUserInfo}
           userInfos={Object.values(userInfos)}
-        />
-        <ButtonsBar
-          onSettingsClicked={handleSettingClicked}
-          onStatusClicked={toggleActive}
-          onMuteClicked={toggleMute}
-          onLeaveClicked={handleLeaveClicked}
-          userInfoRef={selfUserInfoRef}
         />
       </>
     </RoomTemplate>

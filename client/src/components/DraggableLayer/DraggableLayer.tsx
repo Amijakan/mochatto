@@ -21,14 +21,12 @@ class DraggableLayer extends Component<DraggableLayerProps> {
         });
     }
 
-    // componentDidMount(): void {
-    // }
-
     mouseDownHandler = (event: MouseEvent<HTMLDivElement>): void => {
         this.childRefs.map((child) => {
-            console.log(child);
             if (child.current?.containsPoint(event.clientX, event.clientY)) {
-                child.current.isDragging = true;
+                const xOffset = event.clientX - child.current.x;
+                const yOffset = event.clientY - child.current.y;
+                child.current.startDrag(xOffset, yOffset);
             }
         });
     }
@@ -36,8 +34,7 @@ class DraggableLayer extends Component<DraggableLayerProps> {
     mouseMoveHandler = (event: MouseEvent<HTMLDivElement>): void => {
         this.childRefs.map((child) => {
             if (child.current?.isDragging) {
-                child.current.x = event.clientX;
-                child.current.y = event.clientY;
+                child.current.redraw(event.clientX, event.clientY);
             }
         });
     }
@@ -45,7 +42,7 @@ class DraggableLayer extends Component<DraggableLayerProps> {
     mouseUpHandler = (): void => {
         this.childRefs.map((child) => {
             if (child.current) {
-                child.current.isDragging = false;
+                child.current.stopDrag();
             }
         });
     }

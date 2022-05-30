@@ -1,13 +1,7 @@
 export class AudioVisualizer {
-  intervalId: number;
   onAudioActivity: (gain: number) => void;
   constructor(_onAudioActivity: (gain: number) => void) {
-    this.intervalId = 0;
     this.onAudioActivity = _onAudioActivity;
-  }
-
-  stop(): void {
-    window.clearInterval(this.intervalId);
   }
 
   setStream(stream: MediaStream): void {
@@ -17,41 +11,42 @@ export class AudioVisualizer {
         const source = context.createMediaStreamSource(stream);
         const analyser = context.createAnalyser();
         analyser.smoothingTimeConstant = 0.3;
-        analyser.fftSize = 1024;
+        analyser.fftSize = 256;
 
         // chain mic -> analyser -> processor -> context
         source.connect(analyser); // feed mic audio into analyser
 
-        if (this.intervalId) {
-          window.clearInterval(this.intervalId);
-          this.onAudioActivity(0);
-        }
+        // Previous average to compare to current.
+        let prevAverage = 0;
+        this.onAudioActivity(0);
         const draw = () => {
           const array = new Uint8Array(analyser.fftSize);
           analyser.getByteFrequencyData(array);
 
-          let sum = 0;
-          array.forEach((e) => {
-            sum += e * 4;
-          });
+          const sum = array.reduce((current, next) => current + next * 4);
           const average = sum / array.length;
-          if (average != 0) {
+          if (isSignificantlyDifferent(prevAverage, average, 7)) {
             this.onAudioActivity(average);
+            // Update previous average once current average meets threshold
+            prevAverage = average;
           }
+          window.requestAnimationFrame(draw);
         };
-        this.intervalId = window.setInterval(draw, 50);
+        draw();
       }
     }
   }
 }
-export const gainToMultiplier = (gain: number): number => {
-  const max = 150;
-  let _multiplier = 0;
-  if (gain < max) {
-    _multiplier = gain / max;
-  } else {
-    _multiplier = 1;
-  }
-  return _multiplier;
+
+export const isSignificantlyDifferent = (
+  prev: number,
+  curr: number,
+  threshold: number
+): boolean => {
+  return Math.abs(prev - curr) > threshold;
 };
 
+export const gainToMultiplier = (gain: number): number => {
+  const max = 250;
+  return Math.min(gain / max, 1);
+};

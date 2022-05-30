@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { SocketContext, DeviceContext } from "@/contexts";
-import { DeviceSelector } from "@/components/DeviceSelector";
-import { AudioVisualizer } from "@/classes/AudioVisualizer";
+import { DeviceSelector } from "@/components";
+import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import PropTypes from "prop-types";
-import { Input } from "@/components/atomize_wrapper";
 import { Div, Notification, Icon } from "atomize";
-import { Button, Card, Text } from "@/components/atomize_wrapper";
+import { Button, Card, Text, Input } from "@/components/atomize_wrapper";
 import { BaseTemplate } from "@/templates";
-import { colors } from "@/constants/colors";
+import "./style.scss";
 
 const JoinPage = ({
   name,
@@ -32,7 +31,6 @@ const JoinPage = ({
     if (socket) {
       if (name != "") {
         setJoined(true);
-        visualizer.stop();
       } else {
         setShowNotification(true);
       }
@@ -56,6 +54,17 @@ const JoinPage = ({
   const onAudioActivity = (_gain: number) => {
     setGain(_gain);
   };
+
+  function Visualizer() {
+    return (
+      <div
+        className="visualizer"
+        style={{
+          width: (gainToMultiplier(gain) * 100).toString() + "%",
+        }}
+      />
+    );
+  }
 
   return (
     <BaseTemplate>
@@ -87,14 +96,8 @@ const JoinPage = ({
             <Div m={{ t: "20px" }}>
               <Div>Select audio device:</Div>
               <DeviceSelector onSelect={onSelect} />
-              <Div
-                style={{
-                  width: gain.toString() + "px",
-                  height: "10px",
-                  background: colors.bg,
-                }}
-              ></Div>
             </Div>
+            {Visualizer()}
             <Div d="flex" justify="space-around" w="100%" m={{ t: "20px" }}>
               <Button w="45%" onClick={() => onJoinClicked()}>
                 Join

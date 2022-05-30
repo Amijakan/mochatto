@@ -12,23 +12,9 @@ pipeline {
         echo 'Hello'
       }
     }
-    stage('test-frontend') {
-      steps {
-        sh '''
-          echo "Test Frontend"
-        '''
-      }
-    }
-    stage('test-backend') {
-      steps {
-        sh '''
-          echo "Test Backend"
-        '''
-      }
-    }
     stage('dev-deploy') {
       when {
-        branch "setup-jenkins"
+        branch "ft-* rf-* bg-*"
       }
       steps {
         sh '''

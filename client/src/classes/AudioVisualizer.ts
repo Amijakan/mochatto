@@ -25,7 +25,7 @@ export class AudioVisualizer {
 
           const sum = array.reduce((current, next) => current + next * 4);
           const average = sum / array.length;
-          if (isSignificantlyDifferent(prevAverage, average, 15)) {
+          if (isSignificantlyDifferent(prevAverage, average, 10)) {
             this.onAudioActivity(average);
           }
           prevAverage = average;

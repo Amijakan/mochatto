@@ -14,7 +14,7 @@ pipeline {
     }
     stage('dev-deploy') {
       when {
-        branch "ft-* rf-* bg-*"
+        expression { GIT_BRANCH ==~ /(ft|bg|rf)-*/ };
       }
       steps {
         sh '''
@@ -25,7 +25,7 @@ pipeline {
     }
     stage('main-deploy') {
       when {
-        branch "main"
+        expression { GIT_BRANCH == "main" };
       }
       steps {
         sh '''

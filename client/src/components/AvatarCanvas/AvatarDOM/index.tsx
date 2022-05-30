@@ -29,7 +29,7 @@ function AvatarDOM({
   const [isRendered, setIsRendered] = useState(false);
   function calculateSpecificStyles() {
     return {
-      boxShadow: "0 0 0 " + (1 + multiplier * 10).toString() + "px " + _borderColor,
+      boxShadow: "0 0 0 " + multiplier.toString() + "rem " + _borderColor,
       background: _backgroundColor,
       left: pos[0],
       top: pos[1],

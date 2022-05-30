@@ -8,12 +8,9 @@ pipeline {
   }
   stages {
     stage('Hello') {
-      environment {
-        GIT_BRANCH = "${BRANCH_NAME}"
-      }
       steps {
         echo 'Hello'
-        echo "${GIT_BRANCH}"
+        echo "${BRANCH_NAME}"
       }
     }
     stage('dev-deploy') {

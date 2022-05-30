@@ -11,6 +11,7 @@
     border-radius: 100%;
     position: absolute;
     display: table;
+    transition: box-shadow 0.2s;
 
     .avatar-initial {
         user-select: none;

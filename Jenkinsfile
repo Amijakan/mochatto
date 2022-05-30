@@ -19,9 +19,9 @@ pipeline {
     stage('dev-deploy') {
       when {
         anyOf {
-          branch "ft-*";
-          branch "bg-*";
-          branch "rf-*";
+          branch "ft-*"
+          branch "bg-*"
+          branch "rf-*"
         }
       }
       steps {

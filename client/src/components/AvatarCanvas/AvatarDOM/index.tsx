@@ -75,7 +75,7 @@ const areEqual = (prev, next) => {
     prev._borderColor === next._borderColor &&
     prev.pos[0] === next.pos[0] &&
     prev.pos[1] === next.pos[1] &&
-    prev.initial[1] === next.initial[1] &&
+    prev.initial === next.initial &&
     prev.active === next.active &&
     prev.mute === next.mute &&
     prev.multiplier === next.multiplier

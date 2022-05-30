@@ -25,10 +25,11 @@ export class AudioVisualizer {
 
           const sum = array.reduce((current, next) => current + next * 4);
           const average = sum / array.length;
-          if (isSignificantlyDifferent(prevAverage, average, 10)) {
+          if (isSignificantlyDifferent(prevAverage, average, 7)) {
             this.onAudioActivity(average);
+            // Update previous average once current average meets threshold
+            prevAverage = average;
           }
-          prevAverage = average;
           window.requestAnimationFrame(draw);
         };
         draw();
@@ -46,6 +47,6 @@ export const isSignificantlyDifferent = (
 };
 
 export const gainToMultiplier = (gain: number): number => {
-  const max = 200;
+  const max = 250;
   return gain < max ? gain / max : 1;
 };

@@ -10,6 +10,7 @@ pipeline {
     stage('Hello') {
       steps {
         echo 'Hello'
+        echo $GIT_BRANCH
       }
     }
     stage('dev-deploy') {

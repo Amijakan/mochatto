@@ -48,5 +48,5 @@ export const isSignificantlyDifferent = (
 
 export const gainToMultiplier = (gain: number): number => {
   const max = 250;
-  return gain < max ? gain / max : 1;
+  return Math.min(gain / max, 1);
 };

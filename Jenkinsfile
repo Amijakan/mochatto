@@ -14,13 +14,6 @@ pipeline {
       }
     }
     stage('dev-deploy') {
-      when {
-        anyOf {
-          branch "ft-*"
-          branch "bg-*"
-          branch "rf-*"
-        }
-      }
       steps {
         sh '''
           echo "Deploy Dev"

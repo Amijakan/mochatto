@@ -72,13 +72,7 @@ const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
     const { onScreenShareClicked, userInfoRef } = props;
     return (
       <Button title="Screen sharing" {...defaultButtonStyle} onClick={onScreenShareClicked}>
-        {userInfoRef.current.isScreenSharing ? (
-          <>
-            <StopScreenShareIcon />
-          </>
-        ) : (
-          <ScreenShareIcon />
-        )}
+        {userInfoRef.current.isScreenSharing ? <StopScreenShareIcon /> : <ScreenShareIcon />}
       </Button>
     );
   };
@@ -131,6 +125,7 @@ const areEqual = (prev, next): boolean => {
     prev.onSettingsClicked === next.onSettingsClicked &&
     prev.onStatusClicked === next.onStatusClicked &&
     prev.onMuteClicked === next.onMuteClicked &&
+    prev.onScreenShareClicked === next.onScreenShareClicked &&
     prev.onLeaveClicked === next.onLeaveClicked
   );
 };

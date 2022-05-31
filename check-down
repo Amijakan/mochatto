@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Make sure to login to your github with `gh auth login`
+OPEN_PR="$(gh pr list | awk '{NF=1}1')"
+
+# the format is $JENKINS_MULTIBRANCH_PIPELINE_JOB_NAME _ $PR_NAME _ $CONTAINER_NAME
+CONTAINER_NAME_FORMAT="/multibranch_pr*/p"
+RUNNING_CONTAINERS="$(docker ps --format 'table {{.Names}}' | sed -n $CONTAINER_NAME_FORMAT)"
+
+for container_name in $RUNNING_CONTAINERS; 
+do
+  # Checks if container name 
+  prs=$(echo $OPEN_PR | sed 's/ /\|/g')
+  match_pattern="multibranch_pr-($prs)_(server|client)-beta_[0-9]+"
+  echo $match_pattern
+  if [[ $container_name =~ $match_pattern ]] 
+  then
+    echo $container_name keeps running
+  else
+    echo PR Closed. Stopping $container_name
+    docker rm -f $container_name
+  fi
+done

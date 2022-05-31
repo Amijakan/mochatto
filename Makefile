@@ -24,10 +24,10 @@ dev-up:
 
 ## Starts the prod environment in daemon
 prod-up:
-	docker-compose -f ./docker-compose.yaml -f ./docker-compose.nginx-proxy.yaml up server-prod client-prod -d --build
+	docker-compose -f ./docker-compose.yaml -f ./docker-compose.nginx-proxy.yaml up -d --build -- server-prod client-prod
 
 beta-up:
-	docker-compose -f ./docker-compose.yaml -f ./docker-compose.nginx-proxy.yaml up client-beta server-beta -d --build
+	docker-compose -f ./docker-compose.yaml -f ./docker-compose.nginx-proxy.yaml up -d --build -- client-beta server-beta
 
 test:
 	docker-compose run --rm client-test

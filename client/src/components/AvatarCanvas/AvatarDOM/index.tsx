@@ -3,7 +3,7 @@ import { Icon } from "atomize";
 import MicOffIcon from "@material-ui/icons/MicOff";
 import cx from "classnames";
 
-import "./AvatarDOM.scss";
+import "./style.scss";
 
 function AvatarDOM({
   onPointerDown,
@@ -29,7 +29,7 @@ function AvatarDOM({
   const [isRendered, setIsRendered] = useState(false);
   function calculateSpecificStyles() {
     return {
-      boxShadow: "0 0 0 " + (1 + multiplier * 10).toString() + "px " + _borderColor,
+      boxShadow: "0 0 0 " + multiplier.toString() + "rem " + _borderColor,
       background: _backgroundColor,
       left: pos[0],
       top: pos[1],
@@ -75,11 +75,11 @@ const areEqual = (prev, next) => {
     prev._borderColor === next._borderColor &&
     prev.pos[0] === next.pos[0] &&
     prev.pos[1] === next.pos[1] &&
-    prev.initial[1] === next.initial[1] &&
+    prev.initial === next.initial &&
     prev.active === next.active &&
     prev.mute === next.mute &&
     prev.multiplier === next.multiplier
-  )
-}
+  );
+};
 
 export default React.memo(AvatarDOM, areEqual);

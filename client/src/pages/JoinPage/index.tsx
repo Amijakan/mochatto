@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { SocketContext, DeviceContext } from "@/contexts";
-import { DeviceSelector } from "@/components/DeviceSelector";
-import { AudioVisualizer } from "@/classes/AudioVisualizer";
+import { DeviceSelector } from "@/components";
+import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import PropTypes from "prop-types";
-import { Input } from "@/components/atomize_wrapper";
 import { Div, Notification, Icon } from "atomize";
-import { Button, Card, Text } from "@/components/atomize_wrapper";
+import { Button, Card, Text, Input } from "@/components/atomize_wrapper";
 import { BaseTemplate } from "@/templates";
-import "./JoinPage.scss";
+import "./style.scss";
 
 const JoinPage = ({
   name,
@@ -61,7 +60,7 @@ const JoinPage = ({
       <div
         className="visualizer"
         style={{
-          width: gain.toString() + "px",
+          width: (gainToMultiplier(gain) * 100).toString() + "%",
         }}
       />
     );
@@ -100,10 +99,7 @@ const JoinPage = ({
             </Div>
             {Visualizer()}
             <Div d="flex" justify="space-around" w="100%" m={{ t: "20px" }}>
-              <Button 
-                w="45%" 
-                onClick={() => onJoinClicked()}
-              >
+              <Button w="45%" onClick={() => onJoinClicked()}>
                 Join
               </Button>
               <Button

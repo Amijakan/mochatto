@@ -24,7 +24,7 @@ const JoinPage = ({
   const [showNotification, setShowNotification] = useState(false);
   const history = useHistory();
 
-  const joinButtonRef = useRef(null)
+  const joinButtonRef = useRef<HTMLButtonElement | null>(null)
 
   const [gain, setGain] = useState(0);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);

@@ -19,7 +19,9 @@ pipeline {
           echo "Deploy Dev"
           make beta-up
         '''
-        pullRequest.comment("Deployed to https://${BRANCH_NAME}.dev.mochatto.com")
+        script {
+          pullRequest.comment("Deployed to https://${BRANCH_NAME}.dev.mochatto.com")
+        }
       }
     }
     stage('main-deploy') {

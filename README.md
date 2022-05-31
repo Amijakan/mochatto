@@ -45,3 +45,13 @@ Mochatto is an open-source proximity voice chat application for virtual meetings
 - [ ] Password protection for rooms
 - [ ] Screenshares
 - [ ] Audio Recording
+
+## Runnig own iceServer
+
+```
+docker run -d --network=host coturn/coturn
+```
+
+This will run at port 3478
+Make sure that your firewall for port 3478 is not blocked
+

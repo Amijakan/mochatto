@@ -14,7 +14,12 @@ pipeline {
           make beta-up
         '''
         script {
-          pullRequest.comment("Deployed to https://${BRANCH_NAME.toLowerCase()}.dev.mochatto.com")
+          for (comment in pullRequest.comments) {
+              if (comment.body.startsWith("AUTOMATED: ")) {
+                  pullRequest.deleteComment(comment.id)
+              }
+          }
+          pullRequest.comment("AUTOMATED: Deployed to https://${BRANCH_NAME.toLowerCase()}.dev.mochatto.com")
         }
       }
     }

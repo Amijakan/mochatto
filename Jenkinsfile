@@ -7,12 +7,6 @@ pipeline {
     disableConcurrentBuilds()
   }
   stages {
-    stage('Hello') {
-      steps {
-        echo 'Hello'
-        echo "${BRANCH_NAME}"
-      }
-    }
     stage('dev-deploy') {
       steps {
         sh '''

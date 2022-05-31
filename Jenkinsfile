@@ -20,7 +20,7 @@ pipeline {
           make beta-up
         '''
         script {
-          pullRequest.comment("Deployed to https://${BRANCH_NAME}.dev.mochatto.com")
+          pullRequest.comment("Deployed to https://${BRANCH_NAME.toLowerCase()}.dev.mochatto.com")
         }
       }
     }

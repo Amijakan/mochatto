@@ -49,7 +49,7 @@ const JoinPage = ({
       console.log(event)
       if (event.code === "Enter") {
         event.preventDefault()
-        joinButtonRef?.current.click()
+        joinButtonRef.current?.click()
       }
     }
     document.addEventListener("keydown", keyListener)

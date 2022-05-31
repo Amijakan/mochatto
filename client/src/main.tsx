@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import App from "@/App";
 import { StyleReset } from "atomize";
 import { Provider as StyletronProvider } from "styletron-react";
@@ -8,17 +8,17 @@ import { Client as Styletron } from "styletron-engine-atomic";
 // 1. Create a client engine instance
 const engine = new Styletron();
 
-console.log(import.meta.env);
-
 // 2. Provide the engine to the app
 // debug engine needs inlined source maps
+//
+const container = document.getElementById("root")
+const root = createRoot(container)
 
-ReactDOM.render(
+root.render(
   <React.StrictMode>
     <StyletronProvider value={engine}>
       <StyleReset />
       <App />
     </StyletronProvider>
   </React.StrictMode>,
-  document.getElementById("root")
 );

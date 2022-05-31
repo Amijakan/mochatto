@@ -1,5 +1,5 @@
 # Base
-FROM node:14.17.3 as base
+FROM node:16.15.0 as base
 EXPOSE 4000
 
 WORKDIR /app

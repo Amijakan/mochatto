@@ -50,6 +50,8 @@ Mochatto is an open-source proximity voice chat application for virtual meetings
 
 ## Jenkins pipeline
 
+Currently using
+- Jenkins Multibranch Pipeline with Github Plugin
 
 ### Creating dev environment
 Whent pull request is created, it will run beta-up, which hosts the branch content to
@@ -64,6 +66,6 @@ NOTE: `check-down` uses `gh` command, so make sure to check your token is not ex
 
 e.g.
 ```cron
-30 * * * * sh -c "cd /path/to/repo && ./check-down"
+0 * * * * sh -c "cd /path/to/repo && ./check-down"
 ```
 

@@ -50,18 +50,6 @@ function AvatarCanvas({
 
   return (
     <>
-      <AvatarDOM
-        key={0}
-        multiplier={selfUserInfo.multiplier}
-        onPointerDown={_onPointerDown}
-        _backgroundColor={selfUserInfo.avatarColor.background}
-        _borderColor={selfUserInfo.avatarColor.border}
-        pos={selfUserInfo.position}
-        isSelf={true}
-        initial={selfUserInfo.name[0]}
-        active={selfUserInfo.active}
-        mute={selfUserInfo.mute}
-      />
       {userInfos.map((info, index) => {
         if (!info) {
           info = defaultUserInfo;
@@ -70,13 +58,11 @@ function AvatarCanvas({
           <AvatarDOM
             key={index + 1}
             multiplier={info.multiplier}
-            onPointerDown={() => {
-              console.debug("not your avatar!");
-            }}
+            onPointerDown={(e: React.MouseEvent<HTMLDivElement>) => info.id === "self" && _onPointerDown(e)}
             _backgroundColor={info.avatarColor.background}
             _borderColor={info.avatarColor.border}
             pos={info.position}
-            isSelf={false}
+            isSelf={info.id === "self"}
             initial={info.name[0]}
             active={info.active}
             mute={info.mute}

@@ -51,7 +51,7 @@ Mochatto is an open-source proximity voice chat application for virtual meetings
 ## Jenkins pipeline
 
 Currently using
-- Jenkins Multibranch Pipeline with Github Plugin
+- Jenkins Multibranch Pipeline with [Github Plugin](https://github.com/jenkinsci/pipeline-github-plugin)
 
 ### Creating dev environment
 Whent pull request is created, it will run beta-up, which hosts the branch content to

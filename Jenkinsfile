@@ -14,12 +14,14 @@ pipeline {
           make beta-up
         '''
         script {
-          for (comment in pullRequest.comments) {
-              if (comment.body.startsWith("AUTOMATED: ")) {
-                  pullRequest.deleteComment(comment.id)
-              }
+          if(env.CHANGE_ID){
+            for (comment in pullRequest.comments) {
+                if (comment.body.startsWith("AUTOMATED: ")) {
+                    pullRequest.deleteComment(comment.id)
+                }
+            }
+            pullRequest.comment("AUTOMATED: Deployed to https://${BRANCH_NAME.toLowerCase()}.dev.mochatto.com")
           }
-          pullRequest.comment("AUTOMATED: Deployed to https://${BRANCH_NAME.toLowerCase()}.dev.mochatto.com")
         }
       }
     }

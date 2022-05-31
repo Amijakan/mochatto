@@ -80,7 +80,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       ...selfUserInfoRef.current,
       isScreenSharing: !selfUserInfoRef.current.isScreenSharing,
     });
-  }, [selfUserInfoRef.current.isScreenSharing]);
+  }, [selfUserInfoRef.current.isScreenSharing, stream]);
 
   // announce and set a new user on join
   const onJoin = (name) => {
@@ -218,7 +218,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         .then((stream) => {
           onStartScreenSharing(stream);
           stream.getVideoTracks()[0].onended = () => {
-            onEndScreenSharing();
+            toggleScreenShare();
           };
         })
         .catch((e) => {

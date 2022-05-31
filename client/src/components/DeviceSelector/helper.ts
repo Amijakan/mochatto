@@ -4,14 +4,14 @@ export const Device = (): { value: string; label: string } => {
   return { value, label };
 };
 
-const defaultOnError = (e: MediaStreamError): void => {
+const defaultOnError = (e: EndOfStreamError): void => {
   console.warn(e);
   return;
 };
 
 // return a list of available input audio devices
 export const listInputDevices = (
-  onError: (MediaStreamError) => void = defaultOnError
+  onError: (error: EndOfStreamError) => void = defaultOnError
 ): Promise<{ value: string; label: string }[]> => (
   navigator.mediaDevices
     .enumerateDevices()
@@ -28,9 +28,9 @@ export const listInputDevices = (
 // select a device as the input device
 export const selectInputDevice = (
   id: string,
-  useStream: (MediaStream) => void,
+  useStream: (stream: MediaStream) => void,
   options: { autoGainControl: boolean, echoCancellation: boolean, noiseSuppression: boolean },
-  onError: (MediaStreamError) => void = defaultOnError
+  onError: (error: EndOfStreamError) => void = defaultOnError
 ): void => {
   navigator.mediaDevices
     .getUserMedia({

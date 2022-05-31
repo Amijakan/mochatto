@@ -2,8 +2,6 @@ version: '3.8'
 
 services:
   client-prod:
-    profiles:
-      - prod
     expose:
       - ${APP_PORT}
     environment:
@@ -13,8 +11,6 @@ services:
       LETSENCRYPT_EMAIL: ${EMAIL}
 
   server-prod:
-    profiles:
-      - prod
     expose:
       - ${API_PORT}
     environment:
@@ -24,8 +20,6 @@ services:
       LETSENCRYPT_EMAIL: ${EMAIL}
 
   client-beta:
-    profiles:
-      - beta
     expose:
       - ${APP_PORT}
     environment:
@@ -38,8 +32,6 @@ services:
     extends:
       file: docker-compose.yaml
       service: server-prod
-    profiles:
-      - beta
     expose:
       - ${API_PORT}
     environment:

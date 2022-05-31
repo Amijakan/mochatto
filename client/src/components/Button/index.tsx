@@ -6,6 +6,6 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   ref?: React.MutableRefObject<HTMLButtonElement | null>
 }
 
-const Button: React.FC<ButtonProps> = (props) => <button {...props}>{props.children}</button>
+const Button: React.FC<ButtonProps> = (props: ButtonProps) => <button {...props}>{props?.children}</button>
 
 export default Button

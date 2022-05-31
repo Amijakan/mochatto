@@ -61,11 +61,11 @@ https://[PR_NUMBER].dev.mochatto.com
 ```
 
 ### Stopping dev environment
-I could not find a good way to bring the container down, so I am using a crontab with `check-down`
-NOTE: `check-down` uses `gh` command, so make sure to check your token is not expired.
+I could not find a good way to bring the container down, so I am using a crontab with `check-for-closed-pr`
+NOTE: `check-for-closed-pr` uses `gh` command, so make sure to check your token is not expired.
 
 e.g.
 ```cron
-0 * * * * sh -c "cd /path/to/repo && ./check-down"
+0 * * * * sh -c "cd /path/to/repo && ./check-for-closed-pr"
 ```
 

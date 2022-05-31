@@ -4,15 +4,15 @@
 OPEN_PR="$(gh pr list | awk '{NF=1}1')"
 
 # the format is $JENKINS_MULTIBRANCH_PIPELINE_JOB_NAME _ $PR_NAME _ $CONTAINER_NAME
-CONTAINER_NAME_FORMAT="/multibranch_pr*/p"
+JENKINS_PROJECT_NAME=multibranch
+CONTAINER_NAME_FORMAT="/${JENKINS_PROJECT_NAME}_*/p"
 RUNNING_CONTAINERS="$(docker ps --format 'table {{.Names}}' | sed -n $CONTAINER_NAME_FORMAT)"
 
 for container_name in $RUNNING_CONTAINERS; 
 do
   # Checks if container name 
   prs=$(echo $OPEN_PR | sed 's/ /\|/g')
-  match_pattern="multibranch_pr-($prs)_(server|client)-beta_[0-9]+"
-  echo $match_pattern
+  match_pattern="${JENKINS_PROJECT_NAME}_pr-($prs)_(server|client)-beta_[0-9]+"
   if [[ $container_name =~ $match_pattern ]] 
   then
     echo $container_name keeps running

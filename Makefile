@@ -16,18 +16,21 @@ help:
 
 ## Prepares the dev environment
 dev: 
-	CURRENT_UID=$$(id -u):$$(id -g) docker-compose --profile dev build
+	CURRENT_UID=$$(id -u):$$(id -g) docker-compose build client-dev server-dev
 
 ## Starts the dev environment (Mounts local folder)
 dev-up:
-	CURRENT_UID=$$(id -u):$$(id -g) docker-compose --profile dev up
+	CURRENT_UID=$$(id -u):$$(id -g) docker-compose up client-dev server-dev
 
 ## Starts the prod environment in daemon
 prod-up:
-	docker-compose -f ./docker-compose.yaml -f ./docker-compose.nginx-proxy.yaml --profile prod up -d --build
+	docker-compose -f ./docker-compose.yaml -f ./docker-compose.nginx-proxy.yaml up -d --build -- server-prod client-prod
 
 beta-up:
-	BETA_PREFIX=$$(git rev-parse --abbrev-ref HEAD) docker-compose -f ./docker-compose.yaml -f ./docker-compose.nginx-proxy.yaml --profile beta up -d --build --force-recreate
+	BETA_PREFIX=$$(git rev-parse --abbrev-ref HEAD) docker-compose -f ./docker-compose.yaml -f ./docker-compose.nginx-proxy.yaml up -d --build --force-recreate -- client-beta server-beta
+
+test:
+	docker-compose run --rm client-test
 
 ## Cleans containers
 clean:

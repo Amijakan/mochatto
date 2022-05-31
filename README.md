@@ -26,8 +26,10 @@ Mochatto is an open-source proximity voice chat application for virtual meetings
 1. `make dev-up`
 
 ### Prod
-1. `sudo make prod`
-1. `sudo make prod-up`
+1. `make prod-up`
+
+### Beta
+1. `make beta-up`
 
 ## Features
 
@@ -45,3 +47,23 @@ Mochatto is an open-source proximity voice chat application for virtual meetings
 - [ ] Password protection for rooms
 - [ ] Screenshares
 - [ ] Audio Recording
+
+## Jenkins pipeline
+
+
+### Creating dev environment
+Whent pull request is created, it will run beta-up, which hosts the branch content to
+
+```
+https://[PR_NUMBER].dev.mochatto.com
+```
+
+### Stopping dev environment
+I could not find a good way to bring the container down, so I am using a crontab with `check-down`
+NOTE: `check-down` uses `gh` command, so make sure to check your token is not expired.
+
+e.g.
+```cron
+30 * * * * sh -c "cd /path/to/repo && ./check-down"
+```
+

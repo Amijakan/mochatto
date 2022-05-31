@@ -57,8 +57,8 @@ services:
       target: prod
       args:
         serverurl: https://${API_URL}
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    command:
+      nginx -g 'daemon off;'
 
   client-beta:
     build:
@@ -66,7 +66,7 @@ services:
       dockerfile: ./Dockerfile
       target: prod
       args:
-        serverurl: https://${BETA_API_URL}
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+        serverurl: https://${BETA_PREFIX}.dev-api.${APP_URL}
+    command:
+      nginx -g 'daemon off;'
       

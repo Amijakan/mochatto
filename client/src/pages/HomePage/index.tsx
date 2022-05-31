@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { BaseTemplate } from "@/templates";
+import { Button } from "@/components"
 import { Div } from "atomize";
-import { Button, Text, Input } from "@/components/atomize_wrapper";
+import { Text, Input } from "@/components/atomize_wrapper";
 import { SocketContext } from "@/contexts";
 import { useHistory } from "react-router-dom";
 
@@ -60,7 +61,7 @@ const HomePage = (): JSX.Element => {
           />
         </Div>
         <Button
-          w={responsiveWidth}
+          className="primary w-50"
           onClick={() => {
             history.push(roomId);
             history.go(0);

@@ -1,7 +1,7 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { Div, Row, Col, Modal, Button } from "atomize";
-import { Logo } from "@/components";
+import { Div, Row, Col, Modal } from "atomize";
+import { Logo, Button } from "@/components";
 import b64bg from "@/assets/imgs/background_b64";
 
 const RoomTemplate = ({
@@ -39,8 +39,7 @@ const RoomTemplate = ({
           {sideDrawerComponent}
           <Div d="flex" justify="center" m={{ t: "2rem" }}>
             <Button
-              bg="gray200"
-              textColor="medium"
+              className="secondary"
               onClick={() => setShowModal(false)}
             >
               Close

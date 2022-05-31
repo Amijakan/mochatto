@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { SocketContext, DeviceContext } from "@/contexts";
-import { DeviceSelector } from "@/components";
+import { DeviceSelector, Button } from "@/components";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import PropTypes from "prop-types";
 import { Div, Notification, Icon } from "atomize";
-import { Button, Card, Text, Input } from "@/components/atomize_wrapper";
+import { Card, Text, Input } from "@/components/atomize_wrapper";
 import { BaseTemplate } from "@/templates";
 import "./style.scss";
 
@@ -46,9 +46,10 @@ const JoinPage = ({
   useEffect(() => {
     setVisualizer(new AudioVisualizer(onAudioActivity));
     const keyListener = (event) => {
+      console.log(event)
       if (event.code === "Enter") {
         event.preventDefault()
-        joinButtonRef.current.click()
+        joinButtonRef?.current.click()
       }
     }
     document.addEventListener("keydown", keyListener)
@@ -108,16 +109,17 @@ const JoinPage = ({
             </Div>
             {Visualizer()}
             <Div d="flex" justify="space-around" w="100%" m={{ t: "20px" }}>
-              <Button w="45%" onClick={() => onJoinClicked()} ref={joinButtonRef}>
+              <Button onClick={() => onJoinClicked()} ref={joinButtonRef}
+                className="primary w-50"
+              >
                 Join
               </Button>
               <Button
-                w="45%"
+                className="secondary w-50"
                 onClick={() => {
                   history.push("/");
                   history.go(0);
                 }}
-                bg="gray"
               >
                 Back
               </Button>

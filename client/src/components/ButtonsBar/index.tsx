@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from "react";
-import { Button, Div, Icon } from "atomize";
+import { Button } from "@/components"
+import { Div, Icon } from "atomize";
 import MicIcon from "@material-ui/icons/Mic";
 import MicOffIcon from "@material-ui/icons/MicOff";
 
@@ -15,21 +16,13 @@ type ButtonsBarProps = {
 };
 
 const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
-  const defaultButtonStyle = {
-    p: "1rem",
-    m: "0.3rem",
-    bg: "none",
-    h: "2.5rem",
-    w: "2.5rem",
-    hoverBg: "#ffffff29",
-    rounded: "circle",
-  };
-
   const SettingsButton = () => {
     const { onSettingsClicked } = props;
 
     return (
-      <Button title="Settings (,)" {...defaultButtonStyle} onClick={onSettingsClicked}>
+      <Button
+        className="circle"
+        title="Settings (,)" onClick={onSettingsClicked}>
         <Icon name="SettingsSolid" color="white" size="24px" />
       </Button>
     );
@@ -40,15 +33,14 @@ const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
 
     return (
       <Button
+        className="circle"
         title="Status (s)"
-        {...defaultButtonStyle}
-        textColor={userInfoRef.current.active ? "success700" : "danger700"}
         onClick={onStatusClicked}
       >
         {userInfoRef.current.active ? (
-          <Icon name="Status" color="success700" size="22px" />
+          <Icon name="Status" color="success700" size="24px" />
         ) : (
-          <Icon name="RemoveSolid" color="danger700" size="26px" />
+          <Icon name="RemoveSolid" color="danger700" size="24px" />
         )}
       </Button>
     );
@@ -58,7 +50,7 @@ const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
     const { onMuteClicked, userInfoRef } = props;
 
     return (
-      <Button title="Toggle mute (m)" {...defaultButtonStyle} onClick={onMuteClicked}>
+      <Button className="circle" title="Toggle mute (m)" onClick={onMuteClicked}>
         {userInfoRef.current.mute ? <MicOffIcon /> : <MicIcon />}
       </Button>
     );
@@ -69,11 +61,9 @@ const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
 
     return (
       <Button
+        className="cirle color-red"
         title="Leave room (L)"
-        {...defaultButtonStyle}
-        w="4rem"
         onClick={onLeaveClicked}
-        textColor="red"
       >
         Leave
       </Button>

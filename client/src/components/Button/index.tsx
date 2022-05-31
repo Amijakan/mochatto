@@ -2,7 +2,7 @@ import React from 'react'
 import './style.scss'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children: string | JSX.Element;
+  children?: string | JSX.Element;
   ref?: React.MutableRefObject<HTMLButtonElement | null>
 }
 

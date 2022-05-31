@@ -26,8 +26,10 @@ Mochatto is an open-source proximity voice chat application for virtual meetings
 1. `make dev-up`
 
 ### Prod
-1. `sudo make prod`
-1. `sudo make prod-up`
+1. `make prod-up`
+
+### Beta
+1. `make beta-up`
 
 ## Features
 
@@ -45,3 +47,35 @@ Mochatto is an open-source proximity voice chat application for virtual meetings
 - [ ] Place Videos in the space
 - [ ] Password protection for rooms
 - [ ] Audio Recording
+
+## Runnig own iceServer
+
+```
+docker run -d --network=host coturn/coturn
+```
+
+This will run at port 3478
+Make sure that your firewall for port 3478 is not blocked
+
+
+## Jenkins pipeline
+
+Currently using
+- Jenkins Multibranch Pipeline with [Github Plugin](https://github.com/jenkinsci/pipeline-github-plugin)
+
+### Creating dev environment
+Whent pull request is created, it will run beta-up, which hosts the branch content to
+
+```
+https://[PR_NUMBER].dev.mochatto.com
+```
+
+### Stopping dev environment
+I could not find a good way to bring the container down, so I am using a crontab with `check-for-closed-pr`
+NOTE: `check-for-closed-pr` uses `gh` command, so make sure to check your token is not expired.
+
+e.g.
+```cron
+0 * * * * sh -c "cd /path/to/repo && ./check-for-closed-pr"
+```
+

@@ -2,8 +2,6 @@ version: '3.8'
 
 services:
   client-prod:
-    profiles:
-      - prod
     expose:
       - ${APP_PORT}
     environment:
@@ -13,8 +11,6 @@ services:
       LETSENCRYPT_EMAIL: ${EMAIL}
 
   server-prod:
-    profiles:
-      - prod
     expose:
       - ${API_PORT}
     environment:
@@ -24,28 +20,24 @@ services:
       LETSENCRYPT_EMAIL: ${EMAIL}
 
   client-beta:
-    profiles:
-      - beta
     expose:
       - ${APP_PORT}
     environment:
-      VIRTUAL_HOST: ${BETA_APP_URL}
+      VIRTUAL_HOST: ${BETA_PREFIX}.dev.${APP_URL}
       VIRTUAL_PORT: ${APP_PORT}
-      LETSENCRYPT_HOST: ${BETA_APP_URL}
+      LETSENCRYPT_HOST: ${BETA_PREFIX}.dev.${APP_URL}
       LETSENCRYPT_EMAIL: ${EMAIL}
 
   server-beta:
     extends:
       file: docker-compose.yaml
       service: server-prod
-    profiles:
-      - beta
     expose:
       - ${API_PORT}
     environment:
-      VIRTUAL_HOST: ${BETA_API_URL}
+      VIRTUAL_HOST: ${BETA_PREFIX}.dev-api.${APP_URL}
       VIRTUAL_PORT: ${API_PORT}
-      LETSENCRYPT_HOST: ${BETA_API_URL}
+      LETSENCRYPT_HOST: ${BETA_PREFIX}.dev-api.${APP_URL}
       LETSENCRYPT_EMAIL: ${EMAIL}
 
 

@@ -33,7 +33,7 @@ export class PeerProcessor {
     this.dataChannel = null as unknown as RTCDataChannel;
     // initialize with a free public STUN server to find out public ip, NAT type, and internet side port
     this.peerConnection = new RTCPeerConnection({
-      iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+      iceServers: [{ urls: "stun:mochatto.com:3478" }],
     });
     this.multiplier = 0;
     this.peerStream = new MediaStream();

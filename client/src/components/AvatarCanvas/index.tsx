@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
+import { SocketContext } from "@/contexts";
 import AvatarDOM from "./AvatarDOM";
 import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
 
@@ -13,6 +14,7 @@ function AvatarCanvas({
   setSelfUserInfo: (any) => void;
 }): JSX.Element {
   let offset;
+  const { socket } = useContext(SocketContext);
 
   // on mouse down, add listeners for moving and mouse up
   const _onPointerDown = (event) => {
@@ -50,19 +52,7 @@ function AvatarCanvas({
 
   return (
     <>
-      <AvatarDOM
-        key={0}
-        multiplier={selfUserInfo.multiplier}
-        onPointerDown={_onPointerDown}
-        _backgroundColor={selfUserInfo.avatarColor.background}
-        _borderColor={selfUserInfo.avatarColor.border}
-        pos={selfUserInfo.position}
-        isSelf={true}
-        initial={selfUserInfo.name[0]}
-        active={selfUserInfo.active}
-        mute={selfUserInfo.mute}
-      />
-      {userInfos.filter(info => info.id !== "self").map((info, index) => {
+      {userInfos.map((info, index) => {
         if (!info) {
           info = defaultUserInfo;
         }
@@ -70,13 +60,11 @@ function AvatarCanvas({
           <AvatarDOM
             key={index + 1}
             multiplier={info.multiplier}
-            onPointerDown={() => {
-              console.debug("not your avatar!");
-            }}
+            onPointerDown={(e: React.MouseEvent<HTMLDivElement>) => info.id === socket.id && _onPointerDown(e)}
             _backgroundColor={info.avatarColor.background}
             _borderColor={info.avatarColor.border}
             pos={info.position}
-            isSelf={false}
+            isSelf={info.id === socket.id}
             initial={info.name[0]}
             active={info.active}
             mute={info.mute}

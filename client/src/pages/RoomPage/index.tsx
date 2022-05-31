@@ -39,7 +39,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const updateSelfUserInfo = (info) => {
     selfUserInfoRef.current = info;
     setSelfUserInfo(info);
-    addUserInfo("self")(info)
+    addUserInfo(socket.id)(info);
   };
 
   const updateVisualizer = (_visualizer) => {
@@ -148,10 +148,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       document.removeEventListener("keydown", onKey);
     };
   }, []);
-
-  useEffect(() => {
-    userInfosRef.current = userInfos
-  }, [userInfos]);
 
   useEffect(() => {
     if (stream) {

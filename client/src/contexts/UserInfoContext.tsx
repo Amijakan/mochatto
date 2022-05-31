@@ -15,7 +15,8 @@ export type UserInfo = {
   mute: boolean;
 };
 
-export const defaultUserInfo = {
+export const defaultUserInfo: UserInfo = {
+  id: "",
   name: "",
   avatarColor: { background: "rgb(0 0 0 / 0%)", border: "rgb(0 0 0 / 0%)" },
   multiplier: 0,

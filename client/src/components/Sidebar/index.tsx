@@ -3,6 +3,7 @@ import "./style.scss"
 import { UserInfoContext } from "../../contexts";
 import { UserInfo } from "../../contexts/UserInfoContext";
 import { Person, ChatBubble } from "@material-ui/icons";
+import AvatarDOM from "@/components/AvatarCanvas/AvatarDOM"
 
 enum Utils {
   USERS = "USERS",
@@ -52,7 +53,22 @@ const UserList = () => {
     <>
       {/*@ts-ignore */}
       {Object.values(userInfos).map((value: UserInfo, index: number) => (
-        <div key={index} className="TBD">{value.name}</div>
+        <AvatarDOM
+          size="small"
+          key={index + 1}
+          multiplier={value.multiplier}
+          onPointerDown={() => {
+            console.debug("not your avatar!");
+          }}
+          _backgroundColor={value.avatarColor.background}
+          _borderColor={value.avatarColor.border}
+          pos={value.position}
+          isSelf={false}
+          initial={value.name[0]}
+          active={value.active}
+          mute={value.mute}
+
+        />
       ))}
     </>
   )

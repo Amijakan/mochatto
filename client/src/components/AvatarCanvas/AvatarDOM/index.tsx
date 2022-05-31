@@ -15,6 +15,7 @@ function AvatarDOM({
   initial,
   active,
   mute,
+  size = "large"
 }: {
   onPointerDown: (PointerEvent) => void;
   pos: [number, number];
@@ -25,6 +26,7 @@ function AvatarDOM({
   initial: string;
   active: boolean;
   mute: boolean;
+  size?: string;
 }): JSX.Element {
   const [isRendered, setIsRendered] = useState(false);
   function calculateSpecificStyles() {
@@ -59,6 +61,7 @@ function AvatarDOM({
   return (
     <div
       className={cx("avatar", "avatar-outer", { "no-show": !isRendered })}
+      data-size={size}
       onPointerDown={onPointerDown}
       style={calculateSpecificStyles()}
     >

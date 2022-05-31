@@ -4,8 +4,6 @@
 
 .avatar-outer {
     touch-action: none;
-    width: 4.5rem;
-    height: 4.5rem;
     border-radius: 100%;
     position: absolute;
     display: table;
@@ -18,7 +16,6 @@
         text-align: center;
         display: table-cell;
         font-family: helvetica;
-        font-size: 2rem;
         cursor: default;
     }
 
@@ -26,8 +23,6 @@
         position: absolute;
         bottom: 0;
         right: 0;
-        width: 1.5rem;
-        height: 1.5rem;
 
         .active-icon {
             background: white;
@@ -35,5 +30,31 @@
             width: 100%;
             height: 100%;
         }
+    }
+}
+
+.avatar-outer[data-size=large] {
+    $base-size: 4.5rem;
+    width: $base-size;
+    height: $base-size;
+    .avatar-initial {
+      font-size: calc($base-size * 4 / 9);
+    }
+    .avatar-active {
+        width: calc($base-size / 3);
+        height: calc($base-size / 3);
+    }
+}
+
+.avatar-outer[data-size=small] {
+    $base-size: 3rem;
+    width: $base-size;
+    height: $base-size;
+    .avatar-initial {
+      font-size: calc($base-size * 4 / 9);
+    }
+    .avatar-active {
+        width: calc($base-size / 3);
+        height: calc($base-size / 3);
     }
 }

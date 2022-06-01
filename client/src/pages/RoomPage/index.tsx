@@ -110,7 +110,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const onStartScreenSharing = (_stream: MediaStream) => {
     const videoPlayer = document.createElement("video");
-    let numVideos = _stream.getVideoTracks().length
+    const numVideos = _stream.getVideoTracks().length
     const screenShareTrack = _stream.getVideoTracks()[numVideos - 1];
     const mixedStream = stream.clone();
 
@@ -196,7 +196,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   useEffect(() => {
     networkRef.current?.replaceStream(stream);
     networkRef.current?.updateAllTracks(stream && stream.getAudioTracks()[0]);
-    let numVideos = stream.getVideoTracks().length
+    const numVideos = stream.getVideoTracks().length
     networkRef.current?.updateAllTracks(stream && stream.getVideoTracks()[numVideos - 1]);
     visualizerRef.current?.setStream(stream);
   }, [stream]);
@@ -220,7 +220,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         .then((stream) => {
           toggleScreenShare();
           onStartScreenSharing(stream);
-          let numVideos = stream.getVideoTracks().length
+          const numVideos = stream.getVideoTracks().length
           stream.getVideoTracks()[numVideos - 1].onended = () => {
             toggleScreenShare();
           };

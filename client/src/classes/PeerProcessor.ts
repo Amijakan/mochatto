@@ -248,7 +248,7 @@ export class PeerProcessor {
         break;
       case "video":
         // if there's already a track assigned to the stream, remove it
-        // let numVideos = this.peerStream.getVideoTracks().length
+        // const numVideos = this.peerStream.getVideoTracks().length
         // if (this.peerStream.getVideoTracks()[numVideos - 1]) {
         //   this.peerStream.removeTrack(this.peerStream.getVideoTracks()[numVideos - 1]);
         // }

@@ -52,14 +52,11 @@ const UserList = () => {
   return (
     <>
       {/*@ts-ignore */}
-      {Object.values(userInfos).map((value: UserInfo, index: number) => (
+      {Object.values(userInfos).map((value: UserInfo) => (
         <AvatarDOM
           size="small"
-          key={index + 1}
-          multiplier={value.multiplier}
-          onPointerDown={() => {
-            console.debug("not your avatar!");
-          }}
+          multiplier={0}
+          onPointerDown={() => { }}
           _backgroundColor={value.avatarColor.background}
           _borderColor={value.avatarColor.border}
           pos={value.position}

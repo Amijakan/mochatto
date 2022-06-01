@@ -18,6 +18,8 @@ type ButtonsBarProps = {
   userInfoRef: any;
 };
 
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+
 const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
   const defaultButtonStyle = {
     p: "1rem",
@@ -101,7 +103,7 @@ const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
             {SettingsButton()}
             {StatusButton()}
             {MuteButton()}
-            {ScreenShareButton()}
+            {!isMobile && ScreenShareButton()}
             {LeaveButton()}
           </Div>
         </Div>

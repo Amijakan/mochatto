@@ -2,7 +2,7 @@ import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import { Socket } from "socket.io-client";
 import { DCLabel, Pack } from "@/classes/Network";
-import { SIOChannel } from "@/contexts/SocketIOContext"
+import { SIOChannel } from "@/contexts/SocketIOContext";
 
 export interface DataPackage {
   position: [number, number];
@@ -50,6 +50,10 @@ export class PeerProcessor {
     // listener for when a peer adds a track
     this.peerConnection.ontrack = (event) => {
       this.updateLocalTrack(event.track);
+    };
+
+    this.peerConnection.onnegotiationneeded = () => {
+      this.sendOffer();
     };
 
     this.peerConnection.ondatachannel = (event) => {
@@ -144,14 +148,12 @@ export class PeerProcessor {
     if (info.isScreenSharing) {
       if (!this.screenShareTrigger) {
         this.screenShareTrigger = true;
-        // If video player doesn't exist, create.
-        this.videoPlayer ??= document.createElement("video");
-        document.getElementById("avatar-video-" + this.peerId)?.appendChild(this.videoPlayer);
       }
     } else {
       if (this.screenShareTrigger) {
         this.screenShareTrigger = false;
         this.videoPlayer?.remove();
+        this.videoPlayer = null as unknown as HTMLVideoElement;
       }
     }
     this.peerUserInfo = info;
@@ -275,7 +277,6 @@ export class PeerProcessor {
           });
         } else {
           this.setVideoSender(this.peerConnection.addTrack(track));
-          this.sendOffer();
         }
         break;
     }

@@ -32,8 +32,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const [showModal, setShowModal] = useState(false);
   const networkRef = useRef(null as unknown as Network);
 
-  const sharedScreenRef = useRef(null)
-
   // when new input is selected update all tracks and send a new offer out
   const onSelect = (_stream) => {
     setStream(_stream);
@@ -112,7 +110,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const onStartScreenSharing = (_stream: MediaStream) => {
     const videoPlayer = document.createElement("video");
-    sharedScreenRef.current = videoPlayer
     let numVideos = _stream.getVideoTracks().length
     const screenShareTrack = _stream.getVideoTracks()[numVideos - 1];
     const mixedStream = stream.clone();
@@ -129,7 +126,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const onEndScreenSharing = () => {
     stream.getVideoTracks().forEach((track) => track.stop());
-    sharedScreenRef.current.srcObject = null
     document.getElementById("avatar-video-" + socket.id)?.firstChild?.remove();
   };
 

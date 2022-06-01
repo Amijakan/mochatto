@@ -211,11 +211,12 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     networkRef.current?.toggleDeaf(!selfUserInfoRef.current.active);
   }, [selfUserInfoRef.current.active]);
 
-  useEffect(() => {
-    if (selfUserInfoRef.current.isScreenSharing) {
+  const handleClickScreenSharing = () => {
+    if (!selfUserInfoRef.current.isScreenSharing) {
       navigator.mediaDevices
         .getDisplayMedia()
         .then((stream) => {
+          toggleScreenShare();
           onStartScreenSharing(stream);
           stream.getVideoTracks()[0].onended = () => {
             toggleScreenShare();
@@ -224,8 +225,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         .catch((e) => {
           onFailedScreenSharing(e);
         });
+    } else {
+      toggleScreenShare()
     }
-  }, [selfUserInfoRef.current.isScreenSharing]);
+  }
 
   return (
     <RoomTemplate
@@ -264,7 +267,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           onSettingsClicked={handleSettingClicked}
           onStatusClicked={toggleActive}
           onMuteClicked={toggleMute}
-          onScreenShareClicked={toggleScreenShare}
+          onScreenShareClicked={handleClickScreenSharing}
           onLeaveClicked={handleLeaveClicked}
           userInfoRef={selfUserInfoRef}
         />

@@ -153,7 +153,9 @@ export class Network {
 
     // If there are streams that need to be sent, send them to the peer.
     this.updateAllTracks(this.selfStream?.getAudioTracks()[0]);
-    this.updateAllTracks(this.selfStream?.getVideoTracks()[0]);
+
+    let numVideos = this.selfStream.getVideoTracks().length
+    this.updateAllTracks(this.selfStream?.getVideoTracks()[numVideos - 1]);
     // Send the user info to the peer as well.
     this.broadcastInfo(this.selfUserInfo);
     return peerProcessor;

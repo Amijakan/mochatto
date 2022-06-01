@@ -148,6 +148,13 @@ export class PeerProcessor {
     if (info.isScreenSharing) {
       if (!this.screenShareTrigger) {
         this.screenShareTrigger = true;
+        this.videoPlayer ??= document.createElement("video");
+        // Append player to div.
+        document.getElementById("avatar-video-" + this.peerId)?.appendChild(this.videoPlayer);
+        // Set the new stream as the video source and play.
+        this.videoPlayer.srcObject = this.peerStream;
+        this.videoPlayer.play();
+        this.videoPlayer.autoplay = true;
       }
     } else {
       if (this.screenShareTrigger) {
@@ -187,7 +194,7 @@ export class PeerProcessor {
   getVolume(selfPosition: [number, number], peerPosition: [number, number]): number {
     const distance = Math.sqrt(
       Math.pow(selfPosition[0] - peerPosition[0], 2) +
-        Math.pow(selfPosition[1] - peerPosition[1], 2)
+      Math.pow(selfPosition[1] - peerPosition[1], 2)
     );
     const max = 600;
     let volume = 0;
@@ -241,9 +248,10 @@ export class PeerProcessor {
         break;
       case "video":
         // if there's already a track assigned to the stream, remove it
-        if (this.peerStream.getVideoTracks()[0]) {
-          this.peerStream.removeTrack(this.peerStream.getVideoTracks()[0]);
-        }
+        // let numVideos = this.peerStream.getVideoTracks().length
+        // if (this.peerStream.getVideoTracks()[numVideos - 1]) {
+        //   this.peerStream.removeTrack(this.peerStream.getVideoTracks()[numVideos - 1]);
+        // }
         // add the track
         this.peerStream.addTrack(track);
 

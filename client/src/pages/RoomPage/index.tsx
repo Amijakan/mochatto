@@ -32,6 +32,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const [showModal, setShowModal] = useState(false);
   const networkRef = useRef(null as unknown as Network);
 
+  const sharedScreenRef = useRef(null)
+
   // when new input is selected update all tracks and send a new offer out
   const onSelect = (_stream) => {
     setStream(_stream);
@@ -110,7 +112,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const onStartScreenSharing = (_stream: MediaStream) => {
     const videoPlayer = document.createElement("video");
-    const screenShareTrack = _stream.getVideoTracks()[0];
+    sharedScreenRef.current = videoPlayer
+    let numVideos = _stream.getVideoTracks().length
+    const screenShareTrack = _stream.getVideoTracks()[numVideos - 1];
     const mixedStream = stream.clone();
 
     // Set video player configurations and append to self avatar
@@ -124,8 +128,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const onEndScreenSharing = () => {
+    stream.getVideoTracks().forEach((track) => track.stop());
+    sharedScreenRef.current.srcObject = null
     document.getElementById("avatar-video-" + socket.id)?.firstChild?.remove();
-    stream.getTracks().forEach((track) => track.kind === "video" && track.stop());
   };
 
   const onFailedScreenSharing = (e) => {
@@ -195,7 +200,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   useEffect(() => {
     networkRef.current?.replaceStream(stream);
     networkRef.current?.updateAllTracks(stream && stream.getAudioTracks()[0]);
-    networkRef.current?.updateAllTracks(stream && stream.getVideoTracks()[0]);
+    let numVideos = stream.getVideoTracks().length
+    networkRef.current?.updateAllTracks(stream && stream.getVideoTracks()[numVideos - 1]);
     visualizerRef.current?.setStream(stream);
   }, [stream]);
 
@@ -218,7 +224,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         .then((stream) => {
           toggleScreenShare();
           onStartScreenSharing(stream);
-          stream.getVideoTracks()[0].onended = () => {
+          let numVideos = stream.getVideoTracks().length
+          stream.getVideoTracks()[numVideos - 1].onended = () => {
             toggleScreenShare();
           };
         })

@@ -250,7 +250,7 @@ export class PeerProcessor {
         // If video player doesn't exist, create.
         this.videoPlayer ??= document.createElement("video");
         // Append player to div.
-        document.getElementById("avatar-video-" + this.peerId)?.appendChild(videoPlayer);
+        document.getElementById("avatar-video-" + this.peerId)?.appendChild(this.videoPlayer);
         // Set the new stream as the video source and play.
         this.videoPlayer.srcObject = this.peerStream;
         this.videoPlayer.play();

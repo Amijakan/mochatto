@@ -38,8 +38,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const updateSelfUserInfo = (info) => {
-    selfUserInfoRef.current = info;
-    setSelfUserInfo(info);
+    const newInfo = { ...selfUserInfoRef.current, ...info }
+    selfUserInfoRef.current = newInfo
+    setSelfUserInfo(newInfo);
   };
 
   const updateVisualizer = (_visualizer) => {
@@ -52,7 +53,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const toggleMute = useCallback(() => {
-    updateSelfUserInfo({ ...selfUserInfoRef.current, mute: !selfUserInfoRef.current.mute });
+    updateSelfUserInfo({ mute: !selfUserInfoRef.current.mute });
   }, [selfUserInfoRef.current.mute]);
 
   const handleLeaveClicked = useCallback(() => {
@@ -65,7 +66,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const toggleActive = useCallback(() => {
     updateSelfUserInfo({
-      ...selfUserInfoRef.current,
       active: !selfUserInfoRef.current.active,
       mute: selfUserInfoRef.current.active,
     });
@@ -77,10 +77,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       onEndScreenSharing();
     }
     updateSelfUserInfo({
-      ...selfUserInfoRef.current,
       isScreenSharing: !selfUserInfoRef.current.isScreenSharing,
     });
-  }, [selfUserInfoRef.current.isScreenSharing, stream]);
+  }, [selfUserInfoRef.current.isScreenSharing, stream])
 
   // announce and set a new user on join
   const onJoin = (name) => {
@@ -105,7 +104,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const onAudioActivity = (gain: number) => {
     const newMultiplier = gainToMultiplier(gain);
-    updateSelfUserInfo({ ...selfUserInfoRef.current, multiplier: newMultiplier });
+    updateSelfUserInfo({ multiplier: newMultiplier });
   };
 
   const onStartScreenSharing = (_stream: MediaStream) => {
@@ -119,7 +118,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     videoPlayer.autoplay = true;
     document.getElementById("avatar-video-" + socket.id)?.appendChild(videoPlayer);
 
-    updateSelfUserInfo({ ...selfUserInfoRef.current, isScreenSharing: true });
+    if (!selfUserInfoRef.current.isScreenSharing) {
+      toggleScreenShare()
+    }
     mixedStream.addTrack(screenShareTrack);
     setStream(mixedStream); // Seems reduntant but necessary to run the hook.
   };
@@ -130,7 +131,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const onFailedScreenSharing = (e) => {
-    updateSelfUserInfo({ ...selfUserInfoRef.current, isScreenSharing: false });
+    if (selfUserInfoRef.current.isScreenSharing) {
+      toggleScreenShare()
+    }
   };
 
   // open all listeners on render
@@ -190,7 +193,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, [userInfos]);
 
   useEffect(() => {
-    updateSelfUserInfo({ ...selfUserInfoRef.current, id: socket.id });
+    updateSelfUserInfo({ id: socket.id });
   }, [socket]);
 
   useEffect(() => {
@@ -213,17 +216,12 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     networkRef.current?.toggleDeaf(!selfUserInfoRef.current.active);
   }, [selfUserInfoRef.current.active]);
 
-  const handleClickScreenSharing = () => {
+  const handleClickScreenSharing = useCallback(() => {
     if (!selfUserInfoRef.current.isScreenSharing) {
       navigator.mediaDevices
         .getDisplayMedia()
         .then((stream) => {
-          toggleScreenShare();
           onStartScreenSharing(stream);
-          const numVideos = stream.getVideoTracks().length
-          stream.getVideoTracks()[numVideos - 1].onended = () => {
-            toggleScreenShare();
-          };
         })
         .catch((e) => {
           onFailedScreenSharing(e);
@@ -231,7 +229,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     } else {
       toggleScreenShare()
     }
-  }
+  }, [selfUserInfoRef.current.isScreenSharing, stream])
 
   return (
     <RoomTemplate

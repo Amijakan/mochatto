@@ -210,7 +210,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       stream.getAudioTracks()[0].enabled = !selfUserInfoRef.current.mute;
     }
     networkRef.current?.updateInfo(selfUserInfoRef.current);
-  }, [selfUserInfoRef.current]);
+  }, [selfUserInfoRef.current.mute, stream]);
 
   useEffect(() => {
     networkRef.current?.setDeaf(!selfUserInfoRef.current.active);

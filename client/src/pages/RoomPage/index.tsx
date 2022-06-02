@@ -213,7 +213,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, [selfUserInfoRef.current]);
 
   useEffect(() => {
-    networkRef.current?.toggleDeaf(!selfUserInfoRef.current.active);
+    networkRef.current?.setDeaf(!selfUserInfoRef.current.active);
   }, [selfUserInfoRef.current.active]);
 
   const handleClickScreenSharing = useCallback(() => {

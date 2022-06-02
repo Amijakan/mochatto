@@ -181,7 +181,7 @@ export class Network {
     return peerProcessor as PeerProcessor;
   }
 
-  toggleDeaf(deaf: boolean): void {
+  setDeaf(deaf: boolean): void {
     this.peerProcessors.forEach((peerProcessor) => {
       peerProcessor.audioPlayer.muted = deaf;
     });

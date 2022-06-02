@@ -38,8 +38,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const updateSelfUserInfo = (info) => {
-    const newInfo = { ...selfUserInfoRef.current, ...info }
-    selfUserInfoRef.current = newInfo
+    const newInfo = { ...selfUserInfoRef.current, ...info };
+    selfUserInfoRef.current = newInfo;
     setSelfUserInfo(newInfo);
   };
 
@@ -79,7 +79,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     updateSelfUserInfo({
       isScreenSharing: !selfUserInfoRef.current.isScreenSharing,
     });
-  }, [selfUserInfoRef.current.isScreenSharing, stream])
+  }, [selfUserInfoRef.current.isScreenSharing, stream]);
 
   // announce and set a new user on join
   const onJoin = (name) => {
@@ -109,7 +109,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const onStartScreenSharing = (_stream: MediaStream) => {
     const videoPlayer = document.createElement("video");
-    const numVideos = _stream.getVideoTracks().length
+    const numVideos = _stream.getVideoTracks().length;
     const screenShareTrack = _stream.getVideoTracks()[numVideos - 1];
     const mixedStream = stream.clone();
 
@@ -119,7 +119,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     document.getElementById("avatar-video-" + socket.id)?.appendChild(videoPlayer);
 
     if (!selfUserInfoRef.current.isScreenSharing) {
-      toggleScreenShare()
+      toggleScreenShare();
     }
     mixedStream.addTrack(screenShareTrack);
     setStream(mixedStream); // Seems reduntant but necessary to run the hook.
@@ -132,7 +132,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const onFailedScreenSharing = (e) => {
     if (selfUserInfoRef.current.isScreenSharing) {
-      toggleScreenShare()
+      toggleScreenShare();
     }
   };
 
@@ -199,7 +199,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   useEffect(() => {
     networkRef.current?.replaceStream(stream);
     networkRef.current?.updateAllTracks(stream && stream.getAudioTracks()[0]);
-    const numVideos = stream.getVideoTracks().length
+    const numVideos = stream.getVideoTracks().length;
     networkRef.current?.updateAllTracks(stream && stream.getVideoTracks()[numVideos - 1]);
     visualizerRef.current?.setStream(stream);
   }, [stream]);
@@ -222,14 +222,18 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         .getDisplayMedia()
         .then((stream) => {
           onStartScreenSharing(stream);
+          // Listener for toggling screen share info when the "Stop sharing" browser overlap button is pressed.
+          stream.getVideoTracks()[stream.getVideoTracks().length - 1].onended = () => {
+            toggleScreenShare();
+          };
         })
         .catch((e) => {
           onFailedScreenSharing(e);
         });
     } else {
-      toggleScreenShare()
+      toggleScreenShare();
     }
-  }, [selfUserInfoRef.current.isScreenSharing, stream])
+  }, [selfUserInfoRef.current.isScreenSharing, stream]);
 
   return (
     <RoomTemplate

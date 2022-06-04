@@ -7,13 +7,13 @@ const Draggable = (
     updatePosition = () => { },
     draggable = true,
   }: {
-    children: React.ReactComponent | React.ReactComponent[]
+    children: React.FC | React.FC[]
     position: { x: number, y: number },
     updatePosition?: (position: { x: number, y: number }) => void,
     draggable: boolean
   }
 ) => {
-  // on mouse down, add listeners for moving and mouse up
+  // Offset for the difference between center of element and where the click actually occurred
   const offsetRef = useRef({ x: 0, y: 0 })
   const positionRef = useRef(position)
 
@@ -40,7 +40,7 @@ const Draggable = (
 
   return (
     <div
-      onPointerDown={draggable && onPointerDown}
+      {...(draggable ? { onPointerDown: onPointerDown } : {})}
       style={{ position: 'absolute', top: position.y, left: position.x }}
     >
       {children}

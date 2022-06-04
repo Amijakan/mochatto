@@ -38,6 +38,20 @@ services:
     command:
       yarn test
 
+  client-test-headed:
+    build:
+      context: ./client
+      dockerfile: ./Dockerfile
+      target: test
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ~/.Xauthority:/root/.Xauthority
+    environment:
+      QT_XQQ_NO_MITSHM: 1
+      DISPLAY: $DISPLAY
+    command:
+      yarn test-headed
+
   ###############################################
   # Prod containers    
   server-prod:

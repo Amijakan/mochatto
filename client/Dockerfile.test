@@ -1,6 +1,5 @@
-# ---- TEST 
-# Reference: https://playwright.dev/docs/docker
 FROM mcr.microsoft.com/playwright:v1.22.0-focal
+# Reference: https://playwright.dev/docs/docker
 
 WORKDIR /app
 COPY ./package.json /app/package.json

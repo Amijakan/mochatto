@@ -34,7 +34,6 @@ services:
     build:
       context: ./client
       dockerfile: ./Dockerfile.test
-      target: test
     command:
       yarn test
 

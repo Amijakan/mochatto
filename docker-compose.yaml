@@ -33,16 +33,14 @@ services:
   client-test:
     build:
       context: ./client
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile.test
       target: test
     command:
       yarn test
 
   client-test-headed:
-    build:
-      context: ./client
-      dockerfile: ./Dockerfile
-      target: test
+    extends:
+      service: client-test
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ~/.Xauthority:/root/.Xauthority

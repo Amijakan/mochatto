@@ -8,11 +8,11 @@ import { Draggable } from "@/components";
 function AvatarCanvas({
   userInfos,
   selfUserInfo,
-  setSelfUserInfo,
+  updateSelfUserInfo,
 }: {
   userInfos: UserInfo[];
   selfUserInfo: UserInfo;
-  setSelfUserInfo: (any) => void;
+  updateSelfUserInfo: (any) => void;
 }): JSX.Element {
   const { socket } = useContext(SocketContext);
   const selfPositionRef = useRef({ x: 100, y: 100 })
@@ -21,7 +21,7 @@ function AvatarCanvas({
 
   const updatePosition = useCallback((position: { x: number, y: number }) => {
     selfPositionRef.current = position
-    setSelfUserInfo({ ...selfUserInfo, position: [position.x, position.y] })
+    updateSelfUserInfo({ position: [position.x, position.y] })
   }, [selfUserInfo])
 
 
@@ -34,7 +34,7 @@ function AvatarCanvas({
     const random = Math.random();
     const background = getColor(random, 1, 1);
     const border = getColor(random, 1.2, 0.6);
-    setSelfUserInfo({ ...selfUserInfo, avatarColor: { background, border } });
+    updateSelfUserInfo({ avatarColor: { background, border } });
   }, []);
 
   return (
@@ -53,12 +53,11 @@ function AvatarCanvas({
       </Draggable>
       {
         userInfos.filter(info => info.id !== socket.id).map((info, index) => {
-          console.log(info.id, info.position)
           if (!info) {
             info = defaultUserInfo;
           }
           return (
-            <Draggable position={{ x: info.position[0], y: info.position[1] }} updatePosition={null} isDraggable={false}>
+            <Draggable position={{ x: info.position[0], y: info.position[1] }} updatePosition={null} isDraggable={false} key={index}>
               <AvatarDOM
                 key={index + 1}
                 multiplier={info.multiplier}

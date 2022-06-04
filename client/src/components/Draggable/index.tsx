@@ -4,7 +4,7 @@ const Draggable = (
   {
     children,
     position,
-    updatePosition = () => { },
+    updatePosition = null,
     draggable = true,
   }: {
     children: React.FC | React.FC[]
@@ -35,7 +35,7 @@ const Draggable = (
     // world coordinate
     const newPosition = { x: event.clientX - offsetRef.current.x, y: event.clientY - offsetRef.current.y };
     positionRef.current = newPosition
-    updatePosition(newPosition)
+    if (updatePosition) updatePosition(newPosition)
   }, []);
 
   return (

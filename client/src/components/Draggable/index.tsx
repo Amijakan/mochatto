@@ -7,9 +7,9 @@ const Draggable = (
     updatePosition = null,
     draggable = true,
   }: {
-    children: React.FC | React.FC[]
+    children: JSX.Element | JSX.Element[]
     position: { x: number, y: number },
-    updatePosition?: (position: { x: number, y: number }) => void | null,
+    updatePosition?: ((position: { x: number, y: number }) => void) | null,
     draggable: boolean
   }
 ) => {

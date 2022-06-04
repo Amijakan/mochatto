@@ -6,8 +6,6 @@ import cx from "classnames";
 import "./style.scss";
 
 function AvatarDOM({
-  onPointerDown,
-  pos,
   isSelf,
   multiplier = 1,
   _backgroundColor,
@@ -16,8 +14,6 @@ function AvatarDOM({
   active,
   mute,
 }: {
-  onPointerDown: (PointerEvent) => void;
-  pos: [number, number];
   isSelf: boolean;
   multiplier?: number;
   _backgroundColor: string;
@@ -31,8 +27,6 @@ function AvatarDOM({
     return {
       boxShadow: "0 0 0 " + multiplier.toString() + "rem " + _borderColor,
       background: _backgroundColor,
-      left: pos[0],
-      top: pos[1],
     };
   }
 
@@ -59,7 +53,6 @@ function AvatarDOM({
   return (
     <div
       className={cx("avatar", "avatar-outer", { "no-show": !isRendered })}
-      onPointerDown={onPointerDown}
       style={calculateSpecificStyles()}
     >
       <div className="avatar-initial">{initial}</div>
@@ -73,8 +66,6 @@ const areEqual = (prev, next) => {
     prev.active === next.active &&
     prev._backgroundColor === next._backgroundColor &&
     prev._borderColor === next._borderColor &&
-    prev.pos[0] === next.pos[0] &&
-    prev.pos[1] === next.pos[1] &&
     prev.initial === next.initial &&
     prev.active === next.active &&
     prev.mute === next.mute &&

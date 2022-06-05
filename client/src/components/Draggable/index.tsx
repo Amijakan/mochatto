@@ -4,12 +4,12 @@ const Draggable = (
   {
     children,
     position,
-    updatePosition = null,
+    onPositionChange = null,
     draggable = true,
   }: {
     children: JSX.Element | JSX.Element[]
     position: { x: number, y: number },
-    updatePosition?: ((position: { x: number, y: number }) => void) | null,
+    onPositionChange?: ((position: { x: number, y: number }) => void) | null,
     draggable: boolean
   }
 ) => {
@@ -35,7 +35,7 @@ const Draggable = (
     // world coordinate
     const newPosition = { x: event.clientX - offsetRef.current.x, y: event.clientY - offsetRef.current.y };
     positionRef.current = newPosition
-    if (updatePosition) updatePosition(newPosition)
+    if (onPositionChange) onPositionChange(newPosition)
   }, []);
 
   return (

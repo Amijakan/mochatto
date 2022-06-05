@@ -37,7 +37,7 @@ function AvatarCanvas({
 
   return (
     <>
-      <Draggable position={selfPositionRef.current} updatePosition={updatePosition} draggable={true}>
+      <Draggable position={selfPositionRef.current} onPositionChange={updatePosition} draggable={true}>
         <AvatarDOM
           key={0}
           multiplier={selfUserInfo.multiplier}
@@ -55,7 +55,7 @@ function AvatarCanvas({
             info = defaultUserInfo;
           }
           return (
-            <Draggable position={{ x: info.position[0], y: info.position[1] }} updatePosition={null} draggable={false} key={index}>
+            <Draggable position={{ x: info.position[0], y: info.position[1] }} onPositionChange={null} draggable={false} key={index}>
               <AvatarDOM
                 key={index + 1}
                 multiplier={info.multiplier}

@@ -7,9 +7,9 @@
     width: 4.5rem;
     height: 4.5rem;
     border-radius: 100%;
-    position: absolute;
     display: table;
     transition: box-shadow 0.2s;
+    position: relative;
 
     .avatar-initial {
         user-select: none;
@@ -36,4 +36,8 @@
             height: 100%;
         }
     }
+}
+
+.avatar[data-self=self] {
+  z-index: 1
 }

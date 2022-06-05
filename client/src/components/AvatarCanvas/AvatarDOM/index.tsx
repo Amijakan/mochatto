@@ -32,12 +32,6 @@ function AvatarDOM({
 
   useEffect(() => {
     setIsRendered(true);
-    const avatardom = document.querySelector(".avatar");
-    if (avatardom) {
-      if (isSelf) {
-        (avatardom as HTMLElement).style.zIndex = "1";
-      }
-    }
   }, []);
 
   function renderStatusIcon() {
@@ -53,6 +47,7 @@ function AvatarDOM({
   return (
     <div
       className={cx("avatar", "avatar-outer", { "no-show": !isRendered })}
+      data-self={isSelf && "self"}
       style={calculateSpecificStyles()}
     >
       <div className="avatar-initial">{initial}</div>

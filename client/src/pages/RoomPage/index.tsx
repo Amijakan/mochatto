@@ -104,7 +104,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const onAudioActivity = (gain: number) => {
     const newMultiplier = gainToMultiplier(gain);
-    updateSelfUserInfo({ multiplier: newMultiplier });
+    updateSelfUserInfo({ multiplier: selfUserInfoRef.current.mute ? 0 : newMultiplier });
   };
 
   const onStartScreenSharing = (_stream: MediaStream) => {

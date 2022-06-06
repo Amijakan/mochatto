@@ -1,5 +1,5 @@
 import React from 'react'
 
-const ChatHistory = () => (<div>Chat History</div>)
+const ChatHistory = () => (<div>Coming soon...</div>)
 
 export default React.memo(ChatHistory)

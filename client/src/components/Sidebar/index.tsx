@@ -1,9 +1,11 @@
 import React, { useState, useContext } from 'react'
-import "./style.scss"
-import { UserInfoContext } from "../../contexts";
-import { UserInfo } from "../../contexts/UserInfoContext";
 import { Person, ChatBubble } from "@material-ui/icons";
+
+import { UserInfoContext } from "@/contexts";
+import { UserInfo } from "@/contexts/UserInfoContext";
 import AvatarDOM from "@/components/AvatarCanvas/AvatarDOM"
+
+import "./style.scss"
 
 enum Utils {
   USERS = "USERS",

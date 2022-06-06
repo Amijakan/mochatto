@@ -44,14 +44,20 @@ function AvatarCanvas({
           if (!info) {
             info = defaultUserInfo;
           }
+          const isSelf = info.id === socket.id
           return (
-            <Draggable position={selfPositionRef.current} onPositionChange={updatePosition} draggable={info.id === socket.id}>
+            <Draggable position={
+              isSelf ?
+                selfPositionRef.current :
+                { x: info.position[0], y: info.position[1] }
+            }
+              onPositionChange={updatePosition} draggable={isSelf}>
               <AvatarDOM
                 key={index + 1}
                 multiplier={info.multiplier}
                 _backgroundColor={info.avatarColor.background}
                 _borderColor={info.avatarColor.border}
-                isSelf={info.id === socket.id}
+                isSelf={isSelf}
                 initial={info.name[0]}
                 active={info.active}
                 mute={info.mute}

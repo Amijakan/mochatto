@@ -53,23 +53,22 @@ const UserList = () => {
     <>
       {/*@ts-ignore */}
       {Object.values(userInfos).map((value: UserInfo, index: number) => (
-        <AvatarDOM
-          size="small"
-          key={index + 1}
-          multiplier={value.multiplier}
-          onPointerDown={() => {
-            console.debug("not your avatar!");
-          }}
-          _backgroundColor={value.avatarColor.background}
-          _borderColor={value.avatarColor.border}
-          pos={value.position}
-          isSelf={false}
-          initial={value.name[0]}
-          active={value.active}
-          mute={value.mute}
+        <div className="sidebar--userlist-item" key={index}>
+          <AvatarDOM
+            size="small"
+            multiplier={0}
+            _backgroundColor={value.avatarColor.background}
+            _borderColor={value.avatarColor.border}
+            isSelf={false}
+            initial={value.name[0]}
+            active={value.active}
+            mute={value.mute}
 
-        />
-      ))}
+          />
+          <span>{value.name}</span>
+        </div>
+      ))
+      }
     </>
   )
 }

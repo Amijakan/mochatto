@@ -2,8 +2,8 @@ $transition-time: 0.3s;
 $primary: #FC8030;
 $background: #000000BA;
 $white: #FCFCFC;
-$default: 8px;
-$buttons-margin: 4px;
+$default: 0.5rem;
+$buttons-margin: 0.25rem;
 
 
 button {
@@ -51,6 +51,17 @@ button[data-active=inactive] {
 
   &--body {
     padding: $default;
+  }
+
+  &--userlist-item {
+    display: flex;
+    align-items: center;
+    // I'm just putting number that looks good
+    margin: calc($default / 2);
+
+    span {
+      margin-left: $default;
+    }
   }
 
 }

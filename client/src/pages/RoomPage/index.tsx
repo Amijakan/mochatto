@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useContext, useCallback } from "react";
 import { SocketContext, DeviceContext, UserInfoContext } from "@/contexts";
+import { SIOChannel } from "@/contexts/SocketIOContext";
 import { useHistory } from "react-router-dom";
 import { Div, Notification, Icon, Text } from "atomize";
 import { AvatarCanvas, ButtonsBar, DeviceSelector } from "@/components";
@@ -140,15 +141,15 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   useEffect(() => {
     updateNetwork(new Network(socket, name, addUserInfo, selfUserInfoRef.current, stream));
 
-    socket.on("JOIN", ({ name }) => {
+    socket.on(SIOChannel.JOIN, ({ name }) => {
       onJoin(name);
     });
 
-    socket.on("LEAVE", ({ id }) => {
+    socket.on(SIOChannel.LEAVE, ({ id }) => {
       onLeave(id);
     });
 
-    socket.on("DISCONNECT", ({ id }) => {
+    socket.on(SIOChannel.DISCONNECT, ({ id }) => {
       if (globalUserInfos[id]) {
         onLeave(id);
       }
@@ -157,7 +158,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     updateVisualizer(new AudioVisualizer(onAudioActivity));
 
     window.onbeforeunload = () => {
-      socket.emit("LEAVE");
+      socket.emit(SIOChannel.LEAVE);
       networkRef.current.close();
       stream.getTracks().forEach((track) => track.stop());
     };

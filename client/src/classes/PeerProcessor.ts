@@ -261,6 +261,7 @@ export class PeerProcessor {
         // Set the new stream as the video source and play.
         this.videoPlayer.srcObject = this.peerStream;
         this.videoPlayer.play();
+        this.videoPlayer.muted = true;
         this.videoPlayer.autoplay = true;
         break;
     }

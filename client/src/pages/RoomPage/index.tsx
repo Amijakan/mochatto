@@ -176,6 +176,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     }
   }, [selfUserInfoRef.current.active]);
 
+  useEffect(() => {
+    userInfosRef.current = userInfos;
+  }, [userInfos]);
+
   return (
     <RoomTemplate
       showModal={showModal}

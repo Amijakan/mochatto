@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect, useContext, useCallback } from "react";
-import { SocketContext, DeviceContext, UserInfoContext } from "@/contexts";
-import { SIOChannel } from "@/contexts/SocketIOContext";
 import { useHistory } from "react-router-dom";
 import { Div, Notification, Icon, Text } from "atomize";
+import _ from "lodash"
+import { SocketContext, DeviceContext, UserInfoContext } from "@/contexts";
+import { SIOChannel } from "@/contexts/SocketIOContext";
+import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
 import { AvatarCanvas, ButtonsBar, DeviceSelector } from "@/components";
 import { Network } from "@/classes/Network";
-import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import { RoomTemplate } from "@/templates";
 
@@ -15,6 +16,7 @@ const notificationColors = {
   join: { color: "success", icon: "Success" },
   leave: { color: "danger", icon: "Info" },
 };
+
 
 let globalUserInfos = {};
 
@@ -110,8 +112,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const onStartScreenSharing = (_stream: MediaStream) => {
     const videoPlayer = document.createElement("video");
-    const numVideos = _stream.getVideoTracks().length;
-    const screenShareTrack = _stream.getVideoTracks()[numVideos - 1];
+    const screenShareTrack = _.last(_stream.getVideoTracks())
     const mixedStream = stream.clone();
 
     // Set video player configurations and append to self avatar
@@ -127,7 +128,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const onEndScreenSharing = () => {
-    stream.getVideoTracks().forEach((track) => track.stop());
+    stream.getVideoTracks().forEach((track: MediaStreamTrack) => track.stop());
     document.getElementById("avatar-video-" + socket.id)?.firstChild?.remove();
   };
 
@@ -200,8 +201,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   useEffect(() => {
     networkRef.current?.replaceStream(stream);
     networkRef.current?.updateAllTracks(stream && stream.getAudioTracks()[0]);
-    const numVideos = stream.getVideoTracks().length;
-    networkRef.current?.updateAllTracks(stream && stream.getVideoTracks()[numVideos - 1]);
+    networkRef.current?.updateAllTracks(stream && _.last(stream.getVideoTracks()));
     visualizerRef.current?.setStream(stream);
   }, [stream]);
 

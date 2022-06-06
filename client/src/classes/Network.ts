@@ -1,3 +1,4 @@
+import _ from "lodash"
 import { PeerProcessor } from "@/classes/PeerProcessor";
 import { AudioVisualizer } from "@/classes/AudioVisualizer";
 import { UserInfo } from "@/contexts/UserInfoContext";
@@ -154,8 +155,7 @@ export class Network {
     // If there are streams that need to be sent, send them to the peer.
     this.updateAllTracks(this.selfStream?.getAudioTracks()[0]);
 
-    const numVideos = this.selfStream.getVideoTracks().length
-    this.updateAllTracks(this.selfStream?.getVideoTracks()[numVideos - 1]);
+    this.updateAllTracks(_.last(this.selfStream.getVideoTracks()) as MediaStreamTrack);
     // Send the user info to the peer as well.
     this.broadcastInfo(this.selfUserInfo);
     return peerProcessor;

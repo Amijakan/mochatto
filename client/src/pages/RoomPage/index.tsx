@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useContext, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { Div, Notification, Icon, Text } from "atomize";
-import _ from "lodash"
+import _ from "lodash";
 import { SocketContext, DeviceContext, UserInfoContext } from "@/contexts";
 import { SIOChannel } from "@/contexts/SocketIOContext";
 import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
@@ -16,7 +16,6 @@ const notificationColors = {
   join: { color: "success", icon: "Success" },
   leave: { color: "danger", icon: "Info" },
 };
-
 
 let globalUserInfos = {};
 
@@ -112,12 +111,13 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const onStartScreenSharing = (_stream: MediaStream) => {
     const videoPlayer = document.createElement("video");
-    const screenShareTrack = _.last(_stream.getVideoTracks())
+    const screenShareTrack = _.last(_stream.getVideoTracks());
     const mixedStream = stream.clone();
 
     // Set video player configurations and append to self avatar
     videoPlayer.srcObject = _stream;
     videoPlayer.autoplay = true;
+    videoPlayer.muted = true;
     document.getElementById("avatar-video-" + socket.id)?.appendChild(videoPlayer);
 
     if (!selfUserInfoRef.current.isScreenSharing) {
@@ -208,7 +208,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   // Update remote user info  when self info has been changed.
   useEffect(() => {
     if (stream.getAudioTracks().length) {
-      stream.getAudioTracks().forEach((audio: MediaStreamTrack) => audio.enabled = !selfUserInfoRef.current.mute);
+      stream
+        .getAudioTracks()
+        .forEach((audio: MediaStreamTrack) => (audio.enabled = !selfUserInfoRef.current.mute));
     }
     networkRef.current?.updateInfo(selfUserInfoRef.current);
   }, [selfUserInfoRef.current, stream]);

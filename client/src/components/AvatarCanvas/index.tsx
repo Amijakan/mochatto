@@ -1,42 +1,29 @@
-import React, { useEffect, useContext } from "react";
+import React, { useRef, useCallback, useEffect, useContext } from "react";
 import { SocketContext } from "@/contexts";
 import AvatarDOM from "./AvatarDOM";
 import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
+import { Draggable } from "@/components";
 
 // for dragging and rendering avatars
 function AvatarCanvas({
   userInfos,
   selfUserInfo,
-  setSelfUserInfo,
+  updateSelfUserInfo,
 }: {
   userInfos: UserInfo[];
   selfUserInfo: UserInfo;
-  setSelfUserInfo: (any) => void;
+  updateSelfUserInfo: (any) => void;
 }): JSX.Element {
-  let offset;
   const { socket } = useContext(SocketContext);
+  const selfPositionRef = useRef({ x: 100, y: 100 })
 
   // on mouse down, add listeners for moving and mouse up
-  const _onPointerDown = (event) => {
-    offset = [event.clientX - selfUserInfo.position[0], event.clientY - selfUserInfo.position[1]];
-    document.addEventListener("pointermove", _onPointerMove, true);
-    document.addEventListener("pointerup", _onPointerUp, true);
-    event.preventDefault();
-  };
 
-  // remove listeners on mouse up
-  const _onPointerUp = () => {
-    document.removeEventListener("pointermove", _onPointerMove, true);
-    document.removeEventListener("pointerup", _onPointerUp, true);
-  };
+  const updatePosition = useCallback((position: { x: number, y: number }) => {
+    selfPositionRef.current = position
+    updateSelfUserInfo({ position: [position.x, position.y] })
+  }, [selfUserInfo])
 
-  // update mouse position on move
-  const _onPointerMove = (event) => {
-    // world coordinate
-    const mousePos = [event.clientX, event.clientY];
-    const position = [mousePos[0] - offset[0], mousePos[1] - offset[1]];
-    setSelfUserInfo({ ...selfUserInfo, position });
-  };
 
   // returns a randomly generated pastel color
   const getColor = (random: number, lighteness: number, transparency: number) => {
@@ -47,30 +34,32 @@ function AvatarCanvas({
     const random = Math.random();
     const background = getColor(random, 1, 1);
     const border = getColor(random, 1.2, 0.6);
-    setSelfUserInfo({ ...selfUserInfo, avatarColor: { background, border } });
+    updateSelfUserInfo({ avatarColor: { background, border } });
   }, []);
 
   return (
     <>
-      {userInfos.map((info, index) => {
-        if (!info) {
-          info = defaultUserInfo;
-        }
-        return (
-          <AvatarDOM
-            key={index + 1}
-            multiplier={info.multiplier}
-            onPointerDown={(e: React.MouseEvent<HTMLDivElement>) => info.id === socket.id && _onPointerDown(e)}
-            _backgroundColor={info.avatarColor.background}
-            _borderColor={info.avatarColor.border}
-            pos={info.position}
-            isSelf={info.id === socket.id}
-            initial={info.name[0]}
-            active={info.active}
-            mute={info.mute}
-          />
-        );
-      })}
+      {
+        userInfos.map((info, index) => {
+          if (!info) {
+            info = defaultUserInfo;
+          }
+          return (
+            <Draggable position={selfPositionRef.current} onPositionChange={updatePosition} draggable={info.id === socket.id}>
+              <AvatarDOM
+                key={index + 1}
+                multiplier={info.multiplier}
+                _backgroundColor={info.avatarColor.background}
+                _borderColor={info.avatarColor.border}
+                isSelf={info.id === socket.id}
+                initial={info.name[0]}
+                active={info.active}
+                mute={info.mute}
+              />
+            </Draggable>
+          );
+        })
+      }
     </>
   );
 }

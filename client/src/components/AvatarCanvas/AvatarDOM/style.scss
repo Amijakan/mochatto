@@ -5,9 +5,9 @@
 .avatar-outer {
     touch-action: none;
     border-radius: 100%;
-    position: absolute;
     display: table;
     transition: box-shadow 0.2s;
+    position: relative;
 
     .avatar-initial {
         user-select: none;
@@ -57,4 +57,7 @@
         width: calc($base-size / 3);
         height: calc($base-size / 3);
     }
+}
+.avatar[data-self=self] {
+  z-index: 1
 }

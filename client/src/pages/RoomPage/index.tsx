@@ -37,9 +37,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const updateSelfUserInfo = (info) => {
-    selfUserInfoRef.current = info;
-    setSelfUserInfo(info);
-    addUserInfo(socket.id)(info);
+    const newInfo = { ...selfUserInfoRef.current, ...info }
+    selfUserInfoRef.current = newInfo;
+    setSelfUserInfo(newInfo);
+    addUserInfo(socket.id)(newInfo);
   };
 
   const updateVisualizer = (_visualizer) => {
@@ -52,7 +53,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const toggleMute = useCallback(() => {
-    updateSelfUserInfo({ ...selfUserInfoRef.current, mute: !selfUserInfoRef.current.mute });
+    updateSelfUserInfo({ mute: !selfUserInfoRef.current.mute });
   }, [selfUserInfoRef.current.mute]);
 
   const handleLeaveClicked = useCallback(() => {
@@ -65,7 +66,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const toggleActive = useCallback(() => {
     updateSelfUserInfo({
-      ...selfUserInfoRef.current,
       active: !selfUserInfoRef.current.active,
       mute: selfUserInfoRef.current.active,
     });
@@ -94,7 +94,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const onAudioActivity = (gain: number) => {
     const newMultiplier = gainToMultiplier(gain);
-    updateSelfUserInfo({ ...selfUserInfoRef.current, multiplier: newMultiplier });
+    updateSelfUserInfo({ multiplier: newMultiplier });
   };
 
   // open all listeners on render
@@ -206,7 +206,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         </Notification>
         <AvatarCanvas
           selfUserInfo={selfUserInfoRef.current}
-          setSelfUserInfo={updateSelfUserInfo}
+          updateSelfUserInfo={updateSelfUserInfo}
           userInfos={Object.values(userInfos)}
         />
         <ButtonsBar

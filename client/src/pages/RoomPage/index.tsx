@@ -206,8 +206,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // Update remote user info  when self info has been changed.
   useEffect(() => {
-    if (stream && stream.getAudioTracks().length) {
-      stream.getAudioTracks()[0].enabled = !selfUserInfoRef.current.mute;
+    if (stream.getAudioTracks().length) {
+      stream.getAudioTracks().forEach((audio: MediaStreamTrack) => audio.enabled = !selfUserInfoRef.current.mute);
     }
     networkRef.current?.updateInfo(selfUserInfoRef.current);
   }, [selfUserInfoRef.current, stream]);

@@ -7,14 +7,13 @@ import AvatarDOM from "@/components/AvatarCanvas/AvatarDOM"
 
 import "./style.scss"
 
-enum Utils {
+enum SIDEBAR_ITEM {
   USERS = "USERS",
   CHAT = "CHAT",
 }
 
-const UtilButton = ({ value, current, setValue, content }) => {
+const SidebarButton = ({ value, current, setValue, content }) => {
   const selected = current === value;
-
   return (
     <button
       onClick={() => {
@@ -28,21 +27,20 @@ const UtilButton = ({ value, current, setValue, content }) => {
   )
 }
 
-
-const UtilButtons = ({ currentUtil, setCurrentUtil }) => {
+const SidebarHead = ({ currentItem, setCurrentItem }) => {
   return (
-    <div className="sidebar--buttons">
-      <UtilButton value={Utils.USERS} current={currentUtil} setValue={setCurrentUtil} content={<Person />} />
-      <UtilButton value={Utils.CHAT} current={currentUtil} setValue={setCurrentUtil} content={<ChatBubble />} />
+    <div className="sidebar--head">
+      <SidebarButton value={SIDEBAR_ITEM.USERS} current={currentItem} setValue={setCurrentItem} content={<Person />} />
+      <SidebarButton value={SIDEBAR_ITEM.CHAT} current={currentItem} setValue={setCurrentItem} content={<ChatBubble />} />
     </div>
   )
 }
 
-const UtilBody = ({ currentUtil }) => {
+const SidebarBody = ({ currentItem }) => {
   return (
     <div className="sidebar--body">
-      {currentUtil === Utils.USERS && <UserList />}
-      {currentUtil === Utils.CHAT && <ChatHistory />}
+      {currentItem === SIDEBAR_ITEM.USERS && <UserList />}
+      {currentItem === SIDEBAR_ITEM.CHAT && <ChatHistory />}
     </div>
   )
 }
@@ -65,7 +63,6 @@ const UserList = () => {
             initial={value.name[0]}
             active={value.active}
             mute={value.mute}
-
           />
           <span>{value.name}</span>
         </div>
@@ -79,17 +76,17 @@ const ChatHistory = () => (<div>Chat History</div>)
 
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [currentUtil, setCurrentUtil] = useState<Utils | null>(null)
+  const [currentItem, setCurrentItem] = useState<SIDEBAR_ITEM | null>(null)
 
   return (
     <div
       className="sidebar"
       onClick={() => setIsOpen(!isOpen)}
-      data-open={currentUtil ? "open" : "close"}
+      data-open={currentItem ? "open" : "close"}
       data-duration="1s"
     >
-      <UtilButtons currentUtil={currentUtil} setCurrentUtil={setCurrentUtil} />
-      {currentUtil ? <UtilBody currentUtil={currentUtil} /> : <></>}
+      <SidebarHead currentItem={currentItem} setCurrentItem={setCurrentItem} />
+      {currentItem ? <SidebarBody currentItem={currentItem} /> : <></>}
     </div>
   )
 

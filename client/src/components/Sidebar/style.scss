@@ -43,7 +43,7 @@ button[data-active=inactive] {
   backdrop-filter: blur( 4px );
   -webkit-backdrop-filter: blur( 4px );
 
-  &--buttons {
+  &--head {
     display: flex;
     justify-content: flex-end;
     margin: $buttons-margin;

@@ -46,23 +46,25 @@ function AvatarCanvas({
           }
           const isSelf = info.id === socket.id
           return (
-            <Draggable position={
-              isSelf ?
-                selfPositionRef.current :
-                { x: info.position[0], y: info.position[1] }
-            }
-              onPositionChange={updatePosition} draggable={isSelf}>
-              <AvatarDOM
-                key={index + 1}
-                multiplier={info.multiplier}
-                _backgroundColor={info.avatarColor.background}
-                _borderColor={info.avatarColor.border}
-                isSelf={isSelf}
-                initial={info.name[0]}
-                active={info.active}
-                mute={info.mute}
-              />
-            </Draggable>
+            <React.FC key={index}>
+              <Draggable position={
+                isSelf ?
+                  selfPositionRef.current :
+                  { x: info.position[0], y: info.position[1] }
+              }
+                onPositionChange={updatePosition} draggable={isSelf}>
+                <AvatarDOM
+                  key={index + 1}
+                  multiplier={info.multiplier}
+                  _backgroundColor={info.avatarColor.background}
+                  _borderColor={info.avatarColor.border}
+                  isSelf={isSelf}
+                  initial={info.name[0]}
+                  active={info.active}
+                  mute={info.mute}
+                />
+              </Draggable>
+            </React.FC>
           );
         })
       }

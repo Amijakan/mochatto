@@ -1,8 +1,9 @@
+import React from 'react'
 import { SIDEBAR_ITEM } from '../'
 import UserList from '../UserList'
 import ChatHistory from '../ChatHistory'
 
-const SidebarBody = ({ currentItem }) => {
+const SidebarBody = ({ currentItem }: { currentItem: SIDEBAR_ITEM }) => {
   return (
     <div className="sidebar--body">
       {currentItem === SIDEBAR_ITEM.USERS && <UserList />}
@@ -10,6 +11,5 @@ const SidebarBody = ({ currentItem }) => {
     </div>
   )
 }
-
 
 export default SidebarBody

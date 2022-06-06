@@ -1,6 +1,7 @@
 import React from 'react'
+import { SIDEBAR_ITEM } from '../../'
 
-const SidebarButton = ({ value, current, setValue, content }) => {
+const SidebarButton = ({ value, current, setValue, content }: { value: SIDEBAR_ITEM, current: SIDEBAR_ITEM, setValue: (arg0: SIDEBAR_ITEM) => void, content: any }) => {
   const selected = current === value;
   return (
     <button

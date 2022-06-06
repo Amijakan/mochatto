@@ -15,7 +15,6 @@ const notificationColors = {
   leave: { color: "danger", icon: "Info" },
 };
 
-let globalUserInfos = {};
 
 function RoomPage({ name }: { name: string }): JSX.Element {
   const [announcement, setAnnouncement] = useState("");
@@ -28,6 +27,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const [selfUserInfo, setSelfUserInfo] = useState<UserInfo>({ ...defaultUserInfo, name });
   const selfUserInfoRef = useRef(selfUserInfo);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
+  const userInfosRef = useRef(userInfos)
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
   const networkRef = useRef(null as unknown as Network);
@@ -40,6 +40,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const updateSelfUserInfo = (info) => {
     selfUserInfoRef.current = info;
     setSelfUserInfo(info);
+    addUserInfo(socket.id)(info);
   };
 
   const updateVisualizer = (_visualizer) => {
@@ -87,7 +88,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     // Remove the avatar.
     removeUserInfo(id);
     // Set announcement.
-    setAnnouncement(globalUserInfos[id].name + " has left.");
+    setAnnouncement(userInfosRef.current[id].name + " has left.");
     setNotificationTheme("leave");
     setShowNotification(true);
   };
@@ -110,7 +111,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     });
 
     socket.on("DISCONNECT", ({ id }) => {
-      if (globalUserInfos[id]) {
+      if (userInfosRef.current[id]) {
         onLeave(id);
       }
     });
@@ -150,10 +151,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, []);
 
   useEffect(() => {
-    globalUserInfos = userInfos;
-  }, [userInfos]);
-
-  useEffect(() => {
     if (stream) {
       if (networkRef.current) {
         networkRef.current.updateAllTracks(stream.getAudioTracks()[0]);
@@ -179,6 +176,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       networkRef.current.toggleDeaf(!selfUserInfoRef.current.active);
     }
   }, [selfUserInfoRef.current.active]);
+
+  useEffect(() => {
+    userInfosRef.current = userInfos;
+  }, [userInfos]);
 
   return (
     <RoomTemplate

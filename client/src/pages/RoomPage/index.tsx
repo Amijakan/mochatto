@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext, useCallback } from "rea
 import { SocketContext, DeviceContext, UserInfoContext } from "@/contexts";
 import { useHistory } from "react-router-dom";
 import { Div, Notification, Icon, Text } from "atomize";
-import { AvatarCanvas, ButtonsBar, DeviceSelector } from "@/components";
+import { AvatarCanvas, ButtonsBar, DeviceSelector, Sidebar } from "@/components";
 import { Network } from "@/classes/Network";
 import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
@@ -15,8 +15,6 @@ const notificationColors = {
   leave: { color: "danger", icon: "Info" },
 };
 
-let globalUserInfos = {};
-
 function RoomPage({ name }: { name: string }): JSX.Element {
   const [announcement, setAnnouncement] = useState("");
   const [showNotification, setShowNotification] = useState(false);
@@ -28,6 +26,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const [selfUserInfo, setSelfUserInfo] = useState<UserInfo>({ ...defaultUserInfo, name });
   const selfUserInfoRef = useRef(selfUserInfo);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
+  const userInfosRef = useRef(userInfos)
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
   const networkRef = useRef(null as unknown as Network);
@@ -38,8 +37,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const updateSelfUserInfo = (info) => {
-    selfUserInfoRef.current = info;
-    setSelfUserInfo(info);
+    const newInfo = { ...selfUserInfoRef.current, ...info }
+    selfUserInfoRef.current = newInfo;
+    setSelfUserInfo(newInfo);
+    addUserInfo(socket.id)(newInfo);
   };
 
   const updateVisualizer = (_visualizer) => {
@@ -52,7 +53,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const toggleMute = useCallback(() => {
-    updateSelfUserInfo({ ...selfUserInfoRef.current, mute: !selfUserInfoRef.current.mute });
+    updateSelfUserInfo({ mute: !selfUserInfoRef.current.mute });
   }, [selfUserInfoRef.current.mute]);
 
   const handleLeaveClicked = useCallback(() => {
@@ -65,7 +66,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const toggleActive = useCallback(() => {
     updateSelfUserInfo({
-      ...selfUserInfoRef.current,
       active: !selfUserInfoRef.current.active,
       mute: selfUserInfoRef.current.active,
     });
@@ -87,14 +87,14 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     // Remove the avatar.
     removeUserInfo(id);
     // Set announcement.
-    setAnnouncement(globalUserInfos[id].name + " has left.");
+    setAnnouncement(userInfosRef.current[id].name + " has left.");
     setNotificationTheme("leave");
     setShowNotification(true);
   };
 
   const onAudioActivity = (gain: number) => {
     const newMultiplier = gainToMultiplier(gain);
-    updateSelfUserInfo({ ...selfUserInfoRef.current, multiplier: newMultiplier });
+    updateSelfUserInfo({ multiplier: newMultiplier });
   };
 
   // open all listeners on render
@@ -110,7 +110,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     });
 
     socket.on("DISCONNECT", ({ id }) => {
-      if (globalUserInfos[id]) {
+      if (userInfosRef.current[id]) {
         onLeave(id);
       }
     });
@@ -150,10 +150,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, []);
 
   useEffect(() => {
-    globalUserInfos = userInfos;
-  }, [userInfos]);
-
-  useEffect(() => {
     if (stream) {
       if (networkRef.current) {
         networkRef.current.updateAllTracks(stream.getAudioTracks()[0]);
@@ -179,6 +175,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       networkRef.current.toggleDeaf(!selfUserInfoRef.current.active);
     }
   }, [selfUserInfoRef.current.active]);
+
+  useEffect(() => {
+    userInfosRef.current = userInfos;
+  }, [userInfos]);
 
   return (
     <RoomTemplate
@@ -210,7 +210,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         </Notification>
         <AvatarCanvas
           selfUserInfo={selfUserInfoRef.current}
-          setSelfUserInfo={updateSelfUserInfo}
+          updateSelfUserInfo={updateSelfUserInfo}
           userInfos={Object.values(userInfos)}
         />
         <ButtonsBar
@@ -220,6 +220,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           onLeaveClicked={handleLeaveClicked}
           userInfoRef={selfUserInfoRef}
         />
+        <Sidebar />
       </>
     </RoomTemplate>
   );

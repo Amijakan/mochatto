@@ -151,6 +151,7 @@ export class PeerProcessor {
         this.videoPlayer ??= document.createElement("video");
         // Append player to div.
         document.getElementById("avatar-video-" + this.peerId)?.appendChild(this.videoPlayer);
+        this.videoPlayer.muted = true;
         // Set the new stream as the video source and play.
         this.videoPlayer.srcObject = this.peerStream;
         this.videoPlayer.play();
@@ -259,9 +260,9 @@ export class PeerProcessor {
         // Append player to div.
         document.getElementById("avatar-video-" + this.peerId)?.appendChild(this.videoPlayer);
         // Set the new stream as the video source and play.
+        this.videoPlayer.muted = true;
         this.videoPlayer.srcObject = this.peerStream;
         this.videoPlayer.play();
-        this.videoPlayer.muted = true;
         this.videoPlayer.autoplay = true;
         break;
     }

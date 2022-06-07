@@ -12,7 +12,6 @@
       "es2017"
     ],
     "allowJs": true,
-    "ban-ts-comment": false,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,

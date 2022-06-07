@@ -1,6 +1,7 @@
-import { SIDEBAR_ITEM } from '../'
+import React from 'react'
 import { Person, ChatBubble } from "@material-ui/icons";
 import SidebarButton from './SidebarButton'
+import { SIDEBAR_ITEM } from '../'
 
 const SidebarHead = ({ currentItem, setCurrentItem }: { currentItem: SIDEBAR_ITEM | null, setCurrentItem: (arg0: SIDEBAR_ITEM | null) => void }) => {
   return (
@@ -11,4 +12,4 @@ const SidebarHead = ({ currentItem, setCurrentItem }: { currentItem: SIDEBAR_ITE
   )
 }
 
-export default SidebarHead
+export default React.memo(SidebarHead)

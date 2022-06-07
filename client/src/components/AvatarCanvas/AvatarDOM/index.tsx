@@ -15,6 +15,7 @@ function AvatarDOM({
   initial,
   active,
   mute,
+  id,
 }: {
   onPointerDown: (PointerEvent) => void;
   pos: [number, number];
@@ -25,6 +26,7 @@ function AvatarDOM({
   initial: string;
   active: boolean;
   mute: boolean;
+  id: string;
 }): JSX.Element {
   const [isRendered, setIsRendered] = useState(false);
   function calculateSpecificStyles() {
@@ -58,12 +60,14 @@ function AvatarDOM({
 
   return (
     <div
+      id={"avatar-" + id}
       className={cx("avatar", "avatar-outer", { "no-show": !isRendered })}
       onPointerDown={onPointerDown}
       style={calculateSpecificStyles()}
     >
       <div className="avatar-initial">{initial}</div>
       <div className="avatar-active">{renderStatusIcon()}</div>
+      <div className="video-container" id={"avatar-video-" + id}></div>
     </div>
   );
 }

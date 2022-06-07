@@ -12,6 +12,8 @@ export type UserInfo = {
   position: Position;
   active: boolean;
   mute: boolean;
+  id: string;
+  isScreenSharing: boolean;
 };
 
 export const defaultUserInfo = {
@@ -21,6 +23,8 @@ export const defaultUserInfo = {
   position: [100, 100] as Position,
   active: true,
   mute: false,
+  id: "",
+  isScreenSharing: false,
 };
 
 interface Action {

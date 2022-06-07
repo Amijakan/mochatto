@@ -33,7 +33,7 @@ function AvatarCanvas({
     // world coordinate
     const mousePos = [event.clientX, event.clientY];
     const position = [mousePos[0] - offset[0], mousePos[1] - offset[1]];
-    setSelfUserInfo({ ...selfUserInfo, position });
+    setSelfUserInfo({ position });
   };
 
   // returns a randomly generated pastel color
@@ -45,7 +45,7 @@ function AvatarCanvas({
     const random = Math.random();
     const background = getColor(random, 1, 1);
     const border = getColor(random, 1.2, 0.6);
-    setSelfUserInfo({ ...selfUserInfo, avatarColor: { background, border } });
+    setSelfUserInfo({ avatarColor: { background, border } });
   }, []);
 
   return (
@@ -61,6 +61,7 @@ function AvatarCanvas({
         initial={selfUserInfo.name[0]}
         active={selfUserInfo.active}
         mute={selfUserInfo.mute}
+        id={selfUserInfo.id}
       />
       {userInfos.map((info, index) => {
         if (!info) {
@@ -80,6 +81,7 @@ function AvatarCanvas({
             initial={info.name[0]}
             active={info.active}
             mute={info.mute}
+            id={info.id}
           />
         );
       })}

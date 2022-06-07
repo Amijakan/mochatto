@@ -9,6 +9,7 @@ const UserList = () => {
   // FIXME: Styling of user list
   return (
     <>
+      {/*@ts-ignore */}
       {Object.values(userInfos).map((value: UserInfo, index: number) => (
         <div className="sidebar--userlist-item" key={index}>
           <AvatarDOM

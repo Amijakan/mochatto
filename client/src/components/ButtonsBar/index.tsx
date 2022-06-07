@@ -55,14 +55,14 @@ const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
     const { onLeaveClicked } = props;
 
     return (
-      <Button class="leave-button" title="Leave room (L)" onClick={onLeaveClicked}>
+      <Button className="leave-button" title="Leave room (L)" onClick={onLeaveClicked}>
         Leave
       </Button>
     );
   };
 
   return (
-    <div class="buttons-bar">
+    <div className="buttons-bar">
       {SettingsButton()}
       {StatusButton()}
       {MuteButton()}

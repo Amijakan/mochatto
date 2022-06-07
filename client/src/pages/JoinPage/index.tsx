@@ -108,7 +108,7 @@ const JoinPage = ({
               <DeviceSelector onSelect={onSelect} />
             </Div>
             {Visualizer()}
-            <div class="join-back-container">
+            <div className="join-back-container">
               <Button onClick={() => onJoinClicked()} ref={joinButtonRef} className="primary">
                 Join
               </Button>

@@ -60,7 +60,7 @@ const HomePage = (): JSX.Element => {
               setRoomId(e.target.value);
             }}
           />
-          <div class="submit-button-container">
+          <div className="submit-button-container">
             <Button
               className="primary"
               onClick={() => {

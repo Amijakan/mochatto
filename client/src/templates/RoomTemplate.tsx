@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import { Div, Row, Col, Modal } from "atomize";
 import { Logo, Button } from "@/components";
 import b64bg from "@/assets/imgs/background_b64";
+import "./style.scss";
 
 const RoomTemplate = ({
   children,
@@ -39,7 +40,7 @@ const RoomTemplate = ({
           {sideDrawerComponent}
           <Div d="flex" justify="center" m={{ t: "2rem" }}>
             <Button
-              className="secondary"
+              className="close-button"
               onClick={() => setShowModal(false)}
             >
               Close

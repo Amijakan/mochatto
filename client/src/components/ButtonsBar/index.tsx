@@ -1,8 +1,9 @@
 import React, { FunctionComponent } from "react";
-import { Button } from "@/components"
+import { Button } from "@/components";
 import { Div, Icon } from "atomize";
 import MicIcon from "@material-ui/icons/Mic";
 import MicOffIcon from "@material-ui/icons/MicOff";
+import "./style.scss";
 
 import PropTypes from "prop-types";
 
@@ -20,9 +21,7 @@ const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
     const { onSettingsClicked } = props;
 
     return (
-      <Button
-        className="circle"
-        title="Settings (,)" onClick={onSettingsClicked}>
+      <Button title="Settings (,)" onClick={onSettingsClicked}>
         <Icon name="SettingsSolid" color="white" size="24px" />
       </Button>
     );
@@ -32,11 +31,7 @@ const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
     const { onStatusClicked, userInfoRef } = props;
 
     return (
-      <Button
-        className="circle"
-        title="Status (s)"
-        onClick={onStatusClicked}
-      >
+      <Button title="Status (s)" onClick={onStatusClicked}>
         {userInfoRef.current.active ? (
           <Icon name="Status" color="success700" size="24px" />
         ) : (
@@ -50,7 +45,7 @@ const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
     const { onMuteClicked, userInfoRef } = props;
 
     return (
-      <Button className="circle" title="Toggle mute (m)" onClick={onMuteClicked}>
+      <Button title="Toggle mute (m)" onClick={onMuteClicked}>
         {userInfoRef.current.mute ? <MicOffIcon /> : <MicIcon />}
       </Button>
     );
@@ -60,29 +55,19 @@ const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
     const { onLeaveClicked } = props;
 
     return (
-      <Button
-        className="cirle color-red"
-        title="Leave room (L)"
-        onClick={onLeaveClicked}
-      >
+      <Button class="leave-button" title="Leave room (L)" onClick={onLeaveClicked}>
         Leave
       </Button>
     );
   };
 
   return (
-    <Div d="flex" h="100%" flexDir="column">
-      <Div d="flex" justify="center" m={{ t: "auto" }}>
-        <Div d="inline-block">
-          <Div rounded="circle" bg="#000000ba" d="flex" p={{ x: "1rem", y: "0.3rem" }}>
-            {SettingsButton()}
-            {StatusButton()}
-            {MuteButton()}
-            {LeaveButton()}
-          </Div>
-        </Div>
-      </Div>
-    </Div>
+    <div class="buttons-bar">
+      {SettingsButton()}
+      {StatusButton()}
+      {MuteButton()}
+      {LeaveButton()}
+    </div>
   );
 };
 
@@ -95,11 +80,13 @@ ButtonsBar.propTypes = {
 };
 
 const areEqual = (prev, next): boolean => {
-  return (prev.userInfoRef.current === next.userInfoRef.current &&
+  return (
+    prev.userInfoRef.current === next.userInfoRef.current &&
     prev.onSettingsClicked === next.onSettingsClicked &&
     prev.onStatusClicked === next.onStatusClicked &&
     prev.onMuteClicked === next.onMuteClicked &&
-    prev.onLeaveClicked === next.onLeaveClicked)
-}
+    prev.onLeaveClicked === next.onLeaveClicked
+  );
+};
 
 export default React.memo(ButtonsBar, areEqual);

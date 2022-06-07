@@ -24,7 +24,7 @@ const JoinPage = ({
   const [showNotification, setShowNotification] = useState(false);
   const history = useHistory();
 
-  const joinButtonRef = useRef<HTMLButtonElement | null>(null)
+  const joinButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const [gain, setGain] = useState(0);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
@@ -46,13 +46,13 @@ const JoinPage = ({
   useEffect(() => {
     setVisualizer(new AudioVisualizer(onAudioActivity));
     const keyListener = (event) => {
-      console.log(event)
+      console.log(event);
       if (event.code === "Enter") {
-        event.preventDefault()
-        joinButtonRef.current?.click()
+        event.preventDefault();
+        joinButtonRef.current?.click();
       }
-    }
-    document.addEventListener("keydown", keyListener)
+    };
+    document.addEventListener("keydown", keyListener);
   }, []);
 
   useEffect(() => {
@@ -108,14 +108,12 @@ const JoinPage = ({
               <DeviceSelector onSelect={onSelect} />
             </Div>
             {Visualizer()}
-            <Div d="flex" justify="space-around" w="100%" m={{ t: "20px" }}>
-              <Button onClick={() => onJoinClicked()} ref={joinButtonRef}
-                className="primary w-50"
-              >
+            <div class="join-back-container">
+              <Button onClick={() => onJoinClicked()} ref={joinButtonRef} className="primary">
                 Join
               </Button>
               <Button
-                className="secondary w-50"
+                className="secondary"
                 onClick={() => {
                   history.push("/");
                   history.go(0);
@@ -123,7 +121,7 @@ const JoinPage = ({
               >
                 Back
               </Button>
-            </Div>
+            </div>
           </Div>
         </Card>
       </Div>

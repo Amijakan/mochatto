@@ -1,15 +1,17 @@
+@import '@/constants/style';
+
 $primary-color: rgb(247, 175, 34) ;
 $secondary-color: gray;
 
 button {
+  height: $button-height;
   padding: 1rem;
-  border-radius: 12px;
+  border-radius: 0.75rem;
   color: white;
   background-color: transparent;
   cursor: pointer;
   font-size: 14px;
   transition: all 0.4s ease-in-out 0s;
-  margin: 0.3rem;
   min-height: 1.5rem;
   min-width: 1.5rem;
   display: flex;
@@ -43,21 +45,6 @@ button:hover {
   }
 }
 
-.w-full {
-  width: 100%;
-}
-.w-50 {
-  width: 50%;
-}
-
 .transparent {
   background-color: transparent;
-}
-
-.circle {
-  border-radius: 50%;
-}
-
-.color-red {
-  color: red;
 }

@@ -7,6 +7,7 @@ import { Network } from "@/classes/Network";
 import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import { RoomTemplate } from "@/templates";
+import "./style.scss";
 
 import PropTypes from "prop-types";
 
@@ -56,12 +57,12 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, [selfUserInfoRef.current.mute]);
 
   const handleLeaveClicked = useCallback(() => {
-    history.go(0)
-  }, [])
+    history.go(0);
+  }, []);
 
   const handleSettingClicked = useCallback(() => {
-    setShowModal(true)
-  }, [])
+    setShowModal(true);
+  }, []);
 
   const toggleActive = useCallback(() => {
     updateSelfUserInfo({

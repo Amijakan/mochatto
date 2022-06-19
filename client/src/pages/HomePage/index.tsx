@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useContext } from "react";
 import { BaseTemplate } from "@/templates";
+import { Button } from "@/components";
 import { Div } from "atomize";
-import { Button, Text, Input } from "@/components/atomize_wrapper";
+import { Text, Input } from "@/components/atomize_wrapper";
 import { SocketContext } from "@/contexts";
 import { useHistory } from "react-router-dom";
+import "./style.scss";
 
 const HomePage = (): JSX.Element => {
   const { socket } = useContext(SocketContext);
   const [roomExists, setRoomExists] = useState(false);
   const [roomId, setRoomId] = useState("");
   const history = useHistory();
-  const responsiveWidth = { xs: "80%", md: "40%" }
+  const responsiveWidth = { xs: "80%", md: "40%" };
 
   useEffect(() => {
     if (socket) {
@@ -58,16 +60,18 @@ const HomePage = (): JSX.Element => {
               setRoomId(e.target.value);
             }}
           />
+          <div className="submit-button-container">
+            <Button
+              className="primary"
+              onClick={() => {
+                history.push(roomId);
+                history.go(0);
+              }}
+            >
+              {roomExists ? "Join" : "Create"}
+            </Button>
+          </div>
         </Div>
-        <Button
-          w={responsiveWidth}
-          onClick={() => {
-            history.push(roomId);
-            history.go(0);
-          }}
-        >
-          {roomExists ? "Join" : "Create"}
-        </Button>
       </Div>
     </BaseTemplate>
   );

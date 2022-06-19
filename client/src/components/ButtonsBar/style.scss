@@ -1,0 +1,32 @@
+@import "@/constants/style";
+
+$bar-width: 14rem;
+$bar-height: 3rem;
+
+.buttons-bar {
+  background: rgba(0, 0, 0, 0.73);
+  padding: 0.3rem 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  width: $bar-width;
+  height: $bar-height;
+  border-radius: 5rem;
+  position: absolute;
+  bottom: 1rem;
+  left: calc(50% - $bar-width / 2);
+
+  .leave-button {
+    color: red;
+    width: 3.5rem !important;
+    border-radius: 5rem;
+  }
+
+  button {
+    // Needs important tag to override the default button style.
+    height: $button-height !important;
+    width: $button-height !important;
+    border-radius: 5rem;
+  }
+}

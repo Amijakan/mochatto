@@ -1,0 +1,50 @@
+@import '@/constants/style';
+
+$primary-color: rgb(247, 175, 34) ;
+$secondary-color: gray;
+
+button {
+  height: $button-height;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  color: white;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.4s ease-in-out 0s;
+  min-height: 1.5rem;
+  min-width: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+
+button:hover {
+  background-color: rgb(222, 222, 222, 0.2);
+}
+
+.primary {
+  background-color: $primary-color;
+  color: white;
+
+  &:hover {
+    background-color: $primary-color;
+    opacity: 0.7;
+  }
+}
+
+
+.secondary {
+  background-color: $secondary-color;
+  color: white;
+  &:hover {
+    background-color: $secondary-color;
+    opacity: 0.7;
+  }
+}
+
+.transparent {
+  background-color: transparent;
+}

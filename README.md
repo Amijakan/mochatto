@@ -31,6 +31,13 @@ Mochatto is an open-source proximity voice chat application for virtual meetings
 ### Beta
 1. `make beta-up`
 
+### Test
+Without visual check
+- `make test`
+
+With browser running
+- `make test-headed`
+
 ## Features
 
 - [x] Choose Audio Input
@@ -39,13 +46,13 @@ Mochatto is an open-source proximity voice chat application for virtual meetings
 - [x] Audio Processing toggles (`Echo Cancellation` / `Auto Gain Control` / `Noise Suppression`)
 - [x] Status (Active / Inactive)
 - [x] Separate rooms `/[room-id]`
+- [x] Screenshares
 - [ ] Mobile Support
 - [ ] User Lists
 - [ ] Change Username
 - [ ] Place Images in the space
 - [ ] Place Videos in the space
 - [ ] Password protection for rooms
-- [ ] Screenshares
 - [ ] Audio Recording
 
 ## Runnig own iceServer

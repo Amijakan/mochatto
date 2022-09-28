@@ -30,7 +30,10 @@ beta-up:
 	BETA_PREFIX=$$(git rev-parse --abbrev-ref HEAD) docker-compose -f ./docker-compose.yaml -f ./docker-compose.nginx-proxy.yaml up -d --build --force-recreate -- client-beta server-beta
 
 test:
-	docker-compose run --rm client-test
+	docker-compose build client-test && docker-compose run --rm client-test
+
+test-headed:
+	xhost +local:root && docker-compose build client-test-headed && docker-compose run --rm client-test-headed
 
 ## Cleans containers
 clean:

@@ -44,7 +44,7 @@ function AvatarCanvas({
           info = defaultUserInfo;
         }
         return (
-          <Draggable position={{ x: info.position[0], y: info.position[1] }} onPositionChange={info.id === socket.id ? updatePosition : null} draggable={info.id === socket.id}>
+          <Draggable position={{ x: info.position[0], y: info.position[1] }} onPositionChange={info.id === socket.id ? updatePosition : null} draggable={info.id === socket.id} key={info.id}>
             <AvatarDOM
               id={info.id}
               key={index}

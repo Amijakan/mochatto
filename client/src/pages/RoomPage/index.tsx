@@ -268,7 +268,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         </Notification>
         <AvatarCanvas
           selfUserInfo={selfUserInfoRef.current}
-          setSelfUserInfo={updateSelfUserInfo}
+          updateSelfUserInfo={updateSelfUserInfo}
           userInfos={Object.values(userInfos)}
         />
         <ButtonsBar

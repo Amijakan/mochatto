@@ -192,17 +192,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, []);
 
   useEffect(() => {
-    if (stream) {
-      if (networkRef.current) {
-        networkRef.current.updateAllTracks(stream.getAudioTracks()[0]);
-      }
-      if (visualizerRef.current) {
-        visualizerRef.current.setStream(stream);
-      }
-    }
-  }, [stream]);
-
-  useEffect(() => {
     updateSelfUserInfo({ id: socket.id });
   }, [socket]);
 

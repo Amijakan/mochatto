@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect, useContext } from "react";
+import React, { useRef, useCallback, useEffect } from "react";
 import AvatarDOM from "./AvatarDOM";
 import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
 import { Draggable } from "@/components";
@@ -11,7 +11,7 @@ function AvatarCanvas({
 }: {
   userInfos: UserInfo[];
   selfUserInfo: UserInfo;
-  updateSelfUserInfo: (any) => void;
+  updateSelfUserInfo: (arg0: any) => void;
 }): JSX.Element {
   const selfPositionRef = useRef({ x: 100, y: 100 })
 
@@ -39,6 +39,7 @@ function AvatarCanvas({
     <>
       <Draggable position={selfPositionRef.current} onPositionChange={updatePosition} draggable={true}>
         <AvatarDOM
+          id={selfUserInfo.id}
           key={0}
           multiplier={selfUserInfo.multiplier}
           _backgroundColor={selfUserInfo.avatarColor.background}
@@ -57,6 +58,7 @@ function AvatarCanvas({
           return (
             <Draggable position={{ x: info.position[0], y: info.position[1] }} onPositionChange={null} draggable={false} key={index}>
               <AvatarDOM
+                id={info.id}
                 key={index + 1}
                 multiplier={info.multiplier}
                 _backgroundColor={info.avatarColor.background}

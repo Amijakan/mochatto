@@ -1,6 +1,7 @@
-import React, { useRef, useCallback, useEffect } from "react";
+import React, { useEffect, useContext, useCallback, useRef } from "react";
+import { SocketContext } from "@/contexts";
 import AvatarDOM from "./AvatarDOM";
-import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
+import { UserInfo } from "@/contexts/UserInfoContext";
 import { Draggable } from "@/components";
 
 // for dragging and rendering avatars
@@ -13,6 +14,7 @@ function AvatarCanvas({
   selfUserInfo: UserInfo;
   updateSelfUserInfo: (arg0: any) => void;
 }): JSX.Element {
+  const { socket } = useContext(SocketContext);
   const selfPositionRef = useRef({ x: 100, y: 100 })
 
   // on mouse down, add listeners for moving and mouse up
@@ -37,41 +39,23 @@ function AvatarCanvas({
 
   return (
     <>
-      <Draggable position={selfPositionRef.current} onPositionChange={updatePosition} draggable={true}>
-        <AvatarDOM
-          id={selfUserInfo.id}
-          key={0}
-          multiplier={selfUserInfo.multiplier}
-          _backgroundColor={selfUserInfo.avatarColor.background}
-          _borderColor={selfUserInfo.avatarColor.border}
-          isSelf={true}
-          initial={selfUserInfo.name[0]}
-          active={selfUserInfo.active}
-          mute={selfUserInfo.mute}
-        />
-      </Draggable>
-      {
-        userInfos.map((info, index) => {
-          if (!info) {
-            info = defaultUserInfo;
-          }
-          return (
-            <Draggable position={{ x: info.position[0], y: info.position[1] }} onPositionChange={null} draggable={false} key={index}>
-              <AvatarDOM
-                id={info.id}
-                key={index + 1}
-                multiplier={info.multiplier}
-                _backgroundColor={info.avatarColor.background}
-                _borderColor={info.avatarColor.border}
-                isSelf={false}
-                initial={info.name[0]}
-                active={info.active}
-                mute={info.mute}
-              />
-            </Draggable>
-          );
-        })
-      }
+      {userInfos.map((info, index) => (
+        info && (
+          <Draggable position={{ x: info.position[0], y: info.position[1] }} onPositionChange={info.id === socket.id ? updatePosition : null} draggable={info.id === socket.id} key={info.id}>
+            <AvatarDOM
+              id={info.id}
+              key={index}
+              multiplier={info.multiplier}
+              _backgroundColor={info.avatarColor.background}
+              _borderColor={info.avatarColor.border}
+              isSelf={info.id === socket.id}
+              initial={info.name[0]}
+              active={info.active}
+              mute={info.mute}
+            />
+          </Draggable>
+        )
+      ))}
     </>
   );
 }

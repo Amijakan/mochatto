@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useCallback, useRef } from "react";
 import { SocketContext } from "@/contexts";
 import AvatarDOM from "./AvatarDOM";
-import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
+import { UserInfo } from "@/contexts/UserInfoContext";
 import { Draggable } from "@/components";
 
 // for dragging and rendering avatars
@@ -39,11 +39,8 @@ function AvatarCanvas({
 
   return (
     <>
-      {userInfos.map((info, index) => {
-        if (!info) {
-          info = defaultUserInfo;
-        }
-        return (
+      {userInfos.map((info, index) => (
+        info && (
           <Draggable position={{ x: info.position[0], y: info.position[1] }} onPositionChange={info.id === socket.id ? updatePosition : null} draggable={info.id === socket.id} key={info.id}>
             <AvatarDOM
               id={info.id}
@@ -57,8 +54,8 @@ function AvatarCanvas({
               mute={info.mute}
             />
           </Draggable>
-        );
-      })}
+        )
+      ))}
     </>
   );
 }

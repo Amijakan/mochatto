@@ -13,7 +13,7 @@ function AvatarDOM({
   initial,
   active,
   mute,
-  size = "large"
+  size = "large",
   id,
 }: {
   isSelf: boolean;

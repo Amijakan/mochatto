@@ -10,8 +10,10 @@ const UserList = () => {
   return (
     <>
       {(Object.values(userInfos) as UserInfo[]).map((value: UserInfo, index: number) => (
+        value &&
         <div className="sidebar--userlist-item" key={index}>
           <AvatarDOM
+            id={value.id}
             size="small"
             multiplier={0}
             _backgroundColor={value.avatarColor.background}

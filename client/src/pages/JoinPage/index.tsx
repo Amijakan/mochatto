@@ -114,6 +114,7 @@ const JoinPage = ({
               >
                 {notificationText}
               </Notification>
+              <Div>Name:</Div>
               <Input
                 placeholder="Name"
                 type="text"
@@ -123,6 +124,7 @@ const JoinPage = ({
                   setName(e.target.value);
                 }}
               />
+              <Div>Password:</Div>
               <Input
                 placeholder="Password"
                 type="password"

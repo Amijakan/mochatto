@@ -28,9 +28,9 @@ const rooms: { [key: string]: { numUsers: number; passHash: string } } = {};
 // Function to decide whether to verify room password.
 const authenticate = (roomName: string, pass: string) => {
   const hash = createHash("sha256")
-      .update(roomName + pass)
-      .digest("hex"),
-    room = rooms[roomName];
+    .update(roomName + pass)
+    .digest("hex");
+  const room = rooms[roomName];
 
   // If room doesn't exist, return.
   if (!room) {

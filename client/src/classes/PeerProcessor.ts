@@ -1,7 +1,7 @@
 import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import { Socket } from "socket.io-client";
-import { DCLabel, Pack } from "@/classes/Network";
+import { DCLabel, MessageDCLabel, Pack } from "@/classes/Network";
 import { SIOChannel } from "@/contexts/SocketIOContext";
 
 export interface DataPackage {
@@ -12,6 +12,7 @@ export interface DataPackage {
 export class PeerProcessor {
   peerConnection: RTCPeerConnection;
   dataChannel: RTCDataChannel;
+  messageDataChannel: RTCDataChannel;
   socket: Socket;
   audioSender: RTCRtpSender;
   videoSender: RTCRtpSender;
@@ -31,6 +32,7 @@ export class PeerProcessor {
     this.audioSender = null as unknown as RTCRtpSender;
     this.videoSender = null as unknown as RTCRtpSender;
     this.dataChannel = null as unknown as RTCDataChannel;
+    this.messageDataChannel = null as unknown as RTCDataChannel;
     // initialize with a free public STUN server to find out public ip, NAT type, and internet side port
     this.peerConnection = new RTCPeerConnection({
       iceServers: [{ urls: "stun:mochatto.com:3478" }],
@@ -61,12 +63,18 @@ export class PeerProcessor {
       if (dc.label === DCLabel) {
         this.initializeDataChannel(dc);
       }
+      if (dc.label === MessageDCLabel) {
+        this.initializeMessageDatachannel(dc);
+      }
     };
   }
 
   sendOffer(): void {
     if (!this.dataChannel) {
       this.initializeDataChannel(this.peerConnection.createDataChannel(DCLabel));
+    }
+    if (!this.messageDataChannel) {
+      this.initializeMessageDatachannel(this.peerConnection.createDataChannel(MessageDCLabel));
     }
     this.peerConnection
       .createOffer()
@@ -131,15 +139,37 @@ export class PeerProcessor {
     if (this.dataChannel) {
       this.dataChannel.close();
     }
+    if (this.messageDataChannel) {
+      this.messageDataChannel.close();
+    }
     this.dataChannel = dc;
     this.dataChannel.onopen = this.onDataChannelOpen.bind(this);
     // this.dataChannel.onclose = this.onDataChannelClose.bind(this);
     this.dataChannel.onmessage = this.onDataChannelMessage.bind(this);
   }
 
+  initializeMessageDatachannel(dc: RTCDataChannel): void {
+    // if a datachannel is already open, close it
+    if (this.messageDataChannel) {
+      this.messageDataChannel.close();
+    }
+    if (this.messageDataChannel) {
+      this.messageDataChannel.close();
+    }
+    this.messageDataChannel = dc;
+    this.messageDataChannel.onopen = this.onDataChannelOpen.bind(this);
+    // this.messageDataChannel.onclose = this.onDataChannelClose.bind(this);
+    this.messageDataChannel.onmessage = this.onDataChannelMessage.bind(this);
+  }
+
   // runs when the data channel opens
   onDataChannelOpen(): void {
     this.send(this.selfUserInfo);
+  }
+
+  onMessageDataChannelMessage(event: MessageEvent): void {
+    const info = JSON.parse(event.data)
+    // Add message to context
   }
 
   onDataChannelMessage(event: MessageEvent): void {

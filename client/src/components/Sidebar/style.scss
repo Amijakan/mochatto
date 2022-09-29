@@ -86,3 +86,58 @@ button[data-active=inactive] {
 
 .sidebar[data-open=close] {
 }
+
+.chat-history-container {
+
+}
+
+.chat-history-row{
+  width: 100%;
+  display: flex;
+  margin: $default;
+
+  &--avatar {
+
+  }
+}
+
+.chat-history-message {
+  width: 100%;
+  padding: 0 $default;
+  display: flex;
+  flex-direction: column;
+  &__header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  &__name {
+    font-weight: 700;
+
+  }
+  &__date {
+
+  }
+  &__body {
+
+  }
+
+}
+
+.chat-history-form {
+  position: fixed;
+  bottom: $default;
+  display: flex;
+  flex-wrap: no-wrap;
+  justify-content: space-between;
+  width: 100%;
+
+  input {
+    width: 100%;
+    padding: $default;
+    border-radius: $default;
+  }
+  button {
+    background-color: $primary;
+  }
+}

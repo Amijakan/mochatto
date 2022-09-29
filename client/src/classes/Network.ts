@@ -6,6 +6,7 @@ import { SIOChannel } from "@/contexts/SocketIOContext"
 import { Socket } from "socket.io-client";
 
 export const DCLabel = "DATACHANNEL";
+export const MessageDCLabel = "MESSAGEDATACHANNEL";
 
 export interface Pack {
   sdp: RTCSessionDescription;

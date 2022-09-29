@@ -40,7 +40,7 @@ const authenticate = (roomName: string, pass: string) => {
     const roomHash = room.passHash;
     // If room password is set, authenticate, and if not, set password and allow connection.
     if (roomHash) {
-      if (roomHash == hash) return AuthenticationEnum.Success;
+      if (roomHash === hash) return AuthenticationEnum.Success;
       else return AuthenticationEnum.IncorrectPassword;
     }
   }
@@ -74,7 +74,7 @@ io.of((nsp, query, next) => {
     const authenticationResult = authenticate(roomName, password);
     socket.emit("AUTHENTICATE", authenticationResult);
 
-    if (authenticationResult == AuthenticationEnum.Success) {
+    if (authenticationResult === AuthenticationEnum.Success) {
       socket.on("JOIN", (name) => {
         const user = { name, id: socket.id };
         if (name !== "") {

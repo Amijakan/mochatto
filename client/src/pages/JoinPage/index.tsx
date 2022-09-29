@@ -23,6 +23,7 @@ const JoinPage = ({
   const { stream, setStream } = useContext(DeviceContext);
   const { room_id } = useParams<{ room_id: string }>();
   const [showNotification, setShowNotification] = useState(false);
+  const [notificationText, setNotificationText] = useState("");
   const history = useHistory();
 
   const [gain, setGain] = useState(0);
@@ -57,8 +58,12 @@ const JoinPage = ({
         if (name != "") {
           setJoined(true);
         } else {
+          setNotificationText("Please choose a username.");
           setShowNotification(true);
         }
+      } else {
+        setNotificationText("Incorrect password.");
+        setShowNotification(true);
       }
     });
   };
@@ -107,7 +112,7 @@ const JoinPage = ({
                 onClose={() => setShowNotification(false)}
                 prefix={<Icon name="CloseSolid" color="white" size="18px" m={{ r: "0.5rem" }} />}
               >
-                Please choose a username.
+                {notificationText}
               </Notification>
               <Input
                 placeholder="Name"

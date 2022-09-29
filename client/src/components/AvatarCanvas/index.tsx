@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useEffect, useContext } from "react";
 import { SocketContext } from "@/contexts";
 import AvatarDOM from "./AvatarDOM";
-import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
+import { UserInfo } from "@/contexts/UserInfoContext";
 import { Draggable } from "@/components";
 
 // for dragging and rendering avatars
@@ -12,7 +12,7 @@ function AvatarCanvas({
 }: {
   userInfos: UserInfo[];
   selfUserInfo: UserInfo;
-  updateSelfUserInfo: (any) => void;
+  updateSelfUserInfo: (arg0: any) => void;
 }): JSX.Element {
   const { socket } = useContext(SocketContext);
   const selfPositionRef = useRef({ x: 100, y: 100 })
@@ -39,35 +39,23 @@ function AvatarCanvas({
 
   return (
     <>
-      {
-        userInfos.map((info, index) => {
-          if (!info) {
-            info = defaultUserInfo;
-          }
-          const isSelf = info.id === socket.id
-          return (
-            <Draggable
+      {userInfos.map((info, index) => (
+        info && (
+          <Draggable position={{ x: info.position[0], y: info.position[1] }} onPositionChange={info.id === socket.id ? updatePosition : null} draggable={info.id === socket.id} key={info.id}>
+            <AvatarDOM
+              id={info.id}
               key={index}
-              position={
-                isSelf ?
-                  selfPositionRef.current :
-                  { x: info.position[0], y: info.position[1] }
-              }
-              onPositionChange={updatePosition} draggable={isSelf}>
-              <AvatarDOM
-                key={index + 1}
-                multiplier={info.multiplier}
-                _backgroundColor={info.avatarColor.background}
-                _borderColor={info.avatarColor.border}
-                isSelf={isSelf}
-                initial={info.name[0]}
-                active={info.active}
-                mute={info.mute}
-              />
-            </Draggable>
-          );
-        })
-      }
+              multiplier={info.multiplier}
+              _backgroundColor={info.avatarColor.background}
+              _borderColor={info.avatarColor.border}
+              isSelf={info.id === socket.id}
+              initial={info.name[0]}
+              active={info.active}
+              mute={info.mute}
+            />
+          </Draggable>
+        )
+      ))}
     </>
   );
 }

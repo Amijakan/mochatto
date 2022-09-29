@@ -2,7 +2,7 @@ import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import { Socket } from "socket.io-client";
 import { DCLabel, Pack } from "@/classes/Network";
-import { SIOChannel } from "@/contexts/SocketIOContext"
+import { SIOChannel } from "@/contexts/SocketIOContext";
 
 export interface DataPackage {
   position: [number, number];
@@ -13,28 +13,34 @@ export class PeerProcessor {
   peerConnection: RTCPeerConnection;
   dataChannel: RTCDataChannel;
   socket: Socket;
-  sender: RTCRtpSender;
+  audioSender: RTCRtpSender;
+  videoSender: RTCRtpSender;
   peerId: string;
-  stream: MediaStream;
-  player: HTMLAudioElement;
+  peerStream: MediaStream;
+  audioPlayer: HTMLAudioElement;
+  videoPlayer: HTMLVideoElement;
   visualizer: AudioVisualizer;
   multiplier: number;
   // a function to update the positions array context
   addUserInfo: (info) => void;
   selfUserInfo: UserInfo;
   peerUserInfo: UserInfo;
+  screenShareTrigger: boolean;
   constructor(peerId: string, socket: Socket, addUserInfo: (info) => void) {
     this.peerId = peerId;
-    this.sender = null as unknown as RTCRtpSender;
+    this.audioSender = null as unknown as RTCRtpSender;
+    this.videoSender = null as unknown as RTCRtpSender;
     this.dataChannel = null as unknown as RTCDataChannel;
     // initialize with a free public STUN server to find out public ip, NAT type, and internet side port
     this.peerConnection = new RTCPeerConnection({
       iceServers: [{ urls: "stun:mochatto.com:3478" }],
     });
     this.multiplier = 0;
-    this.stream = new MediaStream();
+    this.peerStream = new MediaStream();
     this.visualizer = null as unknown as AudioVisualizer;
-    this.player = new Audio();
+    this.audioPlayer = new Audio();
+    this.videoPlayer = null as unknown as HTMLVideoElement;
+    this.screenShareTrigger = false;
     // the function is re-assigned during the user's initialization
     this.addUserInfo = addUserInfo;
     this.selfUserInfo = defaultUserInfo;
@@ -46,6 +52,10 @@ export class PeerProcessor {
       this.updateLocalTrack(event.track);
     };
 
+    this.peerConnection.onnegotiationneeded = () => {
+      this.sendOffer();
+    };
+
     this.peerConnection.ondatachannel = (event) => {
       const dc = event.channel;
       if (dc.label === DCLabel) {
@@ -55,7 +65,9 @@ export class PeerProcessor {
   }
 
   sendOffer(): void {
-    this.initializeDataChannel(this.peerConnection.createDataChannel(DCLabel));
+    if (!this.dataChannel) {
+      this.initializeDataChannel(this.peerConnection.createDataChannel(DCLabel));
+    }
     this.peerConnection
       .createOffer()
       .then((offer) => {
@@ -133,6 +145,25 @@ export class PeerProcessor {
   onDataChannelMessage(event: MessageEvent): void {
     const info = JSON.parse(event.data);
     this.addUserInfo(info);
+    if (info.isScreenSharing) {
+      if (!this.screenShareTrigger) {
+        this.screenShareTrigger = true;
+        this.videoPlayer ??= document.createElement("video");
+        // Append player to div.
+        document.getElementById("avatar-video-" + this.peerId)?.appendChild(this.videoPlayer);
+        this.videoPlayer.muted = true;
+        // Set the new stream as the video source and play.
+        this.videoPlayer.srcObject = this.peerStream;
+        this.videoPlayer.play();
+        this.videoPlayer.autoplay = true;
+      }
+    } else {
+      if (this.screenShareTrigger) {
+        this.screenShareTrigger = false;
+        this.videoPlayer?.remove();
+        this.videoPlayer = null as unknown as HTMLVideoElement;
+      }
+    }
     this.peerUserInfo = info;
     this.updateVolume();
   }
@@ -149,7 +180,7 @@ export class PeerProcessor {
   close(): void {
     this.dataChannel.close();
     this.peerConnection.close();
-    this.stream.getTracks().forEach((track) => track.stop());
+    this.peerStream.getTracks().forEach((track) => track.stop());
   }
 
   updateSelfUserInfo(info: UserInfo): void {
@@ -177,48 +208,88 @@ export class PeerProcessor {
   // sets volume for this peer user
   setVolume(volume: number): void {
     if (volume >= 0 && volume <= 1) {
-      this.player.volume = volume;
+      this.audioPlayer.volume = volume;
     } else {
       console.warn("Volume needs to be within 0 and 1");
     }
   }
 
-  // keeping note of the track to remove later
-  setSender(s: RTCRtpSender): void {
-    this.sender = s;
+  // Sets the sender for the audio track
+  setAudioSender(s: RTCRtpSender): void {
+    this.audioSender = s;
   }
 
-  // updates the local track when the peer user (this) adds a new track
+  // Sets the sender for the video track
+  setVideoSender(s: RTCRtpSender): void {
+    this.videoSender = s;
+  }
+
+  // Updates the local audio track when the peer user (this) adds a new track.
   updateLocalTrack(track: MediaStreamTrack): boolean {
     if (!track.readyState) {
       return false;
     }
-    // if there's already a track assigned to the stream, remove it
-    if (this.stream.getAudioTracks()[0]) {
-      this.stream.removeTrack(this.stream.getAudioTracks()[0]);
-    }
-    // add the track
-    this.stream.addTrack(track);
+    switch (track.kind) {
+      case "audio":
+        // if there's already a track assigned to the stream, remove it
+        if (this.peerStream.getAudioTracks()[0]) {
+          this.peerStream.removeTrack(this.peerStream.getAudioTracks()[0]);
+        }
+        // add the track
+        this.peerStream.addTrack(track);
 
-    if (this.visualizer) {
-      this.visualizer.setStream(this.stream);
-    }
+        if (this.visualizer) {
+          this.visualizer.setStream(this.peerStream);
+        }
 
-    // set the new stream as the audio source and play
-    this.player.srcObject = this.stream;
-    this.player.play();
-    this.player.autoplay = true;
+        // set the new stream as the audio source and play
+        this.audioPlayer.srcObject = this.peerStream;
+        this.audioPlayer.play();
+        this.audioPlayer.autoplay = true;
+        break;
+      case "video":
+        // if there's already a track assigned to the stream, remove it
+        // if (_.last(this.peerStream.getVideoTracks())) {
+        //   this.peerStream.removeTrack(this.peerStream.getVideoTracks()[numVideos - 1]);
+        // }
+        // add the track
+        this.peerStream.addTrack(track);
+
+        // If video player doesn't exist, create.
+        this.videoPlayer ??= document.createElement("video");
+        // Append player to div.
+        document.getElementById("avatar-video-" + this.peerId)?.appendChild(this.videoPlayer);
+        // Set the new stream as the video source and play.
+        this.videoPlayer.muted = true;
+        this.videoPlayer.srcObject = this.peerStream;
+        this.videoPlayer.play();
+        this.videoPlayer.autoplay = true;
+        break;
+    }
     return true;
   }
 
-  // Update the shared mediastream to the new audio input
+  // Update the shared mediastream to the new audio input.
   updateRemoteTrack(track: MediaStreamTrack): void {
-    if (this.sender) {
-      this.sender.replaceTrack(track).catch((e) => {
-        console.warn(e);
-      });
-    } else {
-      this.setSender(this.peerConnection.addTrack(track));
+    switch (track.kind) {
+      case "audio":
+        if (this.audioSender) {
+          this.audioSender.replaceTrack(track).catch((e) => {
+            console.warn(e);
+          });
+        } else {
+          this.setAudioSender(this.peerConnection.addTrack(track));
+        }
+        break;
+      case "video":
+        if (this.videoSender) {
+          this.videoSender.replaceTrack(track).catch((e) => {
+            console.warn(e);
+          });
+        } else {
+          this.setVideoSender(this.peerConnection.addTrack(track));
+        }
+        break;
     }
   }
 }

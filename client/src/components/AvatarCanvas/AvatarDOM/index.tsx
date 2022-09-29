@@ -14,6 +14,7 @@ function AvatarDOM({
   active,
   mute,
   size = "large"
+  id,
 }: {
   isSelf: boolean;
   multiplier?: number;
@@ -23,6 +24,7 @@ function AvatarDOM({
   active: boolean;
   mute: boolean;
   size?: string;
+  id: string;
 }): JSX.Element {
   const [isRendered, setIsRendered] = useState(false);
   function calculateSpecificStyles() {
@@ -48,6 +50,7 @@ function AvatarDOM({
 
   return (
     <div
+      id={"avatar-" + id}
       className={cx("avatar", "avatar-outer", { "no-show": !isRendered })}
       data-size={size}
       data-self={isSelf && "self"}
@@ -55,6 +58,7 @@ function AvatarDOM({
     >
       <div className="avatar-initial">{initial}</div>
       <div className="avatar-active">{renderStatusIcon()}</div>
+      <div className="video-container" id={"avatar-video-" + id}></div>
     </div>
   );
 }

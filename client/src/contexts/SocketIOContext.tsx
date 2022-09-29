@@ -2,16 +2,20 @@ import React, { createContext, useState, useEffect } from "react";
 import io, { Socket } from "socket.io-client";
 import PropTypes from "prop-types";
 
-const stripTrailingSlash = (str: string) => str.replace(/\/$/, '')
+const getRoomName = (nsp: string) => {
+  // Replace split with path.basename if possible.
+  return encodeURIComponent(nsp.split("/")[1]);
+};
 
 export enum SIOChannel {
+  AUTHENTICATE = "AUTHENTICATE",
   JOIN = "JOIN",
   LEAVE = "LEAVE",
   DISCONNECT = "DISCONNECT",
   SDP_RECEIVED = "SDP_RECEIVED",
   ICE_CANDIDATE = "ICE_CANDIDATE",
   ANSWER = "ANSWER",
-  OFFER = "OFFER"
+  OFFER = "OFFER",
 }
 
 export const SocketContext = createContext<{ socket: Socket }>({
@@ -23,7 +27,10 @@ export const SocketProvider = ({ children }: { children: JSX.Element }): JSX.Ele
 
   useEffect(() => {
     const pathname = window.location.pathname;
-    const ENDPOINT = (import.meta.env.VITE_SERVER_URL || "http://localhost:4000") + stripTrailingSlash(pathname);
+
+    const baseURL: string =
+      (import.meta.env.VITE_SERVER_URL as unknown as string) || "http://localhost:4000";
+    const ENDPOINT = baseURL + "/" + getRoomName(pathname);
     setSocket(io(ENDPOINT));
   }, []);
 

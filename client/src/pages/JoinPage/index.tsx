@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { SocketContext, DeviceContext } from "@/contexts";
+import { SIOChannel } from "@/contexts/SocketIOContext";
 import { DeviceSelector } from "@/components";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import PropTypes from "prop-types";
@@ -26,15 +27,38 @@ const JoinPage = ({
 
   const [gain, setGain] = useState(0);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
+  const [password, setPassword] = useState("");
+
+  enum AuthenticationEnum {
+    Success = 0,
+    IncorrectPassword = 401,
+  }
+
+  const sha256 = async (message: string) => {
+    const msgBuffer = new TextEncoder().encode(message);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+    return hashHex;
+  };
 
   const onJoinClicked = () => {
-    if (socket) {
-      if (name != "") {
-        setJoined(true);
-      } else {
-        setShowNotification(true);
-      }
+    if (!socket) {
+      return;
     }
+
+    const hash = sha256(room_id + password);
+
+    socket.emit(SIOChannel.AUTHENTICATE, hash);
+    socket.on(SIOChannel.AUTHENTICATE, (result) => {
+      if (result == AuthenticationEnum.Success) {
+        if (name != "") {
+          setJoined(true);
+        } else {
+          setShowNotification(true);
+        }
+      }
+    });
   };
 
   const onSelect = (_stream) => {
@@ -90,6 +114,15 @@ const JoinPage = ({
                 value={name}
                 onChange={(e) => {
                   setName(e.target.value);
+                }}
+              />
+              <Input
+                placeholder="Password"
+                type="password"
+                name="password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
                 }}
               />
             </Div>

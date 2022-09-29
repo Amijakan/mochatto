@@ -55,9 +55,7 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  console.log("made connection");
   socket.on("NUM_USERS", (nspName) => {
-    console.log(nspName);
     const roomName = getRoomName(nspName);
     socket.emit("NUM_USERS", rooms[roomName]);
   });
@@ -67,16 +65,13 @@ io.of((nsp, query, next) => {
   const { token } = query;
   // authentication
 
-  console.log("test");
   // If success
   next(null, true);
 }).on("connection", (socket) => {
-  console.log("new client: " + socket.id);
   const roomName = getRoomName(socket.nsp.name);
 
   socket.on("AUTHENTICATE", (password) => {
     const authenticationResult = authenticate(roomName, password);
-    console.log("authenticate: " + authenticationResult);
     socket.emit("AUTHENTICATE", authenticationResult);
 
     if (authenticationResult == AuthenticationEnum.Success) {
@@ -88,20 +83,17 @@ io.of((nsp, query, next) => {
           } else {
             rooms[roomName].numUsers = 1;
           }
-          console.log(name + " (" + socket.id + ") has joined namespace " + roomName);
           io.of(roomName).emit("JOIN", user);
         }
       });
 
       socket.on("OFFER", (dataString) => {
         const targetId = JSON.parse(dataString).receiverId;
-        console.log(socket.id + " has sent offer to " + targetId);
         io.of(roomName).to(targetId).emit("OFFER", dataString);
       });
 
       socket.on("ANSWER", (dataString) => {
         const targetId = JSON.parse(dataString).receiverId;
-        console.log(socket.id + " has sent answer to " + targetId);
         io.of(roomName).to(targetId).emit("ANSWER", dataString);
       });
 
@@ -115,7 +107,6 @@ io.of((nsp, query, next) => {
       });
 
       socket.on("LEAVE", () => {
-        console.log("user's leaving");
         io.of(roomName).emit("LEAVE", { id: socket.id });
       });
 
@@ -125,7 +116,6 @@ io.of((nsp, query, next) => {
           delete rooms[roomName];
         }
         io.of(roomName).emit("DISCONNECT", { id: socket.id });
-        console.log(socket.id + " has disconnected.");
       });
     }
   });

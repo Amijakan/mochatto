@@ -49,7 +49,9 @@ const JoinPage = ({
 
     const hash = sha256(room_id + password);
 
-    socket.emit(SIOChannel.AUTHENTICATE, hash);
+    hash.then((hash) => {
+      socket.emit(SIOChannel.AUTHENTICATE, hash);
+    });
     socket.on(SIOChannel.AUTHENTICATE, (result) => {
       if (result == AuthenticationEnum.Success) {
         if (name != "") {

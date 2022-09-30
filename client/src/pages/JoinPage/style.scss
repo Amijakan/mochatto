@@ -1,5 +1,34 @@
+@import "@/constants/style";
+
 .visualizer {
     height: 10px;
     background: #FDEEC8;
     transition: width 0.2s;
+}
+
+.password-wrapper {
+  display: flex;
+  align-items: center;
+  margin-top: 16px;
+
+  .password-toggle {
+    border-radius: 100%;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-right: 4px;
+    background-color: $gray;
+
+    &.locked-style {
+      background-color: $orange;
+    }
+  }
+  
+  div {
+    flex-grow: 1;
+
+    .password-input.disabled {
+      pointer-events: none;
+      background-color: $gray;
+    }
+  }
 }

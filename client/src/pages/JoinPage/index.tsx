@@ -5,9 +5,12 @@ import { SIOChannel } from "@/contexts/SocketIOContext";
 import { DeviceSelector } from "@/components";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import PropTypes from "prop-types";
-import { Div, Notification, Icon } from "atomize";
-import { Button, Card, Text, Input } from "@/components/atomize_wrapper";
+import { Div, Notification, Icon, Checkbox } from "atomize";
+import { Button, Card, Text, Input, Label } from "@/components/atomize_wrapper";
 import { BaseTemplate } from "@/templates";
+import cx from "classnames";
+import LockIcon from "@material-ui/icons/Lock";
+import LockOpenIcon from "@material-ui/icons/LockOpen";
 import "./style.scss";
 
 const JoinPage = ({
@@ -24,6 +27,7 @@ const JoinPage = ({
   const { room_id } = useParams<{ room_id: string }>();
   const [showNotification, setShowNotification] = useState(false);
   const [notificationText, setNotificationText] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const history = useHistory();
 
   const [gain, setGain] = useState(0);
@@ -86,6 +90,11 @@ const JoinPage = ({
     setGain(_gain);
   };
 
+  const togglePassword = () => {
+    setShowPassword(!showPassword);
+    setPassword("");
+  };
+
   function Visualizer() {
     return (
       <div
@@ -114,7 +123,6 @@ const JoinPage = ({
               >
                 {notificationText}
               </Notification>
-              <Div>Name:</Div>
               <Input
                 placeholder="Name"
                 type="text"
@@ -124,16 +132,24 @@ const JoinPage = ({
                   setName(e.target.value);
                 }}
               />
-              <Div>Password:</Div>
-              <Input
-                placeholder="Password"
-                type="password"
-                name="password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-              />
+              <Div className="password-wrapper">
+                <Button
+                  className={cx("password-toggle", { "locked-style": showPassword })}
+                  onClick={() => togglePassword()}
+                >
+                  {showPassword ? <LockIcon /> : <LockOpenIcon />}
+                </Button>
+                <Input
+                  className={cx("password-input", { disabled: !showPassword })}
+                  placeholder="Password"
+                  type="password"
+                  name="password"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
+                />
+              </Div>
             </Div>
             <Div m={{ t: "20px" }}>
               <Div>Select audio device:</Div>

@@ -25,11 +25,18 @@ enum AuthenticationEnum {
 
 const rooms: { [key: string]: { numUsers: number; passHash: string } } = {};
 
+const getHash = (prehash: string) => {
+  return createHash("sha256").update(prehash).digest("hex");
+};
+
+const getDefaultHash = (roomName: string) => {
+  return getHash(roomName + getHash(roomName));
+};
+
 // Function to decide whether to verify room password.
 const authenticate = (roomName: string, pass: string) => {
-  const hash = createHash("sha256")
-    .update(roomName + pass)
-    .digest("hex");
+  const prehash = roomName + pass;
+  const hash = getHash(prehash);
   const room = rooms[roomName];
 
   // If room doesn't exist, return.
@@ -57,7 +64,11 @@ app.get("/", (req, res) => {
 io.on("connection", (socket) => {
   socket.on("NUM_USERS", (nspName) => {
     const roomName = getRoomName(nspName);
-    socket.emit("NUM_USERS", rooms[roomName]);
+    if (rooms[roomName]) {
+      socket.emit("NUM_USERS", rooms[roomName].numUsers);
+    } else {
+      socket.emit("NUM_USERS", 0);
+    }
   });
 });
 
@@ -69,6 +80,18 @@ io.of((nsp, query, next) => {
   next(null, true);
 }).on("connection", (socket) => {
   const roomName = getRoomName(socket.nsp.name);
+
+  socket.on("ROOM_INFO", () => {
+    if (rooms[roomName]) {
+      const hasPass = rooms[roomName].passHash != getDefaultHash(roomName);
+      socket.emit("ROOM_INFO", {
+        numUsers: rooms[roomName].numUsers,
+        hasPass,
+      });
+    } else {
+      socket.emit("ROOM_INFO", { numUsers: 0, hasPass: false });
+    }
+  });
 
   socket.on("AUTHENTICATE", (password) => {
     const authenticationResult = authenticate(roomName, password);

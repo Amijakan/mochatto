@@ -28,7 +28,11 @@
 
     .password-input.disabled {
       pointer-events: none;
-      background-color: $gray;
+      background-color: $disabled-background-color;
+
+      &::placeholder {
+        color: $disabled-text-color;
+      }
     }
   }
 }

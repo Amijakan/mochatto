@@ -27,12 +27,22 @@ const JoinPage = ({
   const { room_id } = useParams<{ room_id: string }>();
   const [showNotification, setShowNotification] = useState(false);
   const [notificationText, setNotificationText] = useState("");
+
+  // The password text.
+  const [password, setPassword] = useState("");
+  // A boolean to decide whether to disable the password input or not.
+  const [requirePassword, setRequirePassword] = useState(false);
+  // A boolean to decide whether to show the password input or not.
   const [showPassword, setShowPassword] = useState(false);
+  // A boolean to decide whether to show the password choice button or not.
+  const [showPasswordChoice, setShowPasswordChoice] = useState(false);
+  // Has all asynchronous data finished loading?
+  const [finishedLoading, setFinishedLoading] = useState(false);
+
   const history = useHistory();
 
   const [gain, setGain] = useState(0);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
-  const [password, setPassword] = useState("");
 
   enum AuthenticationEnum {
     Success = 0,
@@ -81,6 +91,24 @@ const JoinPage = ({
   }, []);
 
   useEffect(() => {
+    if (socket) {
+      socket.emit(SIOChannel.ROOM_INFO);
+      socket.on(SIOChannel.ROOM_INFO, (info) => {
+        const { numUsers, hasPass } = info;
+        const roomExists = !!numUsers;
+        if (!roomExists) {
+          setShowPassword(true);
+          setShowPasswordChoice(true);
+        } else if (hasPass) {
+          setShowPassword(true);
+          setRequirePassword(true);
+        }
+        setFinishedLoading(true);
+      });
+    }
+  }, [socket]);
+
+  useEffect(() => {
     if (visualizer) {
       visualizer.setStream(stream);
     }
@@ -90,8 +118,8 @@ const JoinPage = ({
     setGain(_gain);
   };
 
-  const togglePassword = () => {
-    setShowPassword(!showPassword);
+  const togglePasswordDisability = () => {
+    setRequirePassword(!requirePassword);
     setPassword("");
   };
 
@@ -132,24 +160,32 @@ const JoinPage = ({
                   setName(e.target.value);
                 }}
               />
-              <Div className="password-wrapper">
-                <Button
-                  className={cx("password-toggle", { "locked-style": showPassword })}
-                  onClick={() => togglePassword()}
-                >
-                  {showPassword ? <LockIcon /> : <LockOpenIcon />}
-                </Button>
-                <Input
-                  className={cx("password-input", { disabled: !showPassword })}
-                  placeholder="Password"
-                  type="password"
-                  name="password"
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                  }}
-                />
-              </Div>
+              {finishedLoading && (
+                <Div className="password-wrapper">
+                  {showPasswordChoice && (
+                    <Button
+                      className={cx("password-toggle", { "locked-style": requirePassword })}
+                      onClick={() => togglePasswordDisability()}
+                    >
+                      {requirePassword ? <LockIcon /> : <LockOpenIcon />}
+                    </Button>
+                  )}
+                  {showPassword && (
+                    <Input
+                      className={cx("password-input", {
+                        disabled: !requirePassword,
+                      })}
+                      placeholder="Password"
+                      type="password"
+                      name="password"
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                      }}
+                    />
+                  )}
+                </Div>
+              )}
             </Div>
             <Div m={{ t: "20px" }}>
               <Div>Select audio device:</Div>

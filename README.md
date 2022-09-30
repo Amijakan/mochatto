@@ -47,12 +47,12 @@ With browser running
 - [x] Status (Active / Inactive)
 - [x] Separate rooms `/[room-id]`
 - [x] Screenshares
+- [x] Password protection for rooms
 - [ ] Mobile Support
 - [ ] User Lists
 - [ ] Change Username
 - [ ] Place Images in the space
 - [ ] Place Videos in the space
-- [ ] Password protection for rooms
 - [ ] Audio Recording
 
 ## Runnig own iceServer

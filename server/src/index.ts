@@ -83,7 +83,7 @@ io.of((nsp, query, next) => {
 
   socket.on("ROOM_INFO", () => {
     if (rooms[roomName]) {
-      const hasPass = rooms[roomName].passHash != getDefaultHash(roomName);
+      const hasPass = rooms[roomName].passHash !== getDefaultHash(roomName);
       socket.emit("ROOM_INFO", {
         numUsers: rooms[roomName].numUsers,
         hasPass,

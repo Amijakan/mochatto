@@ -17,7 +17,6 @@ const notificationColors = {
   leave: { color: "danger", icon: "Info" },
 };
 
-let globalUserInfos = {};
 
 function RoomPage({ name }: { name: string }): JSX.Element {
   const [announcement, setAnnouncement] = useState("");
@@ -30,6 +29,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const [selfUserInfo, setSelfUserInfo] = useState<UserInfo>({ ...defaultUserInfo, name });
   const selfUserInfoRef = useRef(selfUserInfo);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
+  const userInfosRef = useRef(userInfos)
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
   const networkRef = useRef(null as unknown as Network);
@@ -43,6 +43,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     const newInfo = { ...selfUserInfoRef.current, ...info };
     selfUserInfoRef.current = newInfo;
     setSelfUserInfo(newInfo);
+    addUserInfo(socket.id)(newInfo);
   };
 
   const updateVisualizer = (_visualizer) => {
@@ -99,7 +100,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     // Remove the avatar.
     removeUserInfo(id);
     // Set announcement.
-    setAnnouncement(globalUserInfos[id].name + " has left.");
+    setAnnouncement(userInfosRef.current[id].name + " has left.");
     setNotificationTheme("leave");
     setShowNotification(true);
   };
@@ -151,7 +152,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     });
 
     socket.on(SIOChannel.DISCONNECT, ({ id }) => {
-      if (globalUserInfos[id]) {
+      if (userInfosRef.current[id]) {
         onLeave(id);
       }
     });
@@ -191,10 +192,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, []);
 
   useEffect(() => {
-    globalUserInfos = userInfos;
-  }, [userInfos]);
-
-  useEffect(() => {
     updateSelfUserInfo({ id: socket.id });
   }, [socket]);
 
@@ -219,6 +216,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     networkRef.current?.setDeaf(!selfUserInfoRef.current.active);
   }, [selfUserInfoRef.current.active]);
 
+  useEffect(() => {
+    userInfosRef.current = userInfos;
+  }, [userInfos]);
   const handleClickScreenSharing = useCallback(() => {
     if (!selfUserInfoRef.current.isScreenSharing) {
       navigator.mediaDevices
@@ -268,7 +268,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         </Notification>
         <AvatarCanvas
           selfUserInfo={selfUserInfoRef.current}
-          setSelfUserInfo={updateSelfUserInfo}
+          updateSelfUserInfo={updateSelfUserInfo}
           userInfos={Object.values(userInfos)}
         />
         <ButtonsBar

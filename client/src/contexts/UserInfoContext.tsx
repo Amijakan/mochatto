@@ -3,6 +3,7 @@ import React, { createContext, useReducer, useCallback } from "react";
 export type Position = [number, number];
 
 export type UserInfo = {
+  id: string;
   name: string;
   avatarColor: {
     background: string;
@@ -12,18 +13,17 @@ export type UserInfo = {
   position: Position;
   active: boolean;
   mute: boolean;
-  id: string;
   isScreenSharing: boolean;
 };
 
-export const defaultUserInfo = {
+export const defaultUserInfo: UserInfo = {
+  id: "",
   name: "",
   avatarColor: { background: "rgb(0 0 0 / 0%)", border: "rgb(0 0 0 / 0%)" },
   multiplier: 0,
   position: [100, 100] as Position,
   active: true,
   mute: false,
-  id: "",
   isScreenSharing: false,
 };
 
@@ -50,7 +50,7 @@ export const UserInfoProvider = ({ children }: { children: JSX.Element }): JSX.E
             newInfo[key] = defaultUserInfo[key];
           }
         });
-        return { ...userInfos, [action.id]: newInfo };
+        return { ...userInfos, [action.id]: { ...newInfo, id: action.id } };
       }
       case "remove": {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

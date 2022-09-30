@@ -9,9 +9,9 @@
     width: $avatar-size;
     height: $avatar-size;
     border-radius: 100%;
-    position: absolute;
     display: table;
     transition: box-shadow 0.2s;
+    position: relative;
 
     .avatar-initial {
         user-select: none;
@@ -56,4 +56,8 @@
         border-color: #ffffff78;
       }
     }
+}
+
+.avatar[data-self=self] {
+  z-index: 1
 }

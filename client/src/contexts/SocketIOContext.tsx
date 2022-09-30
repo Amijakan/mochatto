@@ -9,6 +9,7 @@ const getRoomName = (nsp: string) => {
 
 export enum SIOChannel {
   AUTHENTICATE = "AUTHENTICATE",
+  ROOM_INFO = "ROOM_INFO",
   JOIN = "JOIN",
   LEAVE = "LEAVE",
   DISCONNECT = "DISCONNECT",
@@ -16,6 +17,7 @@ export enum SIOChannel {
   ICE_CANDIDATE = "ICE_CANDIDATE",
   ANSWER = "ANSWER",
   OFFER = "OFFER",
+  NUM_USERS = "NUM_USERS",
 }
 
 export const SocketContext = createContext<{ socket: Socket }>({

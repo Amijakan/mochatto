@@ -25,6 +25,15 @@ Mochatto is an open-source proximity voice chat application for virtual meetings
 1. `make dev`
 1. `make dev-up`
 
+
+#### Debugging Server
+
+Requires VSCode
+1. `make dev-up`
+2. open `mochatto/server` in VSCode
+3. Go to Debug tab
+4. Run with `Docker: Attach to node`
+
 ### Prod
 1. `make prod-up`
 
@@ -32,6 +41,7 @@ Mochatto is an open-source proximity voice chat application for virtual meetings
 1. `make beta-up`
 
 ### Test
+Make sure that the server is up
 Without visual check
 - `make test`
 

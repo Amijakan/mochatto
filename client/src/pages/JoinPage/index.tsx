@@ -115,7 +115,7 @@ const JoinPage = ({
       });
       socket.on("connect_error", (err) => {
         console.error(err.message);
-        setNotificationText("Failed to connect with server. Retrying...");
+        setNotificationText("Failed to establish connection. Retrying...");
         setShowNotification(true);
       });
     }

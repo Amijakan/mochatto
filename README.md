@@ -32,6 +32,7 @@ Mochatto is an open-source proximity voice chat application for virtual meetings
 1. `make beta-up`
 
 ### Test
+Make sure that the server is up
 Without visual check
 - `make test`
 

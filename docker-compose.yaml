@@ -34,6 +34,7 @@ services:
     build:
       context: ./client
       dockerfile: ./Dockerfile.test
+    network_mode: host
     command:
       yarn test
 

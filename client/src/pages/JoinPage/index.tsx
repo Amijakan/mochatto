@@ -59,6 +59,14 @@ const JoinPage = ({
 
   const onJoinClicked = () => {
     if (!socket) {
+      setNotificationText("Socket is not ready. Please try again.");
+      setShowNotification(true);
+      return;
+    }
+
+    if (!finishedLoading) {
+      setNotificationText("Failure to establish connection.");
+      setShowNotification(true);
       return;
     }
 

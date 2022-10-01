@@ -65,7 +65,7 @@ const JoinPage = ({
     }
 
     if (!finishedLoading) {
-      setNotificationText("Failure to establish connection.");
+      setNotificationText("Failed to connect with server.");
       setShowNotification(true);
       return;
     }
@@ -112,6 +112,11 @@ const JoinPage = ({
           setRequirePassword(true);
         }
         setFinishedLoading(true);
+      });
+      socket.on("connect_error", (err) => {
+        console.error(err.message);
+        setNotificationText("Failed to connect with server. Retrying...");
+        setShowNotification(true);
       });
     }
   }, [socket]);

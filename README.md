@@ -38,6 +38,9 @@ Without visual check
 With browser running
 - `make test-headed`
 
+Debugging with browser
+- `make test-debug`
+
 ## Features
 
 - [x] Choose Audio Input

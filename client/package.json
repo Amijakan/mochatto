@@ -28,6 +28,7 @@
     "devTest": "yarn run cypress open",
     "test": "npx playwright test",
     "test-headed": "npx playwright test --headed",
+    "test-debug": "npx playwright test --debug",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

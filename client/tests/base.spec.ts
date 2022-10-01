@@ -12,6 +12,8 @@ test("test", async ({ page }) => {
   // Click and fill name.
   await page.locator('[placeholder="Name"]').click();
   await page.locator('[placeholder="Name"]').fill("test");
+
+  /* To do: bg-320
   // Wait for and click the password toggle.
   await page.locator(".password-toggle");
   await page.locator(".password-toggle").click();
@@ -33,4 +35,5 @@ test("test", async ({ page }) => {
   // Click text=Back
   await page.locator("text=Back").click();
   await expect(page).toHaveURL("http://localhost:4500/");
+   */
 });

@@ -2,13 +2,13 @@ $transition-time: 0.3s;
 $primary: #FC8030;
 $background: #000000BA;
 $white: #FCFCFC;
-$default: 0.5rem;
+$spacing: 0.5rem;
 $buttons-margin: 0.25rem;
 
 
 button {
-  padding: $default;
-  border-radius: $default;
+  padding: $spacing;
+  border-radius: $spacing;
   color: white;
   transition: $transition-time;
   margin: 0 $buttons-margin;
@@ -33,8 +33,8 @@ button[data-active=inactive] {
 .sidebar {
   position: absolute;
   z-index: 100;
-  top: $default;
-  right: $default;
+  top: $spacing;
+  right: $spacing;
   background-color: $background;
   color: $white;
   transition: width $transition-time, height $transition-time, transform $transition-time;
@@ -43,24 +43,24 @@ button[data-active=inactive] {
   backdrop-filter: blur( 4px );
   -webkit-backdrop-filter: blur( 4px );
 
-  &--head {
+  &__head {
     display: flex;
     justify-content: flex-end;
     margin: $buttons-margin;
   }
 
-  &--body {
-    padding: $default;
+  &__body {
+    padding: $spacing;
   }
 
-  &--userlist-item {
+  &__userlist-item {
     display: flex;
     align-items: center;
     // I'm just putting number that looks good
-    margin: calc($default / 2);
+    margin: calc($spacing * 1.5) $spacing;
 
     span {
-      margin-left: $default;
+      margin-left: $spacing;
     }
   }
 
@@ -68,12 +68,12 @@ button[data-active=inactive] {
 
 .sidebar[data-open=open] {
   border-radius: 16px;
-  height: calc(100vh - 2 * $default);
+  height: calc(100vh - 2 * $spacing);
   width: 300px;
 }
 
 .sidebar[data-open=close] {
-  // MUI icon default width/height: 1em, font-size: 1.5rem, padding: 8px, margin: 0 4px;
+  // MUI icon spacing width/height: 1em, font-size: 1.5rem, padding: 8px, margin: 0 4px;
   // FIXME: need to change this when number of icon changes
   $num-icons: 2;
   $mui-icon-size: calc(1.5rem + 16px); // font-size: 1.5rem + padding: 8px;

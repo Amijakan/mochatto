@@ -1,19 +1,30 @@
 import React from 'react'
 import { SIDEBAR_ITEM } from '../../'
 
-const SidebarButton = ({ value, current, setValue, content }: { value: SIDEBAR_ITEM | null, current: SIDEBAR_ITEM | null, setValue: (arg0: SIDEBAR_ITEM | null) => void, content: any }) => {
-  const selected = current === value;
+const SidebarButton = (
+  {
+    value,
+    selectedItem,
+    setSelectedItem,
+    content
+  } : {
+    value: SIDEBAR_ITEM | null,
+    selectedItem: SIDEBAR_ITEM | null,
+    setSelectedItem: (arg0: SIDEBAR_ITEM | null) => void,
+    content: any
+  }) => {
+  const isSelected = selectedItem === value;
   return (
     <button
       onClick={() => {
-        if (selected) setValue(null)
-        else setValue(value)
+        if (isSelected) setSelectedItem(null) // Toggles sidebar if selected item is clicked again
+        else setSelectedItem(value)
       }}
-      data-active={selected ? 'active' : "inactive"}
+      data-active={isSelected ? 'active' : "inactive"}
     >
       {content}
     </button>
   )
 }
 
-export default React.memo(SidebarButton)
+export default SidebarButton

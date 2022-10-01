@@ -3,11 +3,11 @@ import { Person, ChatBubble } from "@material-ui/icons";
 import SidebarButton from './SidebarButton'
 import { SIDEBAR_ITEM } from '../'
 
-const SidebarHead = ({ currentItem, setCurrentItem }: { currentItem: SIDEBAR_ITEM | null, setCurrentItem: (arg0: SIDEBAR_ITEM | null) => void }) => {
+const SidebarHead = ({ selectedItem, setSelectedItem }: { selectedItem: SIDEBAR_ITEM | null, setSelectedItem: (arg0: SIDEBAR_ITEM | null) => void }) => {
   return (
-    <div className="sidebar--head">
-      <SidebarButton value={SIDEBAR_ITEM.USERS} current={currentItem} setValue={setCurrentItem} content={<Person />} />
-      <SidebarButton value={SIDEBAR_ITEM.CHAT} current={currentItem} setValue={setCurrentItem} content={<ChatBubble />} />
+    <div className="sidebar__head">
+      <SidebarButton value={SIDEBAR_ITEM.USERS} selectedItem={selectedItem} setSelectedItem={setSelectedItem} content={<Person />} />
+      <SidebarButton value={SIDEBAR_ITEM.CHAT} selectedItem={selectedItem} setSelectedItem={setSelectedItem} content={<ChatBubble />} />
     </div>
   )
 }

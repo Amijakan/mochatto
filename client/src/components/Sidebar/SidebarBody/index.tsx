@@ -3,11 +3,11 @@ import { SIDEBAR_ITEM } from '../'
 import UserList from '../UserList'
 import ChatHistory from '../ChatHistory'
 
-const SidebarBody = ({ currentItem }: { currentItem: SIDEBAR_ITEM }) => {
+const SidebarBody = ({ selectedItem }: { selectedItem: SIDEBAR_ITEM }) => {
   return (
-    <div className="sidebar--body">
-      {currentItem === SIDEBAR_ITEM.USERS && <UserList />}
-      {currentItem === SIDEBAR_ITEM.CHAT && <ChatHistory />}
+    <div className="sidebar__body">
+      {selectedItem === SIDEBAR_ITEM.USERS && <UserList />}
+      {selectedItem === SIDEBAR_ITEM.CHAT && <ChatHistory />}
     </div>
   )
 }

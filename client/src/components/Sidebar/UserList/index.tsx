@@ -11,7 +11,7 @@ const UserList = () => {
     <>
       {(Object.values(userInfos) as UserInfo[]).map((value: UserInfo, index: number) => (
         value &&
-        <div className="sidebar--userlist-item" key={index}>
+        <div className="sidebar__userlist-item" key={index}>
           <AvatarDOM
             id={value.id}
             size="small"
@@ -31,4 +31,4 @@ const UserList = () => {
   )
 }
 
-export default UserList
+export default React.memo(UserList)

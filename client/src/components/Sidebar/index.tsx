@@ -12,17 +12,17 @@ export enum SIDEBAR_ITEM {
 
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [currentItem, setCurrentItem] = useState<SIDEBAR_ITEM | null>(null)
+  const [selectedItem, setSelectedItem] = useState<SIDEBAR_ITEM | null>(null)
 
   return (
     <div
       className="sidebar"
       onClick={() => setIsOpen(!isOpen)}
-      data-open={currentItem ? "open" : "close"}
+      data-open={selectedItem ? "open" : "close"}
       data-duration="1s"
     >
-      <SidebarHead currentItem={currentItem} setCurrentItem={setCurrentItem} />
-      {currentItem ? <SidebarBody currentItem={currentItem} /> : <></>}
+      <SidebarHead selectedItem={selectedItem} setSelectedItem={setSelectedItem} />
+      {selectedItem ? <SidebarBody selectedItem={selectedItem} /> : <></>}
     </div>
   )
 

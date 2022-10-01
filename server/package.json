@@ -14,7 +14,7 @@
     "prestart": "npm run build",
     "start": "node .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon ./src/index.ts"
+    "dev": "nodemon --exec 'node --inspect=0.0.0.0:9229 --require ts-node/register ./src/index.ts'"
   },
   "keywords": [],
   "author": "",

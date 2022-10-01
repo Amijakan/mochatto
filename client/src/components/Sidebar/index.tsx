@@ -11,13 +11,11 @@ export enum SIDEBAR_ITEM {
 }
 
 const SideBar = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(false)
   const [selectedItem, setSelectedItem] = useState<SIDEBAR_ITEM | null>(null)
 
   return (
     <div
       className="sidebar"
-      onClick={() => setIsOpen(!isOpen)}
       data-open={selectedItem ? "open" : "close"}
       data-duration="1s"
     >

@@ -18,22 +18,26 @@ const io = new Server(server, {
   },
 });
 
+// Authentication codes to be returned to the client.
+// Needs to be in sync with the frontend enum.
 enum AuthenticationEnum {
   Success = 0,
   IncorrectPassword = 401,
 }
 
+// Holds info about all existing rooms.
 const rooms: { [key: string]: { numUsers: number; passHash: string } } = {};
 
 const getHash = (prehash: string) => {
   return createHash("sha256").update(prehash).digest("hex");
 };
 
+// Function that returns the default hash (when a user provides no password).
+// Needs to be in agreement with the frontend.
 const getDefaultHash = (roomName: string) => {
   return getHash(roomName + getHash(roomName));
 };
 
-// Function to decide whether to verify room password.
 const authenticate = (roomName: string, pass: string) => {
   const prehash = roomName + pass;
   const hash = getHash(prehash);

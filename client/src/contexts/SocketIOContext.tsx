@@ -2,8 +2,9 @@ import React, { createContext, useState, useEffect } from "react";
 import io, { Socket } from "socket.io-client";
 import PropTypes from "prop-types";
 
+// Get the room name from a namespace path.
 const getRoomName = (nsp: string) => {
-  // Replace split with path.basename if possible.
+  // To do: replace split with path.basename if possible.
   return encodeURIComponent(nsp.split("/")[1]);
 };
 
@@ -32,6 +33,7 @@ export const SocketProvider = ({ children }: { children: JSX.Element }): JSX.Ele
 
     const baseURL: string =
       (import.meta.env.VITE_SERVER_URL as unknown as string) || "http://localhost:4000";
+    // To do: replace + with path.join if possible.
     const ENDPOINT = baseURL + "/" + getRoomName(pathname);
     setSocket(io(ENDPOINT));
   }, []);

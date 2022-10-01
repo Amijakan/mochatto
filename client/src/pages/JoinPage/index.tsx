@@ -44,6 +44,8 @@ const JoinPage = ({
   const [gain, setGain] = useState(0);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
 
+  // Authentication codes to be returned back by the server.
+  // Needs to be in sync with the backend enum.
   enum AuthenticationEnum {
     Success = 0,
     IncorrectPassword = 401,
@@ -70,11 +72,15 @@ const JoinPage = ({
       return;
     }
 
+    // The hash to send to server for authentication.
+    // Needs to be in agreement with the backend when providing an empty password.
     const hash = sha256(room_id + password);
 
     hash.then((hash) => {
       socket.emit(SIOChannel.AUTHENTICATE, hash);
     });
+
+    // Handle the authentication result.
     socket.on(SIOChannel.AUTHENTICATE, (result) => {
       if (result == AuthenticationEnum.Success) {
         if (name != "") {
@@ -100,6 +106,7 @@ const JoinPage = ({
 
   useEffect(() => {
     if (socket) {
+      // Retrieve information about the room existing and whether it requires a password or not.
       socket.emit(SIOChannel.ROOM_INFO);
       socket.on(SIOChannel.ROOM_INFO, (info) => {
         const { numUsers, hasPass } = info;
@@ -113,6 +120,7 @@ const JoinPage = ({
         }
         setFinishedLoading(true);
       });
+
       socket.on("connect_error", (err) => {
         console.error(err.message);
         setNotificationText("Failed to establish connection. Retrying...");
@@ -131,7 +139,7 @@ const JoinPage = ({
     setGain(_gain);
   };
 
-  const togglePasswordDisability = () => {
+  const togglePasswordRequirement = () => {
     setRequirePassword(!requirePassword);
     setPassword("");
   };
@@ -178,7 +186,7 @@ const JoinPage = ({
                   {showPasswordChoice && (
                     <Button
                       className={cx("password-toggle", { "locked-style": requirePassword })}
-                      onClick={() => togglePasswordDisability()}
+                      onClick={() => togglePasswordRequirement()}
                     >
                       {requirePassword ? <LockIcon /> : <LockOpenIcon />}
                     </Button>

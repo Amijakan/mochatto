@@ -35,6 +35,9 @@ test:
 test-headed:
 	xhost +local:root && docker-compose build client-test-headed && docker-compose run --rm client-test-headed
 
+test-debug:
+	xhost +local:root && docker-compose build client-test-debug && docker-compose run --rm client-test-debug
+
 ## Cleans containers
 clean:
 	yes | docker-compose rm -s

@@ -8,6 +8,7 @@ services:
       target: base
     ports:
       - '4000:4000'
+      - '9229:9229'
     environment:
       MODE: dev
     volumes:
@@ -34,6 +35,7 @@ services:
     build:
       context: ./client
       dockerfile: ./Dockerfile.test
+    network_mode: host
     command:
       yarn test
 
@@ -48,6 +50,18 @@ services:
       DISPLAY: $DISPLAY
     command:
       yarn test-headed
+
+  client-test-debug:
+    extends:
+      service: client-test
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ~/.Xauthority:/root/.Xauthority
+    environment:
+      QT_XQQ_NO_MITSHM: 1
+      DISPLAY: $DISPLAY
+    command:
+      yarn test-debug
 
   ###############################################
   # Prod containers    

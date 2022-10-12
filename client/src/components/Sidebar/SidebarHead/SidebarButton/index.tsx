@@ -3,26 +3,26 @@ import { SIDEBAR_ITEM } from '../../'
 
 const SidebarButton = (
   {
-    value,
-    selectedItem,
+    value, // identifier for this button
+    selectedItem, // currently active item on sidebar
     setSelectedItem,
-    content
-  } : {
+    children
+  }: {
     value: SIDEBAR_ITEM | null,
     selectedItem: SIDEBAR_ITEM | null,
     setSelectedItem: (arg0: SIDEBAR_ITEM | null) => void,
-    content: any
+    children: JSX.Element
   }) => {
   const isSelected = selectedItem === value;
   return (
     <button
       onClick={() => {
-        if (isSelected) setSelectedItem(null) // Toggles sidebar if selected item is clicked again
+        if (isSelected) setSelectedItem(null) // Closes sidebar if selected item is clicked again
         else setSelectedItem(value)
       }}
       data-active={isSelected ? 'active' : "inactive"}
     >
-      {content}
+      {children}
     </button>
   )
 }

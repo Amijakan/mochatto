@@ -6,9 +6,13 @@ import { SIDEBAR_ITEM } from '../'
 const SidebarHead = ({ selectedItem, setSelectedItem }: { selectedItem: SIDEBAR_ITEM | null, setSelectedItem: (arg0: SIDEBAR_ITEM | null) => void }) => {
   return (
     <div className="sidebar__head">
-      <SidebarButton value={SIDEBAR_ITEM.USERS} selectedItem={selectedItem} setSelectedItem={setSelectedItem} content={<Person />} />
-      <SidebarButton value={SIDEBAR_ITEM.CHAT} selectedItem={selectedItem} setSelectedItem={setSelectedItem} content={<ChatBubble />} />
-    </div>
+      <SidebarButton value={SIDEBAR_ITEM.USERS} selectedItem={selectedItem} setSelectedItem={setSelectedItem}>
+        <Person />
+      </SidebarButton>
+      <SidebarButton value={SIDEBAR_ITEM.CHAT} selectedItem={selectedItem} setSelectedItem={setSelectedItem}>
+        <ChatBubble />
+      </SidebarButton>
+    </div >
   )
 }
 

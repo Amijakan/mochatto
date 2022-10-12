@@ -9,22 +9,22 @@ const UserList = () => {
   // FIXME: Styling of user list
   return (
     <>
-      {(Object.values(userInfos) as UserInfo[]).map((value: UserInfo, index: number) => (
-        value.name &&
-        <div className="sidebar__userlist-item" key={index}>
-          <AvatarDOM
-            id={value.id}
-            size="small"
-            multiplier={0}
-            _backgroundColor={value.avatarColor.background}
-            _borderColor={value.avatarColor.border}
-            isSelf={false}
-            initial={value.name[0]}
-            active={value.active}
-            mute={value.mute}
-          />
-          <span>{value.name}</span>
-        </div>
+      {(Object.values(userInfos) as UserInfo[]).map((userInfo: UserInfo, index: number) => (
+      userInfo.name &&
+      <div className="sidebar__userlist-item" key={index}>
+        <AvatarDOM
+          id={userInfo.id}
+          size="small"
+          multiplier={0}
+          _backgroundColor={userInfo.avatarColor.background}
+          _borderColor={userInfo.avatarColor.border}
+          isSelf={false}
+          initial={userInfo.name[0]}
+          active={userInfo.active}
+          mute={userInfo.mute}
+        />
+        <span>{userInfo.name}</span>
+      </div>
       ))}
     </>
   )

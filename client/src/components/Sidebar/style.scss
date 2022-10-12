@@ -1,15 +1,10 @@
-$transition-time: 0.3s;
-$primary: #FC8030;
-$background: #000000BA;
-$white: #FCFCFC;
-$spacing: 0.5rem;
-$buttons-margin: 0.25rem;
+@import '@/constants/style.scss';
 
 
 button {
   padding: $spacing;
   border-radius: $spacing;
-  color: white;
+  color: $white;
   transition: $transition-time;
   margin: 0 $buttons-margin;
   cursor: pointer;

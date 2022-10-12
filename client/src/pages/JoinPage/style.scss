@@ -1,5 +1,7 @@
+@import '@/constants/style.scss';
+
 .visualizer {
     height: 10px;
     background: #FDEEC8;
-    transition: width 0.2s;
+    transition: width $transition-time;
 }

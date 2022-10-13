@@ -19,6 +19,7 @@ export enum SIOChannel {
   ANSWER = "ANSWER",
   OFFER = "OFFER",
   NUM_USERS = "NUM_USERS",
+  CONNECT_ERROR = "connect_error", // Predefined string by socketio.
 }
 
 export const SocketContext = createContext<{ socket: Socket }>({

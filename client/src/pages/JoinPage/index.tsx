@@ -121,8 +121,7 @@ const JoinPage = ({
         setFinishedLoading(true);
       });
 
-      socket.on("connect_error", (err) => {
-        console.error(err.message);
+      socket.on(SIOChannel.CONNECT_ERROR, (err) => {
         setNotificationText("Failed to establish connection. Retrying...");
         setShowNotification(true);
       });

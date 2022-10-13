@@ -43,7 +43,7 @@ export const UserInfoProvider = ({ children }: { children: JSX.Element }): JSX.E
       case "add": {
         let newInfo = userInfos[action.id];
         Object.keys(action.data).forEach((key) => {
-          newInfo = { ...newInfo, [key]: action.data[key] };
+          newInfo = { ...newInfo, [key]: action?.data[key] };
         });
         Object.keys(defaultUserInfo).forEach((key) => {
           if (newInfo[key] == undefined) {

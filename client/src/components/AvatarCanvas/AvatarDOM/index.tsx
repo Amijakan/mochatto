@@ -13,6 +13,7 @@ function AvatarDOM({
   initial,
   active,
   mute,
+  size = "large",
   id,
 }: {
   isSelf: boolean;
@@ -22,6 +23,7 @@ function AvatarDOM({
   initial: string;
   active: boolean;
   mute: boolean;
+  size?: string;
   id: string;
 }): JSX.Element {
   const [isRendered, setIsRendered] = useState(false);
@@ -50,6 +52,7 @@ function AvatarDOM({
     <div
       id={"avatar-" + id}
       className={cx("avatar", "avatar-outer", { "no-show": !isRendered })}
+      data-size={size}
       data-self={isSelf && "self"}
       style={calculateSpecificStyles()}
     >

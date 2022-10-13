@@ -1,0 +1,80 @@
+@import '@/constants/style.scss';
+
+
+button {
+  padding: $spacing;
+  border-radius: $spacing;
+  color: $white;
+  transition: $transition-time;
+  margin: 0 $buttons-margin;
+  cursor: pointer;
+}
+
+button[data-active=active] {
+  background-color: $primary;
+
+  &:hover {
+  }
+}
+
+button[data-active=inactive] {
+  background-color: transparent;
+
+  &:hover {
+    background-color: #ffffff22;
+  }
+}
+
+.sidebar {
+  position: absolute;
+  z-index: 100;
+  top: $spacing;
+  right: $spacing;
+  background-color: $background;
+  color: $white;
+  transition: width $transition-time, height $transition-time, transform $transition-time;
+
+  // TODO: extract to glass morphism
+  backdrop-filter: blur( 4px );
+  -webkit-backdrop-filter: blur( 4px );
+
+  &__head {
+    display: flex;
+    justify-content: flex-end;
+    margin: $buttons-margin;
+  }
+
+  &__body {
+    padding: $spacing;
+  }
+
+  &__userlist-item {
+    display: flex;
+    align-items: center;
+    // I'm just putting number that looks good
+    margin: calc($spacing * 1.5) $spacing;
+
+    span {
+      margin-left: $spacing;
+    }
+  }
+
+}
+
+.sidebar[data-open=open] {
+  border-radius: 16px;
+  height: calc(100vh - 2 * $spacing);
+  width: 300px;
+}
+
+.sidebar[data-open=close] {
+  // MUI icon spacing width/height: 1em, font-size: 1.5rem, padding: 8px, margin: 0 4px;
+  // FIXME: need to change this when number of icon changes
+  $num-icons: 2;
+  $mui-icon-size: calc(1.5rem + 16px); // font-size: 1.5rem + padding: 8px;
+  $closed-sidebar-width: calc($num-icons * $mui-icon-size + 6 * $buttons-margin); // 2 margin for container, 2 margin for each button
+  $closed-sidebar-height: calc($mui-icon-size + 2 * $buttons-margin);
+  height: $closed-sidebar-height;
+  width: $closed-sidebar-width;
+  border-radius: 16px;
+}

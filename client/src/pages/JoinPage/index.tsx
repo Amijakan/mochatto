@@ -31,7 +31,7 @@ const JoinPage = ({
   // The password text.
   const [password, setPassword] = useState("");
   // A boolean to decide whether to disable the password input or not.
-  const [requirePassword, setRequirePassword] = useState(false);
+  const [isPasswordRequired, setPasswordRequired] = useState(false);
   // A boolean to decide whether to show the password input or not.
   const [showPassword, setShowPassword] = useState(false);
   // A boolean to decide whether to show the password choice button or not.
@@ -116,7 +116,7 @@ const JoinPage = ({
           setShowPasswordChoice(true);
         } else if (hasPass) {
           setShowPassword(true);
-          setRequirePassword(true);
+          setPasswordRequired(true);
         }
         setFinishedLoading(true);
       });
@@ -139,7 +139,7 @@ const JoinPage = ({
   };
 
   const togglePasswordRequirement = () => {
-    setRequirePassword(!requirePassword);
+    setPasswordRequired(!isPasswordRequired);
     setPassword("");
   };
 
@@ -184,16 +184,16 @@ const JoinPage = ({
                 <Div className="password-wrapper">
                   {showPasswordChoice && (
                     <Button
-                      className={cx("password-toggle", { "locked-style": requirePassword })}
+                      className={cx("password-toggle", { "locked-style": isPasswordRequired })}
                       onClick={() => togglePasswordRequirement()}
                     >
-                      {requirePassword ? <LockIcon /> : <LockOpenIcon />}
+                      {isPasswordRequired ? <LockIcon /> : <LockOpenIcon />}
                     </Button>
                   )}
                   {showPassword && (
                     <Input
                       className={cx("password-input", {
-                        disabled: !requirePassword,
+                        disabled: !isPasswordRequired,
                       })}
                       placeholder="Password"
                       type="password"

@@ -3,6 +3,7 @@ import io, { Socket } from "socket.io-client";
 import PropTypes from "prop-types";
 
 // Get the room name from a namespace path.
+// Expect nsp to be in the format of /someroomname
 const getRoomName = (nsp: string) => {
   // To do: replace split with path.basename if possible.
   return encodeURIComponent(nsp.split("/")[1]);

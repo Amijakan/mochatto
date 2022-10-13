@@ -52,7 +52,7 @@ const authenticate = (roomName: string, pass: string) => {
     // If room password is set, authenticate, and if not, set password and allow connection.
     if (roomHash) {
       if (roomHash === hash) return AuthenticationEnum.Success;
-      else return AuthenticationEnum.IncorrectPassword;
+      else return AuthenticationEnum.Unauthorized;
     }
   }
 };

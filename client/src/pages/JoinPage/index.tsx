@@ -1,13 +1,22 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { SocketContext, DeviceContext } from "@/contexts";
+import { SIOChannel } from "@/contexts/SocketIOContext";
 import { DeviceSelector } from "@/components";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import PropTypes from "prop-types";
 import { Div, Notification, Icon } from "atomize";
-import { Button, Card, Text, Input } from "@/components/atomize_wrapper";
+import { Button, Card, Text, Input, Label } from "@/components/atomize_wrapper";
 import { BaseTemplate } from "@/templates";
+import cx from "classnames";
+import { Lock as LockIcon, LockOpen as LockOpenIcon } from "@material-ui/icons";
+
 import "./style.scss";
+
+interface NotificationState {
+  text: string;
+  isOpen: boolean;
+}
 
 const JoinPage = ({
   name,
@@ -21,20 +30,73 @@ const JoinPage = ({
   const { socket } = useContext(SocketContext);
   const { stream, setStream } = useContext(DeviceContext);
   const { room_id } = useParams<{ room_id: string }>();
-  const [showNotification, setShowNotification] = useState(false);
+  const [notificationState, setNotificationState] = useState({
+    text: "",
+    isOpen: false,
+  } as NotificationState);
+
+  // The password text.
+  const [password, setPassword] = useState("");
+  // A boolean to decide whether to disable the password input or not.
+  const [isPasswordRequired, setPasswordRequired] = useState(false);
+  // A boolean to decide whether to show the password input or not.
+  const [showPassword, setShowPassword] = useState(false);
+  // A boolean to decide whether to show the password choice button or not.
+  const [showPasswordChoice, setShowPasswordChoice] = useState(false);
+  // Has all asynchronous data finished loading?
+  const [finishedLoading, setFinishedLoading] = useState(false);
+
   const history = useHistory();
 
   const [gain, setGain] = useState(0);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
 
+  // Authentication codes to be returned back by the server.
+  // Needs to be in sync with the backend enum.
+  enum AuthenticationEnum {
+    Success = 200,
+    Unauthorized = 401,
+  }
+
+  const sha256 = async (message: string) => {
+    const msgBuffer = new TextEncoder().encode(message);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+    return hashHex;
+  };
+
   const onJoinClicked = () => {
-    if (socket) {
-      if (name != "") {
-        setJoined(true);
-      } else {
-        setShowNotification(true);
-      }
+    if (!socket) {
+      setNotificationState({ text: "Socket is not ready. Please try again.", isOpen: true });
+      return;
     }
+
+    if (!finishedLoading) {
+      setNotificationState({ text: "Failed to connect with server.", isOpen: true });
+      return;
+    }
+
+    // The hash to send to server for authentication.
+    // Needs to be in agreement with the backend when providing an empty password.
+    const hash = sha256(room_id + password);
+
+    hash.then((hash) => {
+      socket.emit(SIOChannel.AUTHENTICATE, hash);
+    });
+
+    // Handle the authentication result.
+    socket.on(SIOChannel.AUTHENTICATE, (result) => {
+      if (result == AuthenticationEnum.Success) {
+        if (name != "") {
+          setJoined(true);
+        } else {
+          setNotificationState({ text: "Please choose a username.", isOpen: true });
+        }
+      } else {
+        setNotificationState({ text: "Incorrect password.", isOpen: true });
+      }
+    });
   };
 
   const onSelect = (_stream) => {
@@ -46,6 +108,29 @@ const JoinPage = ({
   }, []);
 
   useEffect(() => {
+    if (socket) {
+      // Retrieve information about the room existing and whether it requires a password or not.
+      socket.emit(SIOChannel.ROOM_INFO);
+      socket.on(SIOChannel.ROOM_INFO, (info) => {
+        const { numUsers, hasPass } = info;
+        const roomExists = !!numUsers;
+        if (!roomExists) {
+          setShowPassword(true);
+          setShowPasswordChoice(true);
+        } else if (hasPass) {
+          setShowPassword(true);
+          setPasswordRequired(true);
+        }
+        setFinishedLoading(true);
+      });
+
+      socket.on(SIOChannel.CONNECT_ERROR, (err) => {
+        setNotificationState({ text: "Failed to establish connection. Retrying...", isOpen: true });
+      });
+    }
+  }, [socket]);
+
+  useEffect(() => {
     if (visualizer) {
       visualizer.setStream(stream);
     }
@@ -53,6 +138,11 @@ const JoinPage = ({
 
   const onAudioActivity = (_gain: number) => {
     setGain(_gain);
+  };
+
+  const togglePasswordRequirement = () => {
+    setPasswordRequired(!isPasswordRequired);
+    setPassword("");
   };
 
   function Visualizer() {
@@ -76,12 +166,12 @@ const JoinPage = ({
             </Text>
             <Div>
               <Notification
-                isOpen={showNotification}
+                isOpen={notificationState.isOpen}
                 bg={"danger700"}
-                onClose={() => setShowNotification(false)}
+                onClose={() => setNotificationState({ ...notificationState, isOpen: false })}
                 prefix={<Icon name="CloseSolid" color="white" size="18px" m={{ r: "0.5rem" }} />}
               >
-                Please choose a username.
+                {notificationState.text}
               </Notification>
               <Input
                 placeholder="Name"
@@ -92,6 +182,32 @@ const JoinPage = ({
                   setName(e.target.value);
                 }}
               />
+              {finishedLoading && (
+                <Div className="password-wrapper">
+                  {showPasswordChoice && (
+                    <Button
+                      className={cx("password-toggle", { "locked-style": isPasswordRequired })}
+                      onClick={() => togglePasswordRequirement()}
+                    >
+                      {isPasswordRequired ? <LockIcon /> : <LockOpenIcon />}
+                    </Button>
+                  )}
+                  {showPassword && (
+                    <Input
+                      className={cx("password-input", {
+                        disabled: !isPasswordRequired,
+                      })}
+                      placeholder="Password"
+                      type="password"
+                      name="password"
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                      }}
+                    />
+                  )}
+                </Div>
+              )}
             </Div>
             <Div m={{ t: "20px" }}>
               <Div>Select audio device:</Div>

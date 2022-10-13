@@ -5,7 +5,7 @@ import { SIOChannel } from "@/contexts/SocketIOContext";
 import { DeviceSelector } from "@/components";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import PropTypes from "prop-types";
-import { Div, Notification, Icon, Checkbox } from "atomize";
+import { Div, Notification, Icon } from "atomize";
 import { Button, Card, Text, Input, Label } from "@/components/atomize_wrapper";
 import { BaseTemplate } from "@/templates";
 import cx from "classnames";

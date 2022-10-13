@@ -47,8 +47,8 @@ const JoinPage = ({
   // Authentication codes to be returned back by the server.
   // Needs to be in sync with the backend enum.
   enum AuthenticationEnum {
-    Success = 0,
-    IncorrectPassword = 401,
+    Success = 200,
+    Unauthorized = 401,
   }
 
   const sha256 = async (message: string) => {

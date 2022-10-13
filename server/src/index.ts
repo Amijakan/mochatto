@@ -21,8 +21,8 @@ const io = new Server(server, {
 // Authentication codes to be returned to the client.
 // Needs to be in sync with the frontend enum.
 enum AuthenticationEnum {
-  Success = 0,
-  IncorrectPassword = 401,
+  Success = 200,
+  Unauthorized = 401,
 }
 
 // Holds info about all existing rooms.

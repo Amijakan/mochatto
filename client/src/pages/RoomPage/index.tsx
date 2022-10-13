@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect, useContext, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { Div, Notification, Icon, Text } from "atomize";
+import { AvatarCanvas, ButtonsBar, DeviceSelector, Sidebar } from "@/components";
 import _ from "lodash";
 import { SocketContext, DeviceContext, UserInfoContext } from "@/contexts";
 import { SIOChannel } from "@/contexts/SocketIOContext";
 import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
-import { AvatarCanvas, ButtonsBar, DeviceSelector } from "@/components";
 import { Network } from "@/classes/Network";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import { RoomTemplate } from "@/templates";
@@ -16,7 +16,6 @@ const notificationColors = {
   join: { color: "success", icon: "Success" },
   leave: { color: "danger", icon: "Info" },
 };
-
 
 function RoomPage({ name }: { name: string }): JSX.Element {
   const [announcement, setAnnouncement] = useState("");
@@ -279,6 +278,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           onLeaveClicked={handleLeaveClicked}
           userInfoRef={selfUserInfoRef}
         />
+        <Sidebar />
       </>
     </RoomTemplate>
   );

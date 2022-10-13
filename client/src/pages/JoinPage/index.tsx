@@ -13,6 +13,11 @@ import LockIcon from "@material-ui/icons/Lock";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
 import "./style.scss";
 
+interface NotificationState {
+  text: string;
+  isOpen: boolean;
+}
+
 const JoinPage = ({
   name,
   setName,
@@ -25,8 +30,10 @@ const JoinPage = ({
   const { socket } = useContext(SocketContext);
   const { stream, setStream } = useContext(DeviceContext);
   const { room_id } = useParams<{ room_id: string }>();
-  const [showNotification, setShowNotification] = useState(false);
-  const [notificationText, setNotificationText] = useState("");
+  const [notificationState, setNotificationState] = useState({
+    text: "",
+    isOpen: false,
+  } as NotificationState);
 
   // The password text.
   const [password, setPassword] = useState("");
@@ -61,14 +68,12 @@ const JoinPage = ({
 
   const onJoinClicked = () => {
     if (!socket) {
-      setNotificationText("Socket is not ready. Please try again.");
-      setShowNotification(true);
+      setNotificationState({ text: "Socket is not ready. Please try again.", isOpen: true });
       return;
     }
 
     if (!finishedLoading) {
-      setNotificationText("Failed to connect with server.");
-      setShowNotification(true);
+      setNotificationState({ text: "Failed to connect with server.", isOpen: true });
       return;
     }
 
@@ -86,12 +91,10 @@ const JoinPage = ({
         if (name != "") {
           setJoined(true);
         } else {
-          setNotificationText("Please choose a username.");
-          setShowNotification(true);
+          setNotificationState({ text: "Please choose a username.", isOpen: true });
         }
       } else {
-        setNotificationText("Incorrect password.");
-        setShowNotification(true);
+        setNotificationState({ text: "Incorrect password.", isOpen: true });
       }
     });
   };
@@ -122,8 +125,7 @@ const JoinPage = ({
       });
 
       socket.on(SIOChannel.CONNECT_ERROR, (err) => {
-        setNotificationText("Failed to establish connection. Retrying...");
-        setShowNotification(true);
+        setNotificationState({ text: "Failed to establish connection. Retrying...", isOpen: true });
       });
     }
   }, [socket]);
@@ -164,12 +166,12 @@ const JoinPage = ({
             </Text>
             <Div>
               <Notification
-                isOpen={showNotification}
+                isOpen={notificationState.isOpen}
                 bg={"danger700"}
-                onClose={() => setShowNotification(false)}
+                onClose={() => setNotificationState({ ...notificationState, isOpen: false })}
                 prefix={<Icon name="CloseSolid" color="white" size="18px" m={{ r: "0.5rem" }} />}
               >
-                {notificationText}
+                {notificationState.text}
               </Notification>
               <Input
                 placeholder="Name"

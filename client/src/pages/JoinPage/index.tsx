@@ -9,8 +9,8 @@ import { Div, Notification, Icon } from "atomize";
 import { Button, Card, Text, Input, Label } from "@/components/atomize_wrapper";
 import { BaseTemplate } from "@/templates";
 import cx from "classnames";
-import LockIcon from "@material-ui/icons/Lock";
-import LockOpenIcon from "@material-ui/icons/LockOpen";
+import { Lock as LockIcon, LockOpen as LockOpenIcon } from "@material-ui/icons";
+
 import "./style.scss";
 
 interface NotificationState {

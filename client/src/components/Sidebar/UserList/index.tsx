@@ -1,11 +1,25 @@
-import React, { useContext } from 'react'
-import { UserInfoContext } from "@/contexts";
+import React, { useContext, useState } from 'react'
+import { UserInfoContext, SocketContext } from "@/contexts";
 import { UserInfo } from "@/contexts/UserInfoContext";
 import AvatarDOM from "@/components/AvatarCanvas/AvatarDOM"
+import { SIOChannel } from "@/contexts/SocketIOContext";
 
 const UserList = () => {
   // TODO: Need to have selfUserInfo here as well
-  const { userInfos } = useContext(UserInfoContext);
+  const { userInfos, editUserName } = useContext(UserInfoContext);
+  const { socket } = useContext(SocketContext);
+
+  socket.on(SIOChannel.EDIT_USER_NAME, ({ id, name }) => {
+    editUserName(id, name);
+  })
+  
+  const editName = () => {
+    const newName = prompt('Enter new name');
+    if (newName) {
+      socket.emit(SIOChannel.EDIT_USER_NAME, newName);
+    }
+  }
+
   // FIXME: Styling of user list
   return (
     <>
@@ -24,6 +38,7 @@ const UserList = () => {
           mute={userInfo.mute}
         />
         <span>{userInfo.name}</span>
+        {userInfo.id === socket.id && <button className="edit-btn" onClick={() => editName()}>Edit</button>}
       </div>
       ))}
     </>

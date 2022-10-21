@@ -27,7 +27,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const visualizerRef = useRef(visualizer);
   const [selfUserInfo, setSelfUserInfo] = useState<UserInfo>({ ...defaultUserInfo, name });
   const selfUserInfoRef = useRef(selfUserInfo);
-  const { userInfos, addUserInfo, removeUserInfo, editUserName } = useContext(UserInfoContext);
+  const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
   const userInfosRef = useRef(userInfos)
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
@@ -157,16 +157,13 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     });
 
     socket.on(SIOChannel.EDIT_USER_NAME, ({ id, name }) => {
-      let newInfo = null as unknown as UserInfo;
       if (id === socket.id) {
-        newInfo = { ...selfUserInfoRef.current, name };
-        selfUserInfoRef.current = newInfo;
-        setSelfUserInfo(newInfo);
+        updateSelfUserInfo({ ...selfUserInfoRef.current, name });
       } else {
-        newInfo = { ...userInfosRef.current, name };
+        const newInfo = { ...userInfosRef.current, name };
         userInfosRef.current = newInfo;
+        addUserInfo(newInfo);
       }
-      addUserInfo(newInfo);
     });
 
     updateVisualizer(new AudioVisualizer(onAudioActivity));

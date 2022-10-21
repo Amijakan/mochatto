@@ -133,6 +133,10 @@ io.of((nsp, query, next) => {
         io.of(roomName).to(sdpSenderId).emit("SDP_RECEIVED");
       });
 
+      socket.on("EDIT_USER_NAME", (name) => {
+        io.of(roomName).emit("EDIT_USER_NAME", { id: socket.id, name });
+      });
+
       socket.on("LEAVE", () => {
         io.of(roomName).emit("LEAVE", { id: socket.id });
       });

@@ -57,6 +57,14 @@ export const UserInfoProvider = ({ children }: { children: JSX.Element }): JSX.E
         const { [action.id]: _toRemove, ...removed } = userInfos;
         return removed;
       }
+      case "editUserName": {
+        Object.keys(userInfos).forEach(key => {
+          if (userInfos[key].id === action.id && action.data.name) {
+            userInfos[key].name = action.data.name;
+          }
+        })
+        return { ...userInfos };
+      }
       default:
         return userInfos;
     }
@@ -75,8 +83,11 @@ export const UserInfoProvider = ({ children }: { children: JSX.Element }): JSX.E
   const removeUserInfo = useCallback((userId: string) => {
     dispatch({ type: "remove", data: {}, id: userId });
   }, []);
+  const editUserName = useCallback((userId: string, name: string) => {
+    dispatch({ type: "editUserName", data: { name }, id: userId });
+  }, []);
   return (
-    <UserInfoContext.Provider value={{ userInfos, addUserInfo, removeUserInfo }}>
+    <UserInfoContext.Provider value={{ userInfos, addUserInfo, removeUserInfo, editUserName }}>
       {children}
     </UserInfoContext.Provider>
   );

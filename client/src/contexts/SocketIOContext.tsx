@@ -20,6 +20,7 @@ export enum SIOChannel {
   ANSWER = "ANSWER",
   OFFER = "OFFER",
   NUM_USERS = "NUM_USERS",
+  EDIT_USER_NAME = "EDIT_USER_NAME",
   CONNECT_ERROR = "connect_error", // Predefined string by socketio.
 }
 

@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext } from 'react'
 import { UserInfoContext, SocketContext } from "@/contexts";
 import { UserInfo } from "@/contexts/UserInfoContext";
 import AvatarDOM from "@/components/AvatarCanvas/AvatarDOM"
@@ -7,7 +7,6 @@ import { SIOChannel } from "@/contexts/SocketIOContext";
 const UserList = () => {
   // TODO: Need to have selfUserInfo here as well
   const { userInfos } = useContext(UserInfoContext);
-  const userInfosRef = useRef(userInfos);
   const { socket } = useContext(SocketContext);
   
   const editName = () => {
@@ -20,7 +19,7 @@ const UserList = () => {
   // FIXME: Styling of user list
   return (
     <>
-      {(Object.values(userInfosRef.current) as UserInfo[]).map((userInfo: UserInfo, index: number) => (
+      {(Object.values(userInfos) as UserInfo[]).map((userInfo: UserInfo, index: number) => (
       userInfo.name &&
       <div className="sidebar__userlist-item" key={index}>
         <AvatarDOM

@@ -157,7 +157,16 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     });
 
     socket.on(SIOChannel.EDIT_USER_NAME, ({ id, name }) => {
-      addUserInfo(id)({ ...selfUserInfoRef.current, name })
+      let newInfo = null as unknown as UserInfo;
+      if (id === socket.id) {
+        newInfo = { ...selfUserInfoRef.current, name };
+        selfUserInfoRef.current = newInfo;
+        setSelfUserInfo(newInfo);
+      } else {
+        newInfo = { ...userInfosRef.current, name };
+        userInfosRef.current = newInfo;
+      }
+      addUserInfo(newInfo);
     });
 
     updateVisualizer(new AudioVisualizer(onAudioActivity));

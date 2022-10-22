@@ -5,36 +5,43 @@ export class AudioVisualizer {
   }
 
   setStream(stream: MediaStream): void {
-    if (stream) {
-      if (stream.active) {
-        const context = new AudioContext();
-        const source = context.createMediaStreamSource(stream);
-        const analyser = context.createAnalyser();
-        analyser.smoothingTimeConstant = 0.3;
-        analyser.fftSize = 256;
-
-        // chain mic -> analyser -> processor -> context
-        source.connect(analyser); // feed mic audio into analyser
-
-        // Previous average to compare to current.
-        let prevAverage = 0;
-        this.onAudioActivity(0);
-        const draw = () => {
-          const array = new Uint8Array(analyser.fftSize);
-          analyser.getByteFrequencyData(array);
-
-          const sum = array.reduce((current, next) => current + next * 4);
-          const average = sum / array.length;
-          if (isSignificantlyDifferent(prevAverage, average, 7)) {
-            this.onAudioActivity(average);
-            // Update previous average once current average meets threshold
-            prevAverage = average;
-          }
-          window.requestAnimationFrame(draw);
-        };
-        draw();
-      }
+    // Check to see whether there's an active audio track.
+    if (
+      !stream ||
+      !stream.active ||
+      !stream.getAudioTracks().length ||
+      stream.getAudioTracks()[0].readyState != "live"
+    ) {
+      return;
     }
+
+    const context = new AudioContext();
+    const source = context.createMediaStreamSource(stream);
+    const analyser = context.createAnalyser();
+    analyser.smoothingTimeConstant = 0.3;
+    analyser.fftSize = 256;
+
+    // chain mic -> analyser -> processor -> context
+    // Feed mic. audio into the analyser.
+    source.connect(analyser);
+
+    // Previous average to compare to current.
+    let prevAverage = 0;
+    this.onAudioActivity(0);
+    const draw = () => {
+      const array = new Uint8Array(analyser.fftSize);
+      analyser.getByteFrequencyData(array);
+
+      const sum = array.reduce((current, next) => current + next * 4);
+      const average = sum / array.length;
+      if (isSignificantlyDifferent(prevAverage, average, 7)) {
+        this.onAudioActivity(average);
+        // Update previous average once current average meets threshold
+        prevAverage = average;
+      }
+      window.requestAnimationFrame(draw);
+    };
+    draw();
   }
 }
 

@@ -5,6 +5,7 @@ import { Div } from "atomize";
 import { Text, Input } from "@/components/atomize_wrapper";
 import { SocketContext } from "@/contexts";
 import { useHistory } from "react-router-dom";
+import { SIOChannel } from "@/contexts/SocketIOContext";
 import "./style.scss";
 
 const HomePage = (): JSX.Element => {
@@ -16,7 +17,7 @@ const HomePage = (): JSX.Element => {
 
   useEffect(() => {
     if (socket) {
-      socket.on("NUM_USERS", (usersNum) => {
+      socket.on(SIOChannel.NUM_USERS, (usersNum) => {
         if (usersNum === 0 || usersNum === null) {
           setRoomExists(false);
         } else {
@@ -28,7 +29,7 @@ const HomePage = (): JSX.Element => {
 
   useEffect(() => {
     if (socket) {
-      socket.emit("NUM_USERS", "/" + roomId);
+      socket.emit(SIOChannel.NUM_USERS, "/" + roomId);
     }
   }, [roomId]);
 

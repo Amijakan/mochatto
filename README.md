@@ -17,7 +17,7 @@
 - `yarn`
 - `node` ~14.17.3
 
-![screenshot](https://user-images.githubusercontent.com/34047281/134995048-cab908f2-7f4a-4d64-b585-a06057dec834.PNG)
+![image](https://user-images.githubusercontent.com/34047281/197360016-db9e242a-61ca-4975-937a-0008ea3a7449.png)
 
 ## Try it out
 

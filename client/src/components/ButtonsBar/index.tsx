@@ -59,7 +59,7 @@ const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
   const ScreenShareButton = () => {
     const { onScreenShareClicked, userInfoRef } = props;
     return (
-      <Button title="Screen sharing" {...defaultButtonStyle} onClick={onScreenShareClicked}>
+      <Button title="Screen sharing" onClick={onScreenShareClicked}>
         {userInfoRef.current.isScreenSharing ? <StopScreenShareIcon /> : <ScreenShareIcon />}
       </Button>
     );
@@ -76,12 +76,14 @@ const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
   };
 
   return (
-    <div className="buttons-bar">
-      {SettingsButton()}
-      {StatusButton()}
-      {MuteButton()}
-      {!isMobile && ScreenShareButton()}
-      {LeaveButton()}
+    <div className="buttons-bar-wrapper">
+      <div className="buttons-bar">
+        {SettingsButton()}
+        {StatusButton()}
+        {MuteButton()}
+        {!isMobile && ScreenShareButton()}
+        {LeaveButton()}
+      </div>
     </div>
   );
 };

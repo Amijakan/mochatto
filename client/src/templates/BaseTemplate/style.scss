@@ -1,0 +1,12 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 8px;
+
+  .logo, .github-logo {
+    cursor: pointer;
+  }
+  img {
+    height: 25px;
+  }
+}

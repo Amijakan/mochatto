@@ -7,7 +7,7 @@
 
 # mochatto
 
-Mochatto is an open-source proximity voice chat application for virtual meetings.
+[Mochatto](https://mochatto.com/) is an open-source proximity voice chat application for virtual meetings.
 
 ## Requirements
 - `docker-compose` > 1.28
@@ -61,9 +61,9 @@ Debugging with browser
 - [x] Separate rooms `/[room-id]`
 - [x] Screenshares
 - [x] Password protection for rooms
+- [x] User Lists
+- [x] Change Username
 - [ ] Mobile Support
-- [ ] User Lists
-- [ ] Change Username
 - [ ] Place Images in the space
 - [ ] Place Videos in the space
 - [ ] Audio Recording

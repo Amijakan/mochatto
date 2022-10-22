@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import { Div, Row, Col, Modal, Button } from "atomize";
 import { Logo } from "@/components";
 import b64bg from "@/assets/imgs/background_b64";
+import "./style.scss";
 
 const RoomTemplate = ({
   children,
@@ -62,7 +63,7 @@ const RoomTemplate = ({
             }}
           >
             <Div bg={"#000000" + "00"} m="0.5rem" rounded="xl" zIndex="20">
-              <Logo />
+              <Logo className="logo-img"/>
             </Div>
           </Col>
           <Col p="1rem" offset="9" size="1"></Col>

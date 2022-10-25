@@ -1,6 +1,4 @@
-import React from "react";
 // Icon from https://icons8.com/icons/set/m
-import { Div } from "atomize";
 import "./style.scss";
 
 const Logo = ({ className = "" }: { className?: string }): JSX.Element => {

@@ -18,7 +18,7 @@ const BaseTemplate = ({ children }: { children: JSX.Element }): JSX.Element => {
                 history.go(0);
               }}
             >
-            <Logo className="logo-img" />
+            <Logo/>
           </div>
           <div
             className="github-logo"
@@ -26,7 +26,7 @@ const BaseTemplate = ({ children }: { children: JSX.Element }): JSX.Element => {
                 window.open("https://github.com/Amijakan/mochatto", "_blank");
               }}
             >
-            <img src={githubLogo} className="github-logo-img"/>
+            <img src={githubLogo}/>
           </div>
       </div>
       {children}

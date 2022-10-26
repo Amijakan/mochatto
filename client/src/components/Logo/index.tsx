@@ -1,3 +1,4 @@
+import React from "react";
 // Icon from https://icons8.com/icons/set/m
 import "./style.scss";
 

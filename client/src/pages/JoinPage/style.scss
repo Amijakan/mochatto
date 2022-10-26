@@ -35,4 +35,14 @@
       }
     }
   }
+
+  .password-visibility-button {
+    $eye-width: 1rem;
+
+    background: $no-background-color;
+    color: $gray;
+    width: $eye-width;
+    margin-left: calc($eye-width * -2 - $spacing);
+    margin-right: $spacing;
+  }
 }

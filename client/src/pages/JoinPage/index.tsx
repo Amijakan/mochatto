@@ -9,7 +9,7 @@ import { Div, Notification, Icon } from "atomize";
 import { Button, Card, Text, Input, Label } from "@/components/atomize_wrapper";
 import { BaseTemplate } from "@/templates";
 import cx from "classnames";
-import { Lock as LockIcon, LockOpen as LockOpenIcon } from "@material-ui/icons";
+import { Lock as LockIcon, LockOpen as LockOpenIcon, VisibilityOff as VisibilityOffIcon, Visibility as VisibilityIcon, Visibility } from "@material-ui/icons";
 
 import "./style.scss";
 
@@ -45,6 +45,8 @@ const JoinPage = ({
   const [showPasswordChoice, setShowPasswordChoice] = useState(false);
   // Has all asynchronous data finished loading?
   const [finishedLoading, setFinishedLoading] = useState(false);
+  // A boolean to toggle the visibility of password text.
+  const [passwordVisibility, setPasswordVisibility] = useState(false);
 
   const history = useHistory();
 
@@ -193,18 +195,28 @@ const JoinPage = ({
                     </Button>
                   )}
                   {showPassword && (
-                    <Input
-                      className={cx("password-input", {
-                        disabled: !isPasswordRequired,
-                      })}
-                      placeholder="Password"
-                      type="password"
-                      name="password"
-                      value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                      }}
-                    />
+                    <>
+                      <Input
+                        className={cx("password-input", {
+                          disabled: !isPasswordRequired,
+                        })}
+                        placeholder="Password"
+                        type={passwordVisibility ? "text" : "password"}
+                        name="password"
+                        value={password}
+                        onChange={(e) => {
+                          setPassword(e.target.value);
+                        }}
+                      />
+                      {isPasswordRequired && (
+                        <Button
+                          className="password-visibility-button"
+                          onClick={() => setPasswordVisibility(!passwordVisibility)}
+                        >
+                          {passwordVisibility ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                        </Button>
+                      )}
+                    </>
                   )}
                 </Div>
               )}

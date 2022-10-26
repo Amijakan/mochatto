@@ -17,18 +17,18 @@ $bar-height: 3rem;
     flex-direction: row;
     justify-content: space-evenly;
     align-items: center;
-    border-radius: 5rem;
+    border-radius: $circular-radius;
 
     .leave-button {
       color: red;
       width: 4rem;
-      border-radius: 5rem;
+      border-radius: $circular-radius;
     }
 
     button {
       height: $button-height;
       width: $button-height;
-      border-radius: 5rem;
+      border-radius: $circular-radius;
       margin: 0.3rem;
     }
   }

@@ -108,7 +108,6 @@ const JoinPage = ({
   useEffect(() => {
     setVisualizer(new AudioVisualizer(onAudioActivity));
     const keyListener = (event) => {
-      console.log(event);
       if (event.code === "Enter") {
         event.preventDefault();
         joinButtonRef.current?.click();

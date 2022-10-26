@@ -62,7 +62,7 @@ const RoomTemplate = ({
             }}
           >
             <Div bg={"#000000" + "00"} m="0.5rem" rounded="xl" zIndex="20">
-              <Logo />
+              <Logo className="logo-img"/>
             </Div>
           </Col>
           <Col p="1rem" offset="9" size="1"></Col>

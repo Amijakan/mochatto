@@ -7,7 +7,7 @@
 
 # mochatto
 
-Mochatto is an open-source proximity voice chat application for virtual meetings.
+[Mochatto](https://mochatto.com/) is an open-source proximity voice chat application for virtual meetings.
 
 ## Requirements
 - `docker-compose` > 1.28
@@ -17,7 +17,7 @@ Mochatto is an open-source proximity voice chat application for virtual meetings
 - `yarn`
 - `node` ~14.17.3
 
-![screenshot](https://user-images.githubusercontent.com/34047281/134995048-cab908f2-7f4a-4d64-b585-a06057dec834.PNG)
+![image](https://user-images.githubusercontent.com/34047281/197360016-db9e242a-61ca-4975-937a-0008ea3a7449.png)
 
 ## Try it out
 
@@ -41,7 +41,8 @@ Requires VSCode
 1. `make beta-up`
 
 ### Test
-Make sure that the server is up
+*Make sure that the server is up*
+
 Without visual check
 - `make test`
 
@@ -61,21 +62,20 @@ Debugging with browser
 - [x] Separate rooms `/[room-id]`
 - [x] Screenshares
 - [x] Password protection for rooms
+- [x] User Lists
+- [x] Change Username
 - [ ] Mobile Support
-- [ ] User Lists
-- [ ] Change Username
 - [ ] Place Images in the space
 - [ ] Place Videos in the space
 - [ ] Audio Recording
 
-## Runnig own iceServer
+## Running own iceServer
 
 ```
 docker run -d --network=host coturn/coturn
 ```
 
-This will run at port 3478
-Make sure that your firewall for port 3478 is not blocked
+*This will run at port 3478. Make sure that your firewall for port 3478 is not blocked.*
 
 
 ## Jenkins pipeline
@@ -91,11 +91,11 @@ https://[PR_NUMBER].dev.mochatto.com
 ```
 
 ### Stopping dev environment
-I could not find a good way to bring the container down, so I am using a crontab with `check-for-closed-pr`
-NOTE: `check-for-closed-pr` uses `gh` command, so make sure to check your token is not expired.
+We couldn't find a good way to bring the container down, so we're using a crontab with `check-for-closed-pr`.
+
+*NOTE: `check-for-closed-pr` uses `gh` command, so make sure to check your token is not expired.*
 
 e.g.
 ```cron
 0 * * * * sh -c "cd /path/to/repo && ./check-for-closed-pr"
 ```
-

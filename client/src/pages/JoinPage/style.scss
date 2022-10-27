@@ -1,5 +1,16 @@
 @import "@/constants/style";
 
+.join-back-container {
+  margin-top: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+
+  button {
+    flex-basis: 45%;
+  }
+}
+
 .visualizer {
     height: 10px;
     background: #FDEEC8;

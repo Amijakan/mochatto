@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { SocketContext, DeviceContext } from "@/contexts";
 import { SIOChannel } from "@/contexts/SocketIOContext";
-import { DeviceSelector } from "@/components";
+import { DeviceSelector, Button } from "@/components";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import PropTypes from "prop-types";
 import { Div, Notification, Icon } from "atomize";
-import { Button, Card, Text, Input, Label } from "@/components/atomize_wrapper";
+import { Card, Text, Input, Label } from "@/components/atomize_wrapper";
 import { BaseTemplate } from "@/templates";
 import cx from "classnames";
 import { Lock as LockIcon, LockOpen as LockOpenIcon } from "@material-ui/icons";
@@ -47,6 +47,8 @@ const JoinPage = ({
   const [finishedLoading, setFinishedLoading] = useState(false);
 
   const history = useHistory();
+
+  const joinButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const [gain, setGain] = useState(0);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
@@ -105,6 +107,13 @@ const JoinPage = ({
 
   useEffect(() => {
     setVisualizer(new AudioVisualizer(onAudioActivity));
+    const keyListener = (event) => {
+      if (event.code === "Enter") {
+        event.preventDefault();
+        joinButtonRef.current?.click();
+      }
+    };
+    document.addEventListener("keydown", keyListener);
   }, []);
 
   useEffect(() => {
@@ -214,21 +223,20 @@ const JoinPage = ({
               <DeviceSelector onSelect={onSelect} />
             </Div>
             {Visualizer()}
-            <Div d="flex" justify="space-around" w="100%" m={{ t: "20px" }}>
-              <Button w="45%" onClick={() => onJoinClicked()}>
+            <div className="join-back-container">
+              <Button onClick={() => onJoinClicked()} ref={joinButtonRef} className="primary">
                 Join
               </Button>
               <Button
-                w="45%"
+                className="secondary"
                 onClick={() => {
                   history.push("/");
                   history.go(0);
                 }}
-                bg="gray"
               >
                 Back
               </Button>
-            </Div>
+            </div>
           </Div>
         </Card>
       </Div>

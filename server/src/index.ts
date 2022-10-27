@@ -1,8 +1,7 @@
 import express from "express";
 import { Server } from "socket.io";
-import cors from "cors";
-import fs from "fs";
 import { createHash } from "crypto";
+import { AuthenticationEnum } from './shared/authentication'
 import path from "path";
 
 const app = express();
@@ -17,13 +16,6 @@ const io = new Server(server, {
     origin: isProd ? "*" : ["http://localhost:4500", "http://localhost:4600"],
   },
 });
-
-// Authentication codes to be returned to the client.
-// Needs to be in sync with the frontend enum.
-enum AuthenticationEnum {
-  Success = 200,
-  Unauthorized = 401,
-}
 
 // Holds info about all existing rooms.
 const rooms: { [key: string]: { numUsers: number; passHash: string } } = {};

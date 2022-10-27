@@ -11,6 +11,8 @@ import { BaseTemplate } from "@/templates";
 import cx from "classnames";
 import { Lock as LockIcon, LockOpen as LockOpenIcon } from "@material-ui/icons";
 
+import { AuthenticationEnum } from '@/shared/authentication'
+
 import "./style.scss";
 
 interface NotificationState {
@@ -52,13 +54,6 @@ const JoinPage = ({
 
   const [gain, setGain] = useState(0);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
-
-  // Authentication codes to be returned back by the server.
-  // Needs to be in sync with the backend enum.
-  enum AuthenticationEnum {
-    Success = 200,
-    Unauthorized = 401,
-  }
 
   const sha256 = async (message: string) => {
     const msgBuffer = new TextEncoder().encode(message);

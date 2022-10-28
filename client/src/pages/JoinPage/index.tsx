@@ -222,7 +222,7 @@ const JoinPage = ({
                           className="password-visibility-button"
                           onClick={() => setPasswordVisibility(!passwordVisibility)}
                         >
-                          {passwordVisibility ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                          {passwordVisibility ? <VisibilityIcon /> : <VisibilityOffIcon />}
                         </Button>
                       )}
                     </>

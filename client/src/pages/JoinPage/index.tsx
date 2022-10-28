@@ -188,8 +188,7 @@ const JoinPage = ({
                 placeholder="Name"
                 type="text"
                 name="name"
-                value={name}
-                onChange={(e) => {
+                onBlur={(e) => {
                   setName(e.target.value);
                 }}
               />
@@ -212,8 +211,7 @@ const JoinPage = ({
                         placeholder="Password"
                         type={isPasswordTextVisible ? "text" : "password"}
                         name="password"
-                        value={password}
-                        onChange={(e) => {
+                        onBlur={(e) => {
                           setPassword(e.target.value);
                         }}
                       />

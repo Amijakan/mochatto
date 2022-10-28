@@ -40,13 +40,13 @@ const JoinPage = ({
   // A boolean to decide whether to disable the password input or not.
   const [isPasswordRequired, setPasswordRequired] = useState(false);
   // A boolean to decide whether to show the password input or not.
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordInput, setShowPasswordInput] = useState(false);
   // A boolean to decide whether to show the password choice button or not.
   const [showPasswordChoice, setShowPasswordChoice] = useState(false);
   // Has all asynchronous data finished loading?
   const [finishedLoading, setFinishedLoading] = useState(false);
   // A boolean to toggle the visibility of password text.
-  const [passwordVisibility, setPasswordVisibility] = useState(false);
+  const [isPasswordTextVisible, setPasswordTextVisibility] = useState(false);
 
   const history = useHistory();
 
@@ -126,10 +126,10 @@ const JoinPage = ({
         const { numUsers, hasPass } = info;
         const roomExists = !!numUsers;
         if (!roomExists) {
-          setShowPassword(true);
+          setShowPasswordInput(true);
           setShowPasswordChoice(true);
         } else if (hasPass) {
-          setShowPassword(true);
+          setShowPasswordInput(true);
           setPasswordRequired(true);
         }
         setFinishedLoading(true);
@@ -203,14 +203,14 @@ const JoinPage = ({
                       {isPasswordRequired ? <LockIcon /> : <LockOpenIcon />}
                     </Button>
                   )}
-                  {showPassword && (
+                  {showPasswordInput && (
                     <>
                       <Input
                         className={cx("password-input", {
                           disabled: !isPasswordRequired,
                         })}
                         placeholder="Password"
-                        type={passwordVisibility ? "text" : "password"}
+                        type={isPasswordTextVisible ? "text" : "password"}
                         name="password"
                         value={password}
                         onChange={(e) => {
@@ -220,9 +220,9 @@ const JoinPage = ({
                       {isPasswordRequired && (
                         <Button
                           className="password-visibility-button"
-                          onClick={() => setPasswordVisibility(!passwordVisibility)}
+                          onClick={() => setPasswordTextVisibility(!isPasswordTextVisible)}
                         >
-                          {passwordVisibility ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                          {isPasswordTextVisible ? <VisibilityIcon /> : <VisibilityOffIcon />}
                         </Button>
                       )}
                     </>

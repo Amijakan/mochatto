@@ -13,6 +13,7 @@ services:
       MODE: dev
     volumes:
       - './server:/app'
+      - './shared:/app/src/shared'
     command:
       bash -c "yarn && yarn dev"
 
@@ -26,6 +27,7 @@ services:
       - '4500:4500'
     volumes:
       - './client:/app'
+      - './shared:/app/src/shared'
     environment:
       VITE_SERVER_URL: "http://localhost:4000"
     command:

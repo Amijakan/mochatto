@@ -1,31 +1,32 @@
 @import '@/constants/style.scss';
 
 
-button {
-  padding: $spacing;
-  border-radius: $spacing;
-  color: $white;
-  transition: $transition-time;
-  margin: 0 $buttons-margin;
-  cursor: pointer;
-}
-
-button[data-active=active] {
-  background-color: $primary;
-
-  &:hover {
-  }
-}
-
-button[data-active=inactive] {
-  background-color: transparent;
-
-  &:hover {
-    background-color: #ffffff22;
-  }
-}
-
 .sidebar {
+  button {
+    padding: $spacing;
+    width: inherit;
+    border-radius: $spacing;
+    color: $white;
+    transition: $transition-time;
+    margin: 0 $buttons-margin;
+    cursor: pointer;
+  }
+
+  button[data-active=active] {
+    background-color: $primary;
+
+    &:hover {
+    }
+  }
+
+  button[data-active=inactive] {
+    background-color: transparent;
+
+    &:hover {
+      background-color: #ffffff22;
+    }
+  }
+
   position: absolute;
   z-index: 100;
   top: $spacing;
@@ -62,6 +63,9 @@ button[data-active=inactive] {
   .edit-btn {
     color: black;
     margin-left: auto;
+    background-color: $white;
+    padding: 0.8rem;
+    height: 2.4rem;
   }
 }
 

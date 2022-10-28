@@ -9,6 +9,7 @@ import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
 import { Network } from "@/classes/Network";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import { RoomTemplate } from "@/templates";
+import "./style.scss";
 
 import PropTypes from "prop-types";
 

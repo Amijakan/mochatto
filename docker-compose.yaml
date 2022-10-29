@@ -3,8 +3,8 @@ services:
   server-dev:
     user: ${CURRENT_UID}
     build:
-      context: ./server
-      dockerfile: ./Dockerfile
+      context: .
+      dockerfile: ./dockerfiles/Dockerfile.server
       target: base
     ports:
       - '4000:4000'
@@ -20,8 +20,8 @@ services:
   client-dev:
     user: ${CURRENT_UID}
     build:
-      context: ./client
-      dockerfile: ./Dockerfile
+      context: .
+      dockerfile: ./dockerfiles/Dockerfile.client
       target: base
     ports:
       - '4500:4500'
@@ -35,8 +35,8 @@ services:
 
   client-test:
     build:
-      context: ./client
-      dockerfile: ./Dockerfile.test
+      context: .
+      dockerfile: ./dockerfiles/Dockerfile.client.test
     network_mode: host
     command:
       yarn test
@@ -69,8 +69,8 @@ services:
   # Prod containers    
   server-prod:
     build:
-      context: ./server
-      dockerfile: ./Dockerfile
+      context: .
+      dockerfile: ./dockerfiles/Dockerfile.server
       target: prod
     environment:
       MODE: prod
@@ -79,8 +79,8 @@ services:
 
   client-prod:
     build:
-      context: ./client
-      dockerfile: ./Dockerfile
+      context: .
+      dockerfile: ./dockerfiles/Dockerfile.client
       target: prod
       args:
         serverurl: https://${API_URL}
@@ -89,8 +89,8 @@ services:
 
   client-beta:
     build:
-      context: ./client
-      dockerfile: ./Dockerfile
+      context: .
+      dockerfile: ./dockerfiles/Dockerfile.client
       target: prod
       args:
         serverurl: https://${BETA_PREFIX}.dev-api.${APP_URL}

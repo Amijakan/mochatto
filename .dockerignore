@@ -1,3 +1,10 @@
-Dockerfile
 node_modules/
 *.log
+Dockerfile
+.dockerignore
+.gitignore
+README.md
+
+build
+
+dist

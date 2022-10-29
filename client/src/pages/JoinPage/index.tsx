@@ -9,7 +9,7 @@ import { Div, Notification, Icon } from "atomize";
 import { Card, Text, Input, Label } from "@/components/atomize_wrapper";
 import { BaseTemplate } from "@/templates";
 import cx from "classnames";
-import { Lock as LockIcon, LockOpen as LockOpenIcon } from "@material-ui/icons";
+import { Lock as LockIcon, LockOpen as LockOpenIcon, VisibilityOff as VisibilityOffIcon, Visibility as VisibilityIcon, Visibility } from "@material-ui/icons";
 
 import "./style.scss";
 
@@ -40,11 +40,13 @@ const JoinPage = ({
   // A boolean to decide whether to disable the password input or not.
   const [isPasswordRequired, setPasswordRequired] = useState(false);
   // A boolean to decide whether to show the password input or not.
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordInput, setShowPasswordInput] = useState(false);
   // A boolean to decide whether to show the password choice button or not.
   const [showPasswordChoice, setShowPasswordChoice] = useState(false);
   // Has all asynchronous data finished loading?
   const [finishedLoading, setFinishedLoading] = useState(false);
+  // A boolean to toggle the visibility of password text.
+  const [isPasswordTextVisible, setPasswordTextVisibility] = useState(false);
 
   const history = useHistory();
 
@@ -124,10 +126,10 @@ const JoinPage = ({
         const { numUsers, hasPass } = info;
         const roomExists = !!numUsers;
         if (!roomExists) {
-          setShowPassword(true);
+          setShowPasswordInput(true);
           setShowPasswordChoice(true);
         } else if (hasPass) {
-          setShowPassword(true);
+          setShowPasswordInput(true);
           setPasswordRequired(true);
         }
         setFinishedLoading(true);
@@ -186,8 +188,7 @@ const JoinPage = ({
                 placeholder="Name"
                 type="text"
                 name="name"
-                value={name}
-                onChange={(e) => {
+                onBlur={(e) => {
                   setName(e.target.value);
                 }}
               />
@@ -201,19 +202,28 @@ const JoinPage = ({
                       {isPasswordRequired ? <LockIcon /> : <LockOpenIcon />}
                     </Button>
                   )}
-                  {showPassword && (
-                    <Input
-                      className={cx("password-input", {
-                        disabled: !isPasswordRequired,
-                      })}
-                      placeholder="Password"
-                      type="password"
-                      name="password"
-                      value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                      }}
-                    />
+                  {showPasswordInput && (
+                    <>
+                      <Input
+                        className={cx("password-input", {
+                          disabled: !isPasswordRequired,
+                        })}
+                        placeholder="Password"
+                        type={isPasswordTextVisible ? "text" : "password"}
+                        name="password"
+                        onBlur={(e) => {
+                          setPassword(e.target.value);
+                        }}
+                      />
+                      {isPasswordRequired && (
+                        <Button
+                          className="password-visibility-button"
+                          onClick={() => setPasswordTextVisibility(!isPasswordTextVisible)}
+                        >
+                          {isPasswordTextVisible ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                        </Button>
+                      )}
+                    </>
                   )}
                 </Div>
               )}

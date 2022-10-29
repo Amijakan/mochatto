@@ -21,6 +21,7 @@
   display: flex;
   align-items: center;
   margin-top: 16px;
+  position: relative;
 
   .password-toggle {
     border-radius: 100%;
@@ -45,5 +46,15 @@
         color: $disabled-text-color;
       }
     }
+  }
+
+  .password-visibility-button {
+    $eye-width: 1rem;
+
+    background: $no-background-color;
+    color: $gray;
+    width: $eye-width;
+    position: absolute;
+    right: calc($eye-width / 2);
   }
 }

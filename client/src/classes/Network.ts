@@ -2,7 +2,7 @@ import _ from "lodash"
 import { PeerProcessor } from "@/classes/PeerProcessor";
 import { AudioVisualizer } from "@/classes/AudioVisualizer";
 import { UserInfo } from "@/contexts/UserInfoContext";
-import { SIOChannel } from "@/contexts/SocketIOContext"
+import { SIOChannel } from "@/shared/socketIO"
 import { Socket } from "socket.io-client";
 
 export const DCLabel = "DATACHANNEL";

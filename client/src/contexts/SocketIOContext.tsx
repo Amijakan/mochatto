@@ -9,21 +9,6 @@ const getRoomName = (nsp: string) => {
   return encodeURIComponent(nsp.split("/")[1]);
 };
 
-export enum SIOChannel {
-  AUTHENTICATE = "AUTHENTICATE",
-  ROOM_INFO = "ROOM_INFO",
-  JOIN = "JOIN",
-  LEAVE = "LEAVE",
-  DISCONNECT = "DISCONNECT",
-  SDP_RECEIVED = "SDP_RECEIVED",
-  ICE_CANDIDATE = "ICE_CANDIDATE",
-  ANSWER = "ANSWER",
-  OFFER = "OFFER",
-  NUM_USERS = "NUM_USERS",
-  EDIT_USER_NAME = "EDIT_USER_NAME",
-  CONNECT_ERROR = "connect_error", // Predefined string by socketio.
-}
-
 export const SocketContext = createContext<{ socket: Socket }>({
   socket: null as unknown as Socket,
 });

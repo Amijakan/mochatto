@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { UserInfoContext, SocketContext } from "@/contexts";
 import { UserInfo } from "@/contexts/UserInfoContext";
 import AvatarDOM from "@/components/AvatarCanvas/AvatarDOM"
-import { SIOChannel } from "@/contexts/SocketIOContext";
+import { SIOChannel } from "@/shared/socketIO";
 
 const UserList = () => {
   // TODO: Need to have selfUserInfo here as well

@@ -4,7 +4,7 @@ import { Div, Notification, Icon, Text } from "atomize";
 import { AvatarCanvas, ButtonsBar, DeviceSelector, Sidebar } from "@/components";
 import _ from "lodash";
 import { SocketContext, DeviceContext, UserInfoContext } from "@/contexts";
-import { SIOChannel } from "@/contexts/SocketIOContext";
+import { SIOChannel } from "@/shared/socketIO";
 import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
 import { Network } from "@/classes/Network";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";

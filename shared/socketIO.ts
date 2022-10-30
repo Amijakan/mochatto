@@ -1,0 +1,15 @@
+export enum SIOChannel {
+  AUTHENTICATE = "AUTHENTICATE",
+  ROOM_INFO = "ROOM_INFO",
+  JOIN = "JOIN",
+  LEAVE = "LEAVE",
+  DISCONNECT = "DISCONNECT",
+  SDP_RECEIVED = "SDP_RECEIVED",
+  ICE_CANDIDATE = "ICE_CANDIDATE",
+  ANSWER = "ANSWER",
+  OFFER = "OFFER",
+  NUM_USERS = "NUM_USERS",
+  EDIT_USER_NAME = "EDIT_USER_NAME",
+  CONNECT_ERROR = "connect_error", // Predefined string by socketio.
+}
+

@@ -61,9 +61,13 @@ io.on("connection", (socket) => {
   socket.on("NUM_USERS", (nspName) => {
     const roomName = getRoomName(nspName);
     if (rooms[roomName]) {
-      socket.emit("NUM_USERS", rooms[roomName].numUsers);
+      const hasPass = rooms[roomName].passHash !== getDefaultHash(roomName);
+      socket.emit("NUM_USERS", {
+        numUsers: rooms[roomName].numUsers,
+        hasPass,
+      });
     } else {
-      socket.emit("NUM_USERS", 0);
+      socket.emit("NUM_USERS", { numUsers: 0, hasPass: false });
     }
   });
 });
@@ -112,6 +116,7 @@ io.of((nsp, query, next) => {
       });
 
       socket.on("ANSWER", (dataString) => {
+        console.log(dataString)
         const targetId = JSON.parse(dataString).receiverId;
         io.of(roomName).to(targetId).emit("ANSWER", dataString);
       });

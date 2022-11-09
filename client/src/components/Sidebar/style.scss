@@ -72,7 +72,8 @@
 .sidebar[data-open=open] {
   border-radius: 16px;
   height: calc(100vh - 2 * $spacing);
-  width: 300px;
+  min-width: 300px;
+  width: 30%;
 }
 
 .sidebar[data-open=close] {
@@ -85,4 +86,16 @@
   height: $closed-sidebar-height;
   width: $closed-sidebar-width;
   border-radius: 16px;
+}
+
+@media (max-width: $breakpoint-tablet) {
+  .sidebar[data-open=open] {
+    height: 90vh;
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .sidebar[data-open=open] {
+    width: calc(100vw - 1rem);
+  }
 }

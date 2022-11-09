@@ -1,3 +1,68 @@
-.submit-button-container {
-  margin-top: 0.5rem;
+@import "@/constants/style";
+
+.view-container {
+  display: flex;
+  flex-direction: column;
+  line-height: initial;
+  align-items: center;
+  font-family: "SF Pro Text", -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  margin: 6rem 4rem;
+  color: $black;
+  text-align: center;
+  box-sizing: border-box;
+
+  .title-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 3.5rem;
+    line-height: 3.5rem;
+    font-weight: 700;
+    max-width: 40rem;
+  }
+
+  .sub-text {
+    margin: 3rem 0;
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+    font-weight: 400;
+  }
+
+  .action-items {
+    width: 40%;
+    min-width: 30rem;
+
+    .submit-button-container {
+      margin-top: 0.5rem;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-tablet) {
+  .view-container {
+    margin: 8rem 2rem;
+
+    .title-text {
+      font-size: 2.5rem;
+      line-height: 2.5rem;
+    }
+
+    .sub-text {
+      margin: 2rem 0;
+      font-size: 1.25rem;
+      line-height: 1.25rem;
+    }
+
+    .action-items {
+      width: 80%;
+      max-width: 30rem;
+      min-width: max-content;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .view-container {
+    margin: 10rem 1rem;
+  }
 }

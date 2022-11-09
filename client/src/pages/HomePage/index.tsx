@@ -35,17 +35,14 @@ const HomePage = (): JSX.Element => {
 
   return (
     <BaseTemplate>
-      <Div flexDir="column" d="flex" justify="space-around" p="5rem" align="center">
-        <Text textColor="#212121" textAlign="center" textSize="5rem" textWeight="700">
-          <Div>Your open-source</Div>
-          <Div>virtual meeting space</Div>
-        </Text>
-        <Div p="3.5rem">
-          <Text textColor="#404040" textAlign="center" textSize="2rem" textWeight="400">
+      <div className="view-container">
+        <div className="title-text">
+          Your open-source virtual meeting space
+        </div>
+        <div className="sub-text">
             A peer-to-peer voice chat app focused on simplicity.
-          </Text>
-        </Div>
-        <Div flexDir="column" p={{ b: "1rem" }} d="flex" justify="center" w={responsiveWidth}>
+        </div>
+        <div className="action-items">
           <Input
             textAlign="center"
             placeholder="Room ID"
@@ -72,8 +69,8 @@ const HomePage = (): JSX.Element => {
               {roomExists ? "Join" : "Create"}
             </Button>
           </div>
-        </Div>
-      </Div>
+        </div>
+      </div>
     </BaseTemplate>
   );
 };

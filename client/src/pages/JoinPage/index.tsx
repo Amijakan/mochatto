@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { SocketContext, DeviceContext } from "@/contexts";
-import { SIOChannel } from "@/contexts/SocketIOContext";
+import { SIOChannel } from "@/shared/socketIO";
 import { DeviceSelector, Button } from "@/components";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import PropTypes from "prop-types";
@@ -9,7 +9,9 @@ import { Div, Notification, Icon } from "atomize";
 import { Card, Text, Input, Label } from "@/components/atomize_wrapper";
 import { BaseTemplate } from "@/templates";
 import cx from "classnames";
-import { Lock as LockIcon, LockOpen as LockOpenIcon, VisibilityOff as VisibilityOffIcon, Visibility as VisibilityIcon, Visibility } from "@material-ui/icons";
+import { Lock as LockIcon, LockOpen as LockOpenIcon, VisibilityOff as VisibilityOffIcon, Visibility as VisibilityIcon } from "@material-ui/icons";
+
+import { AuthenticationEnum } from '@/shared/authentication'
 
 import "./style.scss";
 
@@ -54,13 +56,6 @@ const JoinPage = ({
 
   const [gain, setGain] = useState(0);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
-
-  // Authentication codes to be returned back by the server.
-  // Needs to be in sync with the backend enum.
-  enum AuthenticationEnum {
-    Success = 200,
-    Unauthorized = 401,
-  }
 
   const sha256 = async (message: string) => {
     const msgBuffer = new TextEncoder().encode(message);

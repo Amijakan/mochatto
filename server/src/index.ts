@@ -1,8 +1,8 @@
 import express from "express";
 import { Server } from "socket.io";
-import cors from "cors";
-import fs from "fs";
 import { createHash } from "crypto";
+import { AuthenticationEnum } from './shared/authentication'
+import { SIOChannel } from './shared/socketIO'
 import path from "path";
 
 const app = express();
@@ -17,13 +17,6 @@ const io = new Server(server, {
     origin: isProd ? "*" : ["http://localhost:4500", "http://localhost:4600"],
   },
 });
-
-// Authentication codes to be returned to the client.
-// Needs to be in sync with the frontend enum.
-enum AuthenticationEnum {
-  Success = 200,
-  Unauthorized = 401,
-}
 
 // Holds info about all existing rooms.
 const rooms: { [key: string]: { numUsers: number; passHash: string } } = {};
@@ -66,12 +59,12 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  socket.on("NUM_USERS", (nspName) => {
+  socket.on(SIOChannel.NUM_USERS, (nspName) => {
     const roomName = getRoomName(nspName);
     if (rooms[roomName]) {
-      socket.emit("NUM_USERS", rooms[roomName].numUsers);
+      socket.emit(SIOChannel.NUM_USERS, rooms[roomName].numUsers);
     } else {
-      socket.emit("NUM_USERS", 0);
+      socket.emit(SIOChannel.NUM_USERS, 0);
     }
   });
 });
@@ -85,24 +78,24 @@ io.of((nsp, query, next) => {
 }).on("connection", (socket) => {
   const roomName = getRoomName(socket.nsp.name);
 
-  socket.on("ROOM_INFO", () => {
+  socket.on(SIOChannel.ROOM_INFO, () => {
     if (rooms[roomName]) {
       const hasPass = rooms[roomName].passHash !== getDefaultHash(roomName);
-      socket.emit("ROOM_INFO", {
+      socket.emit(SIOChannel.ROOM_INFO, {
         numUsers: rooms[roomName].numUsers,
         hasPass,
       });
     } else {
-      socket.emit("ROOM_INFO", { numUsers: 0, hasPass: false });
+      socket.emit(SIOChannel.ROOM_INFO, { numUsers: 0, hasPass: false });
     }
   });
 
-  socket.on("AUTHENTICATE", (password) => {
+  socket.on(SIOChannel.AUTHENTICATE, (password) => {
     const authenticationResult = authenticate(roomName, password);
-    socket.emit("AUTHENTICATE", authenticationResult);
+    socket.emit(SIOChannel.AUTHENTICATE, authenticationResult);
 
     if (authenticationResult === AuthenticationEnum.Success) {
-      socket.on("JOIN", (name) => {
+      socket.on(SIOChannel.JOIN, (name) => {
         const user = { name, id: socket.id };
         if (name !== "") {
           if (rooms[roomName].numUsers) {
@@ -110,43 +103,44 @@ io.of((nsp, query, next) => {
           } else {
             rooms[roomName].numUsers = 1;
           }
-          io.of(roomName).emit("JOIN", user);
+          io.of(roomName).emit(SIOChannel.JOIN, user);
         }
       });
 
-      socket.on("OFFER", (dataString) => {
+      socket.on(SIOChannel.OFFER, (dataString) => {
         const targetId = JSON.parse(dataString).receiverId;
-        io.of(roomName).to(targetId).emit("OFFER", dataString);
+        io.of(roomName).to(targetId).emit(SIOChannel.OFFER, dataString);
       });
 
-      socket.on("ANSWER", (dataString) => {
+      socket.on(SIOChannel.ANSWER, (dataString) => {
         const targetId = JSON.parse(dataString).receiverId;
-        io.of(roomName).to(targetId).emit("ANSWER", dataString);
+        io.of(roomName).to(targetId).emit(SIOChannel.ANSWER, dataString);
       });
 
-      socket.on("ICE_CANDIDATE", (dataString) => {
+      socket.on(SIOChannel.ICE_CANDIDATE, (dataString) => {
         const targetId = JSON.parse(dataString).receiverId;
-        io.of(roomName).to(targetId).emit("ICE_CANDIDATE", dataString);
+        io.of(roomName).to(targetId).emit(SIOChannel.ICE_CANDIDATE, dataString);
       });
 
-      socket.on("SDP_RECEIVED", (sdpSenderId) => {
-        io.of(roomName).to(sdpSenderId).emit("SDP_RECEIVED");
+      socket.on(SIOChannel.SDP_RECEIVED, (sdpSenderId) => {
+        io.of(roomName).to(sdpSenderId).emit(SIOChannel.SDP_RECEIVED);
       });
 
-      socket.on("EDIT_USER_NAME", (name) => {
-        io.of(roomName).emit("EDIT_USER_NAME", { id: socket.id, name });
+      socket.on(SIOChannel.EDIT_USER_NAME, (name) => {
+        io.of(roomName).emit(SIOChannel.EDIT_USER_NAME, { id: socket.id, name });
       });
 
-      socket.on("LEAVE", () => {
-        io.of(roomName).emit("LEAVE", { id: socket.id });
+      socket.on(SIOChannel.LEAVE, () => {
+        io.of(roomName).emit(SIOChannel.LEAVE, { id: socket.id });
       });
 
+      // "disconnect" is socket.io native event
       socket.on("disconnect", () => {
         rooms[roomName].numUsers -= 1;
         if (rooms[roomName].numUsers === 0) {
           delete rooms[roomName];
         }
-        io.of(roomName).emit("DISCONNECT", { id: socket.id });
+        io.of(roomName).emit(SIOChannel.DISCONNECT, { id: socket.id });
       });
     }
   });

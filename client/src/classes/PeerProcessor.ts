@@ -2,7 +2,7 @@ import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import { Socket } from "socket.io-client";
 import { DCLabel, Pack } from "@/classes/Network";
-import { SIOChannel } from "@/contexts/SocketIOContext";
+import { SIOChannel } from "@/shared/socketIO";
 
 export interface DataPackage {
   position: [number, number];

@@ -5,7 +5,7 @@ import { Div } from "atomize";
 import { Text, Input } from "@/components/atomize_wrapper";
 import { SocketContext } from "@/contexts";
 import { useHistory } from "react-router-dom";
-import { SIOChannel } from "@/contexts/SocketIOContext";
+import { SIOChannel } from "@/shared/socketIO";
 import "./style.scss";
 
 const HomePage = (): JSX.Element => {

@@ -1,10 +1,12 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect, useRef } from 'react'
 import { Socket } from "socket.io-client";
 import { fromEvent, Observer } from 'rxjs'
-import { SocketContext } from "@/contexts";
+import { SocketContext, DeviceContext } from "@/contexts";
 import { SIOChannel } from "@/contexts/SocketIOContext";
 import { BaseTemplate } from "@/templates";
 import { DCLabel } from '@/classes/Network'
+import { Draggable, DeviceSelector } from '@/components'
+import { EventEmitter } from 'events'
 
 interface RoomState {
   name: string,
@@ -26,15 +28,39 @@ enum WebRTCEvents {
   iceconnectionstatechange = 'iceconnectionstatechange',
   icegatheringstatechange = 'icegatheringstatechange',
   signalingstatechange = 'signalingstatechange',
+}
 
+enum PeerEvents {
+  position = 'position',
+  audio = 'audio',
+  video = 'video',
+  screenshare = 'screenshare'
+}
+
+enum ChannelEvents {
+  open = 'open',
+  message = 'message',
+  close = 'close'
+}
+
+interface Position {
+  x: number,
+  y: number
 }
 
 const webRTCConfig = { iceServers: [{ urls: 'stun:mochatto.com:3478' }] }
 
-// emits values
-
 const TestPage = (): JSX.Element => {
+  const [localEventEmitter, _setLocalEventEmitter] = useState(new EventEmitter())
+
+  const { stream, setStream } = useContext(DeviceContext)
   const { socket } = useContext(SocketContext);
+  const [selfPosition, _setSelfPosition] = useState<Position>({ x: 100, y: 100 })
+  const setSelfPosition = (newPos: Position) => {
+    _setSelfPosition(newPos)
+    localEventEmitter.emit(PeerEvents.position, newPos)
+  }
+
   const [roomState, setRoomState] = useState<RoomState>({
     name: "test",
     numUsers: 0,
@@ -47,8 +73,7 @@ const TestPage = (): JSX.Element => {
 
   const peers: { [key: string]: any } = {}
 
-
-  const configurePeerConnectionRx = (peerConnection: RTCPeerConnection, socket: Socket, peerId: string) => {
+  const configurePeerConnection = (peerConnection: RTCPeerConnection, channel: RTCDataChannel, socket: Socket, peerId: string) => {
     // {{{ configurePeerConnection
     const keys = [
       SIOChannel.SDP_RECEIVED,
@@ -56,12 +81,15 @@ const TestPage = (): JSX.Element => {
       SIOChannel.ANSWER,
       SIOChannel.LEAVE,
       WebRTCEvents.icecandidate,
-      // WebRTCEvents.track,
+      WebRTCEvents.track,
       // WebRTCEvents.negotiationneeded,
       // WebRTCEvents.removetrack,
       // WebRTCEvents.iceconnectionstatechange,
       // WebRTCEvents.icegatheringstatechange,
       WebRTCEvents.signalingstatechange,
+      PeerEvents.audio,
+      ChannelEvents.open,
+      ChannelEvents.message
     ]
 
     // Define Observables
@@ -73,6 +101,12 @@ const TestPage = (): JSX.Element => {
       else if (key in WebRTCEvents) {
         observables[key] = fromEvent(peerConnection, key)
       }
+      else if (key in PeerEvents) {
+        observables[key] = fromEvent(localEventEmitter, key)
+      }
+      else if (key in ChannelEvents) {
+        observables[key] = fromEvent(channel, key)
+      }
     }
 
     // Define Observers
@@ -82,7 +116,12 @@ const TestPage = (): JSX.Element => {
       [SIOChannel.ANSWER]: answerObserver(peerConnection),
       [SIOChannel.LEAVE]: leaveObserver(),
       [WebRTCEvents.icecandidate]: iceCandidateObserver(peerId),
-      [WebRTCEvents.signalingstatechange]: signalingStateChangeObserver(peerConnection)
+      [WebRTCEvents.track]: trackObserver(peerId),
+      [WebRTCEvents.signalingstatechange]: signalingStateChangeObserver(peerConnection),
+      [PeerEvents.audio]: peerAudioObserver(peerConnection),
+      [PeerEvents.video]: peerVideoObserver(peerConnection),
+      [ChannelEvents.open]: () => channel.send("HELLO"),
+      [ChannelEvents.message]: (item: string) => console.log(item)
     }
 
     let subscriptions = {}
@@ -91,8 +130,11 @@ const TestPage = (): JSX.Element => {
     for (let key of keys) {
       subscriptions[key] = observables[key].subscribe(observers[key])
     }
+
+    // Not sure what to do with subscriptions
   }
   // }}}
+  //
 
   const createDataChannel = (peerConnection: RTCPeerConnection, channelName: string): RTCDataChannel => {
     return peerConnection.createDataChannel(channelName)
@@ -100,14 +142,16 @@ const TestPage = (): JSX.Element => {
 
   const createNewPeer = (peerId: string) => {
     const peerConnection = new RTCPeerConnection(webRTCConfig)
-    configurePeerConnectionRx(peerConnection, socket, peerId)
-    const defaultDataChannel = createDataChannel(peerConnection, DCLabel)
+    const dataChannel = createDataChannel(peerConnection, DCLabel)
+    dataChannel.onopen = () => console.log('open')
+    dataChannel.onmessage = () => console.log('message')
+    configurePeerConnection(peerConnection, dataChannel, socket, peerId)
     return {
       id: peerId,
       connection: peerConnection,
       iceCandidates: [],
       dataChannels: {
-        default: defaultDataChannel
+        default: dataChannel,
       }
     }
   }
@@ -121,20 +165,15 @@ const TestPage = (): JSX.Element => {
 
   const handleOnRoomInfo = (info: Partial<RoomState>) => {
     const { numUsers, hasPass } = info;
-    console.log(numUsers, hasPass)
     const roomExists = !!numUsers;
     if (!roomExists) {
-      console.log("room doesnt exist")
     } else if (hasPass) {
-      console.log("Has password")
     } else {
-      console.log("Room exists and no password")
     }
     updateRoomState(info)
 
   }
   const handleJoin = (socket: Socket) => async (user: User) => {
-    console.log("RECEIVED JOIN")
     if (socket.id != user.id) {
       const newPeer = createNewPeer(user.id)
       const peerConnection = newPeer.connection
@@ -145,7 +184,6 @@ const TestPage = (): JSX.Element => {
       await peerConnection.setLocalDescription(offer)
       // If the identity is set appropriately
       if (peerConnection.localDescription) {
-        console.log('has Local Description')
         // Start sending offers to other peers via signaling server
         // Telling who the other side is / who I am
         const offerPack = {
@@ -155,11 +193,7 @@ const TestPage = (): JSX.Element => {
           kind: "offer",
         }
         socket.emit(SIOChannel.OFFER, JSON.stringify(offerPack))
-        console.log("EMITTED OFFER")
       }
-    }
-    else {
-      console.log("My own id")
     }
   }
 
@@ -184,7 +218,6 @@ const TestPage = (): JSX.Element => {
         kind: 'answer'
       }
       socket.emit(SIOChannel.ANSWER, JSON.stringify(answerPack))
-      console.log("EMITTED ANSWER")
     }
     catch (e) {
       console.error(e)
@@ -196,11 +229,26 @@ const TestPage = (): JSX.Element => {
     socket.emit(SIOChannel.AUTHENTICATE, password)
   }
 
+  const peerAudioObserver = (peerConnection: RTCPeerConnection): Observer<MediaStreamTrack> => ({
+    next: (audioTrack: MediaStreamTrack) => {
+      console.log('AUDIO');
+      const resp = peerConnection.addTrack(audioTrack)
+      console.log("ADDED TRRAKC", resp)
+    },
+    error: handleError,
+    complete: () => console.log('completed audio observer')
+
+  })
+
+  const peerVideoObserver = (peerConnection: RTCPeerConnection) => (audioTrack: MediaStreamTrack) => {
+    console.log('Video');
+    peerConnection.addTrack(audioTrack)
+  }
+
   // ------ Observers 
 
   const answerObserver = (peerConnection: RTCPeerConnection): Observer<string> => ({
     next: async (dataString: string) => {
-      console.log("RECEIVED ANSWER")
       const answerPack = JSON.parse(dataString)
       const peerId = answerPack.userId
       await peerConnection.setRemoteDescription(answerPack.sdp)
@@ -211,11 +259,7 @@ const TestPage = (): JSX.Element => {
   })
 
   const leaveObserver = (): Observer<string> => ({
-    next: async (id) => {
-      console.log("RECEIVED LEAVE")
-      console.log(id)
-      delete peers[id]
-    },
+    next: async (id) => delete peers[id],
     error: handleError,
     complete: () => console.log("Completed, not sure what it means")
   })
@@ -233,11 +277,7 @@ const TestPage = (): JSX.Element => {
   })
 
   const iceCandidateObserver = (peerId: string): Observer<RTCIceCandidate> => ({
-    next: (candidate: RTCIceCandidate) => {
-      console.log("observed ice candidate");
-      socket.emit(SIOChannel.ICE_CANDIDATE, JSON.stringify({ ice: candidate, receiverId: peerId })
-      )
-    },
+    next: (candidate: RTCIceCandidate) => socket.emit(SIOChannel.ICE_CANDIDATE, JSON.stringify({ ice: candidate, receiverId: peerId })),
     error: handleError,
     complete: () => console.log("Completed, not sure what it means")
   })
@@ -245,6 +285,25 @@ const TestPage = (): JSX.Element => {
     console.log(peerConnection.signalingState)
     if (peerConnection.signalingState === 'stable') updateRoomState({ joined: true })
   }
+
+  const trackObserver = (peerId: string): Observer<MediaStreamTrack> => ({
+    next: (track: MediaStreamTrack) => {
+      console.log("REMOTE TRACK", track)
+      const peer = peers[peerId]
+      if (!track.readyState) {
+        return
+      }
+      switch (track.kind) {
+        case PeerEvents.audio:
+          peer.datachannels[PeerEvents.audio]
+          break
+        case PeerEvents.video:
+          break
+      }
+    },
+    error: handleError,
+    complete: () => console.log("Completed, not sure what it means")
+  })
 
   const openNewChannel = (peerId: string, channelName: string) => {
     const peer = peers[peerId]
@@ -270,6 +329,18 @@ const TestPage = (): JSX.Element => {
     return null
   }
 
+  useEffect(() => {
+    if (stream.getAudioTracks().length) {
+      console.log(stream.getAudioTracks()[0])
+      localEventEmitter.emit(PeerEvents.audio, stream.getAudioTracks()[0])
+    }
+    if (stream.getVideoTracks().length) {
+      console.log(stream.getVideoTracks()[0])
+      localEventEmitter.emit(PeerEvents.video, stream.getVideoTracks()[0])
+    }
+  }, [stream])
+
+  // Information Listener Layer
 
   useEffect(() => {
     if (socket) {
@@ -292,12 +363,16 @@ const TestPage = (): JSX.Element => {
         <div>RoomName: {roomState.name}</div>
         <div>NumUsers: {roomState.numUsers}</div>
         <div>HasPass: {roomState.hasPass ? "True" : "False"}</div>
+        <DeviceSelector onSelect={setStream} />
         {!roomState.joined && (
           <form onSubmit={handleJoinRoom}>
             <input name="password" style={{ padding: 8, border: '1px solid teal' }} />
             <button type="submit" style={{ backgroundColor: 'teal' }}>Join Room</button>
           </form>
         )}
+        <Draggable position={selfPosition} onPositionChange={setSelfPosition} draggable={true}>
+          <div style={{ width: 200, height: 200, borderRadius: 100, backgroundColor: 'red' }} />
+        </Draggable>
       </>
     </BaseTemplate>
   )

@@ -1,13 +1,27 @@
+@import "@/constants/style";
+
 .header {
   display: flex;
   justify-content: space-between;
-  padding: 0 8px;
+  padding: 0 1rem;
+  height: 4.5rem;
+  border-bottom: 1px solid rgba(0,0,0,.05);
 
   .logo, .github-logo {
     cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    img {
+      height: 1.25rem;
+    }
   }
 
-  img {
-    height: 25px;
+}
+
+@media (max-width: $breakpoint-tablet) {
+  .header {
+    height: 4rem;
+    padding: 0 0.5rem;
   }
 }

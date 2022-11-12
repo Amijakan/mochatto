@@ -164,9 +164,9 @@ const JoinPage = ({
 
   return (
     <BaseTemplate>
-      <Div d="flex" justify="space-around" p={{ t: "100px" }}>
-        <Card m={{ l: "10%", r: "10%" }}>
-          <Div w="80%" p={{ x: "1.25rem", y: "1.25rem" }}>
+      <div className="join-page">
+        <div className="action-card">
+          <div className="card-inner-wrapper">
             <Text textSize="20px" m={{ b: "20px" }}>
               Room ID: <b>{room_id}</b>
             </Text>
@@ -242,9 +242,9 @@ const JoinPage = ({
                 Back
               </Button>
             </div>
-          </Div>
-        </Card>
-      </Div>
+          </div>
+        </div>
+      </div>
     </BaseTemplate>
   );
 };

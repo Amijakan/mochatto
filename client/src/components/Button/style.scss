@@ -18,6 +18,8 @@ button {
   align-items: center;
   justify-content: center;
   width: 100%;
+  font-weight: 500;
+  font-family: "SF Pro Text", -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
 
   &:hover {
     background-color: rgb(222, 222, 222, 0.2);

@@ -1,60 +1,115 @@
 @import "@/constants/style";
 
-.join-back-container {
-  margin-top: 1rem;
-  width: 100%;
+.join-page {
   display: flex;
   justify-content: space-around;
+  padding-top: 6.25rem;
 
-  button {
-    flex-basis: 45%;
-  }
-}
+  .action-card {
+    max-width: 1156px;
+    box-shadow: rgb(8 11 14 / 6%) 0px 0px 1px 0px, rgb(8 11 14 / 10%) 0px 16px 16px -1px;
+    width: 100%;
+    margin: 0 10%;
+    border-radius: 0.75rem;
+    display: flex;
+    justify-content: center;
+    padding: 2.5rem 0;
 
-.visualizer {
-    height: 10px;
-    background: #FDEEC8;
-    transition: width $transition-time;
-}
+    .card-inner-wrapper {
+      width: 80%;
+      padding: 1.25rem;
 
-.password-wrapper {
-  display: flex;
-  align-items: center;
-  margin-top: 16px;
-  position: relative;
+      .join-back-container {
+        margin-top: 1rem;
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
 
-  .password-toggle {
-    border-radius: 100%;
-    width: 2.5rem;
-    height: 2.5rem;
-    margin-right: 4px;
-    background-color: $gray;
+        button {
+          flex-basis: 45%;
+        }
+      }
 
-    &.locked-style {
-      background-color: $orange;
-    }
-  }
-  
-  div {
-    flex-grow: 1;
+      .visualizer {
+          height: 10px;
+          background: #FDEEC8;
+          transition: width $transition-time;
+      }
 
-    .password-input.disabled {
-      pointer-events: none;
-      background-color: $disabled-background-color;
+      .password-wrapper {
+        display: flex;
+        align-items: center;
+        margin-top: 16px;
+        position: relative;
 
-      &::placeholder {
-        color: $disabled-text-color;
+        .password-toggle {
+          border-radius: 100%;
+          width: 2.5rem;
+          height: 2.5rem;
+          margin-right: 4px;
+          background-color: $gray;
+
+          &.locked-style {
+            background-color: $orange;
+          }
+        }
+        
+        div {
+          flex-grow: 1;
+
+          .password-input.disabled {
+            pointer-events: none;
+            background-color: $disabled-background-color;
+
+            &::placeholder {
+              color: $disabled-text-color;
+            }
+          }
+        }
+
+        .password-visibility-button {
+          $eye-width: 1rem;
+
+          background: $no-background-color;
+          color: $gray;
+          width: $eye-width;
+          position: absolute;
+          right: calc($eye-width / 2);
+        }
       }
     }
   }
+}
 
-  .password-visibility-button {
-    $eye-width: 1rem;
 
-    background: $no-background-color;
-    color: $gray;
-    width: $eye-width;
-    position: absolute;
-    right: calc($eye-width / 2);
+@media (max-width: $breakpoint-tablet) {
+  .join-page {
+    padding-top: 0;
+
+    .action-card {
+      margin: 1rem;
+      padding: 0;
+
+      .card-inner-wrapper {
+        width: 90%;
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .join-page {
+    .action-card {
+      .card-inner-wrapper {
+        .join-back-container {
+          flex-direction: column;
+
+          button {
+            padding: 0.75rem;
+            margin: 0.25rem 0;
+          }
+        }
+      }
+    }
   }
 }

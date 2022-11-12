@@ -19,7 +19,7 @@ type ButtonsBarProps = {
   userInfoRef: any;
 };
 
-const isMobile = typeof screen.orientation !== 'undefined';
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
 const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
   const SettingsButton = () => {

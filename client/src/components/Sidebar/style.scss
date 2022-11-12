@@ -90,12 +90,7 @@
 
 @media (max-width: $breakpoint-tablet) {
   .sidebar[data-open=open] {
-    height: 90vh;
-  }
-}
-
-@media (max-width: $breakpoint-mobile) {
-  .sidebar[data-open=open] {
+    height: calc(100vh - 6rem);
     width: calc(100vw - 1rem);
   }
 }

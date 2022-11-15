@@ -73,9 +73,14 @@ const TestPage = (): JSX.Element => {
 
   const peers: { [key: string]: any } = {}
 
+  const updateRemoteTrack = (peerConnection: RTCPeerConnection, track: MediaStreamTrack): void => {
+    peerConnection.addTrack(track)
+  }
+
+
   const configurePeerConnection = (peerConnection: RTCPeerConnection, channel: RTCDataChannel, socket: Socket, peerId: string) => {
     // {{{ configurePeerConnection
-    const keys = [
+    const events = [
       SIOChannel.SDP_RECEIVED,
       SIOChannel.ICE_CANDIDATE,
       SIOChannel.ANSWER,
@@ -94,18 +99,18 @@ const TestPage = (): JSX.Element => {
 
     // Define Observables
     let observables = {}
-    for (let key of keys) {
-      if (key in SIOChannel) {
-        observables[key] = fromEvent(socket, key)
+    for (let event of events) {
+      if (event in SIOChannel) {
+        observables[event] = fromEvent(socket, event)
       }
-      else if (key in WebRTCEvents) {
-        observables[key] = fromEvent(peerConnection, key)
+      else if (event in WebRTCEvents) {
+        observables[event] = fromEvent(peerConnection, event)
       }
-      else if (key in PeerEvents) {
-        observables[key] = fromEvent(localEventEmitter, key)
+      else if (event in PeerEvents) {
+        observables[event] = fromEvent(localEventEmitter, event)
       }
-      else if (key in ChannelEvents) {
-        observables[key] = fromEvent(channel, key)
+      else if (event in ChannelEvents) {
+        observables[event] = fromEvent(channel, event)
       }
     }
 
@@ -127,8 +132,8 @@ const TestPage = (): JSX.Element => {
     let subscriptions = {}
 
     // Start Subscriptions
-    for (let key of keys) {
-      subscriptions[key] = observables[key].subscribe(observers[key])
+    for (let event of events) {
+      subscriptions[event] = observables[event].subscribe(observers[event])
     }
 
     // Not sure what to do with subscriptions
@@ -232,7 +237,9 @@ const TestPage = (): JSX.Element => {
   const peerAudioObserver = (peerConnection: RTCPeerConnection): Observer<MediaStreamTrack> => ({
     next: (audioTrack: MediaStreamTrack) => {
       console.log('AUDIO');
-      const resp = peerConnection.addTrack(audioTrack)
+      console.log(peerConnection)
+      const resp: RTCRtpSender = peerConnection.addTrack(audioTrack)
+      console.log(peerConnection)
       console.log("ADDED TRRAKC", resp)
     },
     error: handleError,

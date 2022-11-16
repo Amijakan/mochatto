@@ -107,7 +107,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     setAnnouncement(userInfosRef.current[id].name + " has left.");
     setNotificationTheme("leave");
     setShowNotification(true);
-    setSoundEffectPlayer?.(new Audio(leaveSoundSrc));
+    setSoundEffectPlayer(new Audio(leaveSoundSrc));
   };
 
   const onAudioActivity = (gain: number) => {

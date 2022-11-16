@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Icon } from "atomize";
 import MicOffIcon from "@material-ui/icons/MicOff";
 import cx from "classnames";
-import joinSoundSrc from "@/assets/sound/join.ogg";
-import leaveSoundSrc from "@/assets/sound/leave.ogg";
 import muteSoundSrc from "@/assets/sound/mute.ogg";
 import unmuteSoundSrc from "@/assets/sound/unmute.ogg";
 import activeSoundSrc from "@/assets/sound/active.ogg";
@@ -44,11 +42,6 @@ function AvatarDOM({
 
   useEffect(() => {
     setIsRendered(true);
-    setSoundEffectPlayer?.(new Audio(joinSoundSrc));
-
-    return () => {
-      setSoundEffectPlayer?.(new Audio(leaveSoundSrc));
-    };
   }, []);
 
   useEffect(() => {

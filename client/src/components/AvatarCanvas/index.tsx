@@ -9,14 +9,15 @@ function AvatarCanvas({
   userInfos,
   selfUserInfo,
   updateSelfUserInfo,
+  setSoundEffectPlayer
 }: {
   userInfos: UserInfo[];
   selfUserInfo: UserInfo;
   updateSelfUserInfo: (arg0: any) => void;
+  setSoundEffectPlayer: (arg0: HTMLAudioElement) => void;
 }): JSX.Element {
   const { socket } = useContext(SocketContext);
   const selfPositionRef = useRef({ x: 100, y: 100 })
-  const [ soundEffectPlayer, setSoundEffectPlayer ] = useState<HTMLAudioElement | null>(null);
 
   // on mouse down, add listeners for moving and mouse up
 
@@ -37,15 +38,6 @@ function AvatarCanvas({
     const border = getColor(random, 1.2, 0.6);
     updateSelfUserInfo({ avatarColor: { background, border } });
   }, []);
-
-  useEffect(() => {
-    if(soundEffectPlayer != null) {
-      // If no other sound is playing.
-      if(soundEffectPlayer.paused && !soundEffectPlayer.duration) {
-        soundEffectPlayer.play();
-      }
-    }
-  }, [soundEffectPlayer]);
 
   return (
     <>

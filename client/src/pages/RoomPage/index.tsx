@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useContext, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { Div, Notification, Icon, Text } from "atomize";
-import { AvatarCanvas, ButtonsBar, DeviceSelector, Sidebar } from "@/components";
+import { AvatarCanvas, ButtonsBar, DeviceSelector, Sidebar, AutoSleepToggle } from "@/components";
 import _ from "lodash";
 import { SocketContext, DeviceContext, UserInfoContext } from "@/contexts";
 import { SIOChannel } from "@/shared/socketIO";
@@ -17,6 +17,7 @@ const notificationColors = {
   join: { color: "success", icon: "Success" },
   leave: { color: "danger", icon: "Info" },
 };
+
 
 function RoomPage({ name }: { name: string }): JSX.Element {
   const [announcement, setAnnouncement] = useState("");
@@ -256,6 +257,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         <Div>
           <Text>Choose your audio input source.</Text>
           <DeviceSelector onSelect={onSelect} />
+          <AutoSleepToggle />
         </Div>
       }
     >

@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect, useContext, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { Div, Notification, Icon, Text } from "atomize";
-import { AvatarCanvas, ButtonsBar, DeviceSelector, Sidebar } from "@/components";
+import { AvatarCanvas, ButtonsBar, DeviceSelector, Sidebar, AutoSleepToggle, Divider } from "@/components";
 import _ from "lodash";
+import cx from 'classnames'
+import { isMobile } from "@/utils"
 import { SocketContext, DeviceContext, UserInfoContext } from "@/contexts";
 import { SIOChannel } from "@/shared/socketIO";
 import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
@@ -18,10 +20,12 @@ const notificationColors = {
   leave: { color: "danger", icon: "Info" },
 };
 
+
 function RoomPage({ name }: { name: string }): JSX.Element {
   const [announcement, setAnnouncement] = useState("");
   const [showNotification, setShowNotification] = useState(false);
   const [notificationTheme, setNotificationTheme] = useState("join");
+  const [isAutoSleepDisabled, setAutoSleepDisabled] = useState(false)
   const { socket } = useContext(SocketContext);
   const { stream, setStream } = useContext(DeviceContext);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
@@ -256,6 +260,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         <Div>
           <Text>Choose your audio input source.</Text>
           <DeviceSelector onSelect={onSelect} />
+          <Divider className={cx("setting-divider", { 'hidden': !isMobile })} />
+          <AutoSleepToggle isAutoSleepDisabled={isAutoSleepDisabled} setAutoSleepDisabled={setAutoSleepDisabled} />
         </Div>
       }
     >

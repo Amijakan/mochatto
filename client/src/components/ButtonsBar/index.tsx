@@ -5,6 +5,7 @@ import MicIcon from "@material-ui/icons/Mic";
 import MicOffIcon from "@material-ui/icons/MicOff";
 import ScreenShareIcon from "@material-ui/icons/ScreenShare";
 import StopScreenShareIcon from "@material-ui/icons/StopScreenShare";
+import { isMobile } from '@/utils'
 import "./style.scss";
 
 import PropTypes from "prop-types";
@@ -18,8 +19,6 @@ type ButtonsBarProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   userInfoRef: any;
 };
-
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
 const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
   const SettingsButton = () => {

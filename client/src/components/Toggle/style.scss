@@ -1,0 +1,53 @@
+@import '@/constants/style.scss';
+
+$toggle-size: 1rem;
+$container-z-index: 30;
+
+
+.toggle-wrapper {
+  display: flex;
+  padding: calc($toggle-size / 8);
+  align-items: center;
+  position: relative;
+  height: $toggle-size;
+  width: calc($toggle-size * 2);
+  border-radius: $toggle-size;
+  z-index: $container-z-index;
+  justify-content: center;
+}
+
+.toggle-wrapper[data-selected=on] {
+  background-color: $primary;
+}
+
+.toggle-wrapper[data-selected=off] {
+  background-color: $gray;
+}
+
+.toggle-ball {
+  cursor: pointer;
+  transition: all 0.1s;
+  background-color: $white;
+  border-radius: $toggle-size;
+  height: $toggle-size;
+  width: $toggle-size;
+  z-index: calc($container-z-index + 1);
+}
+
+
+.toggle-ball[data-selected=on] {
+  transform: translateX(50%);
+}
+
+.toggle-ball[data-selected=off] {
+  transform: translateX(-50%);
+}
+
+.toggle-ball[data-disabled=disabled] {
+  background-color: $disabled-text-color;
+}
+
+.toggle-wrapper[data-disabled=disabled] {
+  background-color: $disabled-background-color;
+}
+

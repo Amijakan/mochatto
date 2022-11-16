@@ -2,6 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Icon } from "atomize";
 import MicOffIcon from "@material-ui/icons/MicOff";
 import cx from "classnames";
+import joinSoundSrc from "@/assets/sound/join.ogg";
+import leaveSoundSrc from "@/assets/sound/leave.ogg";
+import muteSoundSrc from "@/assets/sound/mute.ogg";
+import unmuteSoundSrc from "@/assets/sound/unmute.ogg";
+import activeSoundSrc from "@/assets/sound/active.ogg";
+import inactiveSoundSrc from "@/assets/sound/inactive.ogg";
 
 import "./style.scss";
 
@@ -15,6 +21,7 @@ function AvatarDOM({
   mute,
   size = "large",
   id,
+  setSoundEffectPlayer
 }: {
   isSelf: boolean;
   multiplier?: number;
@@ -25,6 +32,7 @@ function AvatarDOM({
   mute: boolean;
   size?: string;
   id: string;
+  setSoundEffectPlayer: (arg0: HTMLAudioElement) => void;
 }): JSX.Element {
   const [isRendered, setIsRendered] = useState(false);
   function calculateSpecificStyles() {
@@ -36,7 +44,34 @@ function AvatarDOM({
 
   useEffect(() => {
     setIsRendered(true);
+    setSoundEffectPlayer(new Audio(joinSoundSrc));
+
+    return () => {
+      setSoundEffectPlayer(new Audio(leaveSoundSrc));
+    };
   }, []);
+
+  useEffect(() => {
+    if(isRendered) {
+      if(mute) {
+        setSoundEffectPlayer(new Audio(muteSoundSrc));
+      }
+      else {
+        setSoundEffectPlayer(new Audio(unmuteSoundSrc));
+      }
+    }
+  }, [mute]);
+
+  useEffect(() => {
+    if(isRendered) {
+      if(active) {
+        setSoundEffectPlayer(new Audio(activeSoundSrc));
+      }
+      else {
+        setSoundEffectPlayer(new Audio(inactiveSoundSrc));
+      }
+    }
+  }, [active]);
 
   function renderStatusIcon() {
     if (!active) {

@@ -229,6 +229,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   useEffect(() => {
     userInfosRef.current = userInfos;
   }, [userInfos]);
+
   const handleClickScreenSharing = useCallback(() => {
     if (!selfUserInfoRef.current.isScreenSharing) {
       navigator.mediaDevices

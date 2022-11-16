@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect, useContext } from "react";
+import React, { useState, useRef, useCallback, useEffect, useContext } from "react";
 import { SocketContext } from "@/contexts";
 import AvatarDOM from "./AvatarDOM";
 import { UserInfo } from "@/contexts/UserInfoContext";
@@ -16,6 +16,7 @@ function AvatarCanvas({
 }): JSX.Element {
   const { socket } = useContext(SocketContext);
   const selfPositionRef = useRef({ x: 100, y: 100 })
+  const [ soundEffectPlayer, setSoundEffectPlayer ] = useState(null as unknown as Audio);
 
   // on mouse down, add listeners for moving and mouse up
 
@@ -37,6 +38,15 @@ function AvatarCanvas({
     updateSelfUserInfo({ avatarColor: { background, border } });
   }, []);
 
+  useEffect(() => {
+    if(soundEffectPlayer != null) {
+      // If no other sound is playing.
+      if(soundEffectPlayer.paused && !soundEffectPlayer.duration) {
+        soundEffectPlayer.play();
+      }
+    }
+  }, [soundEffectPlayer]);
+
   return (
     <>
       {userInfos.map((info, index) => (
@@ -52,6 +62,7 @@ function AvatarCanvas({
               initial={info.name[0]}
               active={info.active}
               mute={info.mute}
+              setSoundEffectPlayer={setSoundEffectPlayer}
             />
           </Draggable>
         )

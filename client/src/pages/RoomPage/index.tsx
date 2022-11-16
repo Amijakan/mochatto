@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useContext, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { Div, Notification, Icon, Text } from "atomize";
-import { AvatarCanvas, ButtonsBar, DeviceSelector, Sidebar, AutoSleepToggle } from "@/components";
+import { AvatarCanvas, ButtonsBar, DeviceSelector, Sidebar, AutoSleepToggle, Divider } from "@/components";
 import _ from "lodash";
 import { SocketContext, DeviceContext, UserInfoContext } from "@/contexts";
 import { SIOChannel } from "@/shared/socketIO";
@@ -258,6 +258,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         <Div>
           <Text>Choose your audio input source.</Text>
           <DeviceSelector onSelect={onSelect} />
+          <Divider className="setting-divider"/>
           <AutoSleepToggle noSleepEnabled={noSleepEnabled} setNoSleepEnabled={setNoSleepEnabled} />
         </Div>
       }

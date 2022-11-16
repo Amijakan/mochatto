@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import NoSleep from 'nosleep.js'
 import { isMobile } from '@/utils'
 import { Toggle } from "@/components";
 import './style.scss'
 
-const AutoSleepToggle = (): JSX.Element => {
-  const [noSleepEnabled, setNoSleepEnabled] = useState<boolean>(false)
+const AutoSleepToggle = ({ noSleepEnabled, setNoSleepEnabled }): JSX.Element => {
   const noSleep = new NoSleep()
 
   useEffect(() => {

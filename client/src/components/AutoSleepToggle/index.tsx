@@ -4,19 +4,19 @@ import { isMobile } from '@/utils'
 import { Toggle } from "@/components";
 import './style.scss'
 
-const AutoSleepToggle = ({ noSleepEnabled, setNoSleepEnabled }: { noSleepEnabled: boolean, setNoSleepEnabled: (arg0: boolean) => void }): JSX.Element => {
+const AutoSleepToggle = ({ isAutoSleepDisabled, setAutoSleepDisabled }: { isAutoSleepDisabled: boolean, setAutoSleepDisabled: (arg0: boolean) => void }): JSX.Element => {
   const noSleep = new NoSleep()
 
   useEffect(() => {
     if (isMobile) {
-      noSleepEnabled ? noSleep.enable() : noSleep.disable()
+      isAutoSleepDisabled ? noSleep.enable() : noSleep.disable()
     }
-  }, [noSleepEnabled])
+  }, [isAutoSleepDisabled])
 
   return isMobile ? (
     <div className='autosleep-toggle'>
       <p>Disable auto sleep</p>
-      <Toggle selected={noSleepEnabled} setSelected={setNoSleepEnabled} />
+      <Toggle selected={isAutoSleepDisabled} setSelected={setAutoSleepDisabled} />
     </div>) : <></>
 }
 

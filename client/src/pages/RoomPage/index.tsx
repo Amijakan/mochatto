@@ -23,7 +23,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const [announcement, setAnnouncement] = useState("");
   const [showNotification, setShowNotification] = useState(false);
   const [notificationTheme, setNotificationTheme] = useState("join");
-  const [noSleepEnabled, setNoSleepEnabled] = useState(false)
+  const [isAutoSleepDisabled, setAutoSleepDisabled] = useState(false)
   const { socket } = useContext(SocketContext);
   const { stream, setStream } = useContext(DeviceContext);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
@@ -258,8 +258,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         <Div>
           <Text>Choose your audio input source.</Text>
           <DeviceSelector onSelect={onSelect} />
-          <Divider className="setting-divider"/>
-          <AutoSleepToggle noSleepEnabled={noSleepEnabled} setNoSleepEnabled={setNoSleepEnabled} />
+          <Divider className="setting-divider" />
+          <AutoSleepToggle isAutoSleepDisabled={isAutoSleepDisabled} setAutoSleepDisabled={setAutoSleepDisabled} />
         </Div>
       }
     >

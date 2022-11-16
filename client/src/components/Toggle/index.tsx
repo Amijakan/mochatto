@@ -1,7 +1,7 @@
 import React from 'react'
 import './style.scss'
 
-const Toggle = ({ selected, setSelected, disabled = false }) => {
+const Toggle = ({ selected, setSelected, disabled = false }: { selected: boolean, setSelected: (arg0: boolean) => void, disabled?: boolean }): JSX.Element => {
 
   const handleToggle = () => {
     if (!disabled) setSelected(!selected)

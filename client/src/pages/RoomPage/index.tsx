@@ -3,6 +3,8 @@ import { useHistory } from "react-router-dom";
 import { Div, Notification, Icon, Text } from "atomize";
 import { AvatarCanvas, ButtonsBar, DeviceSelector, Sidebar, AutoSleepToggle, Divider } from "@/components";
 import _ from "lodash";
+import cx from 'classnames'
+import { isMobile } from "@/utils"
 import { SocketContext, DeviceContext, UserInfoContext } from "@/contexts";
 import { SIOChannel } from "@/shared/socketIO";
 import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
@@ -258,7 +260,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         <Div>
           <Text>Choose your audio input source.</Text>
           <DeviceSelector onSelect={onSelect} />
-          <Divider className="setting-divider" />
+          <Divider className={cx("setting-divider", { 'hidden': !isMobile })} />
           <AutoSleepToggle isAutoSleepDisabled={isAutoSleepDisabled} setAutoSleepDisabled={setAutoSleepDisabled} />
         </Div>
       }

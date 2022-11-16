@@ -12,6 +12,8 @@ import { Network } from "@/classes/Network";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import { RoomTemplate } from "@/templates";
 import "./style.scss";
+import joinSoundSrc from "@/assets/sound/join.ogg";
+import leaveSoundSrc from "@/assets/sound/leave.ogg";
 
 import PropTypes from "prop-types";
 
@@ -37,6 +39,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
   const networkRef = useRef(null as unknown as Network);
+  const [ soundEffectPlayer, setSoundEffectPlayer ] = useState<HTMLAudioElement | null>(null);
 
   // when new input is selected update all tracks and send a new offer out
   const onSelect = (_stream) => {
@@ -93,6 +96,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     setAnnouncement(name + " has joined the room!");
     setNotificationTheme("join");
     setShowNotification(true);
+    setSoundEffectPlayer(new Audio(joinSoundSrc));
   };
 
   // When a user leaves.
@@ -107,6 +111,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     setAnnouncement(userInfosRef.current[id].name + " has left.");
     setNotificationTheme("leave");
     setShowNotification(true);
+    setSoundEffectPlayer(new Audio(leaveSoundSrc));
   };
 
   const onAudioActivity = (gain: number) => {
@@ -206,6 +211,15 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, []);
 
   useEffect(() => {
+    if(soundEffectPlayer != null) {
+      // If no other sound is playing.
+      if(soundEffectPlayer.paused && !soundEffectPlayer.duration) {
+        soundEffectPlayer.play();
+      }
+    }
+  }, [soundEffectPlayer]);
+
+  useEffect(() => {
     updateSelfUserInfo({ id: socket.id });
   }, [socket]);
 
@@ -233,6 +247,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   useEffect(() => {
     userInfosRef.current = userInfos;
   }, [userInfos]);
+
   const handleClickScreenSharing = useCallback(() => {
     if (!selfUserInfoRef.current.isScreenSharing) {
       navigator.mediaDevices
@@ -286,6 +301,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           selfUserInfo={selfUserInfoRef.current}
           updateSelfUserInfo={updateSelfUserInfo}
           userInfos={Object.values(userInfos)}
+          setSoundEffectPlayer={setSoundEffectPlayer}
         />
         <ButtonsBar
           onSettingsClicked={handleSettingClicked}

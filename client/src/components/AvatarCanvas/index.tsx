@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect, useContext } from "react";
+import React, { useState, useRef, useCallback, useEffect, useContext } from "react";
 import { SocketContext } from "@/contexts";
 import AvatarDOM from "./AvatarDOM";
 import { UserInfo } from "@/contexts/UserInfoContext";
@@ -9,10 +9,12 @@ function AvatarCanvas({
   userInfos,
   selfUserInfo,
   updateSelfUserInfo,
+  setSoundEffectPlayer
 }: {
   userInfos: UserInfo[];
   selfUserInfo: UserInfo;
   updateSelfUserInfo: (arg0: any) => void;
+  setSoundEffectPlayer: (arg0: HTMLAudioElement) => void;
 }): JSX.Element {
   const { socket } = useContext(SocketContext);
   const selfPositionRef = useRef({ x: 100, y: 100 })
@@ -52,6 +54,7 @@ function AvatarCanvas({
               initial={info.name[0]}
               active={info.active}
               mute={info.mute}
+              setSoundEffectPlayer={setSoundEffectPlayer}
             />
           </Draggable>
         )

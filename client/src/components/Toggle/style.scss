@@ -1,7 +1,6 @@
 @import '@/constants/style.scss';
 
-$toggle-size: 1.5rem;
-$box-shadow: 0 0 8px $gray;
+$toggle-size: 1rem;
 $container-z-index: 30;
 
 
@@ -13,24 +12,22 @@ $container-z-index: 30;
   height: $toggle-size;
   width: calc($toggle-size * 2);
   border-radius: $toggle-size;
-  box-shadow: $box-shadow;
   z-index: $container-z-index;
   justify-content: center;
 }
 
 .toggle-wrapper[data-selected=on] {
-  background-color: $white;
+  background-color: $primary;
 }
 
 .toggle-wrapper[data-selected=off] {
-  background-color: $primary;
+  background-color: $gray;
 }
 
 .toggle-ball {
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.1s;
   background-color: $white;
-  box-shadow: $box-shadow;
   border-radius: $toggle-size;
   height: $toggle-size;
   width: $toggle-size;
@@ -39,18 +36,18 @@ $container-z-index: 30;
 
 
 .toggle-ball[data-selected=on] {
-  transform: translateX(-50%);
-}
-
-.toggle-ball[data-selected=off] {
   transform: translateX(50%);
 }
 
+.toggle-ball[data-selected=off] {
+  transform: translateX(-50%);
+}
+
 .toggle-ball[data-disabled=disabled] {
-  background-color: $gray;
+  background-color: $disabled-text-color;
 }
 
 .toggle-wrapper[data-disabled=disabled] {
-  background-color: $gray;
+  background-color: $disabled-background-color;
 }
 

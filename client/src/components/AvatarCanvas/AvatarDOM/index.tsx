@@ -32,7 +32,7 @@ function AvatarDOM({
   mute: boolean;
   size?: string;
   id: string;
-  setSoundEffectPlayer: (arg0: HTMLAudioElement) => void;
+  setSoundEffectPlayer?: (arg0: HTMLAudioElement) => void;
 }): JSX.Element {
   const [isRendered, setIsRendered] = useState(false);
   function calculateSpecificStyles() {
@@ -44,20 +44,20 @@ function AvatarDOM({
 
   useEffect(() => {
     setIsRendered(true);
-    setSoundEffectPlayer(new Audio(joinSoundSrc));
+    setSoundEffectPlayer?.(new Audio(joinSoundSrc));
 
     return () => {
-      setSoundEffectPlayer(new Audio(leaveSoundSrc));
+      setSoundEffectPlayer?.(new Audio(leaveSoundSrc));
     };
   }, []);
 
   useEffect(() => {
     if(isRendered) {
       if(mute) {
-        setSoundEffectPlayer(new Audio(muteSoundSrc));
+        setSoundEffectPlayer?.(new Audio(muteSoundSrc));
       }
       else {
-        setSoundEffectPlayer(new Audio(unmuteSoundSrc));
+        setSoundEffectPlayer?.(new Audio(unmuteSoundSrc));
       }
     }
   }, [mute]);
@@ -65,10 +65,10 @@ function AvatarDOM({
   useEffect(() => {
     if(isRendered) {
       if(active) {
-        setSoundEffectPlayer(new Audio(activeSoundSrc));
+        setSoundEffectPlayer?.(new Audio(activeSoundSrc));
       }
       else {
-        setSoundEffectPlayer(new Audio(inactiveSoundSrc));
+        setSoundEffectPlayer?.(new Audio(inactiveSoundSrc));
       }
     }
   }, [active]);

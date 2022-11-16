@@ -16,7 +16,7 @@ function AvatarCanvas({
 }): JSX.Element {
   const { socket } = useContext(SocketContext);
   const selfPositionRef = useRef({ x: 100, y: 100 })
-  const [ soundEffectPlayer, setSoundEffectPlayer ] = useState(null as unknown as HTMLAudioElement);
+  const [ soundEffectPlayer, setSoundEffectPlayer ] = useState<HTMLAudioElement | null>(null);
 
   // on mouse down, add listeners for moving and mouse up
 

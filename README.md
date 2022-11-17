@@ -65,6 +65,11 @@ Debugging with browser
 - [x] User Lists
 - [x] Change Username
 - [ ] Mobile Support
+  - [x] Disable Sleep Toggle
+  - [x] Disable Share screen
+  - [ ] Mobile Detection: Fails iPad
+  - [ ] UI Support
+    - [ ] In screen scroll
 - [ ] Place Images in the space
 - [ ] Place Videos in the space
 - [ ] Audio Recording

@@ -136,11 +136,13 @@ io.of((nsp, query, next) => {
 
       // "disconnect" is socket.io native event
       socket.on("disconnect", () => {
-        rooms[roomName].numUsers -= 1;
-        if (rooms[roomName].numUsers === 0) {
-          delete rooms[roomName];
+        if (rooms[roomName]) { // Shouldn't happen, but looks like there are occasions where this goes out of sync.
+          rooms[roomName].numUsers -= 1;
+          if (rooms[roomName].numUsers === 0) {
+            delete rooms[roomName];
+          }
+          io.of(roomName).emit(SIOChannel.DISCONNECT, { id: socket.id });
         }
-        io.of(roomName).emit(SIOChannel.DISCONNECT, { id: socket.id });
       });
     }
   });

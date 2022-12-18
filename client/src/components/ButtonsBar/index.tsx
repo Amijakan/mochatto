@@ -5,7 +5,7 @@ import MicIcon from "@material-ui/icons/Mic";
 import MicOffIcon from "@material-ui/icons/MicOff";
 import ScreenShareIcon from "@material-ui/icons/ScreenShare";
 import StopScreenShareIcon from "@material-ui/icons/StopScreenShare";
-import { isMobile } from '@/utils'
+import { isMobile } from "@/utils";
 import "./style.scss";
 
 import PropTypes from "prop-types";
@@ -17,7 +17,7 @@ type ButtonsBarProps = {
   onScreenShareClicked: () => void;
   onLeaveClicked: () => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  userInfoRef: any;
+  userInfo: any;
 };
 
 const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
@@ -32,11 +32,11 @@ const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
   };
 
   const StatusButton = () => {
-    const { onStatusClicked, userInfoRef } = props;
+    const { onStatusClicked, userInfo } = props;
 
     return (
       <Button title="Status (s)" onClick={onStatusClicked}>
-        {userInfoRef.current.active ? (
+        {userInfo?.active ? (
           <Icon name="Status" color="success700" size="24px" />
         ) : (
           <Icon name="RemoveSolid" color="danger700" size="24px" />
@@ -46,20 +46,20 @@ const ButtonsBar: FunctionComponent<ButtonsBarProps> = (props) => {
   };
 
   const MuteButton = () => {
-    const { onMuteClicked, userInfoRef } = props;
+    const { onMuteClicked, userInfo } = props;
 
     return (
       <Button title="Toggle mute (m)" onClick={onMuteClicked}>
-        {userInfoRef.current.mute ? <MicOffIcon /> : <MicIcon />}
+        {userInfo?.mute ? <MicOffIcon /> : <MicIcon />}
       </Button>
     );
   };
 
   const ScreenShareButton = () => {
-    const { onScreenShareClicked, userInfoRef } = props;
+    const { onScreenShareClicked, userInfo } = props;
     return (
       <Button title="Screen sharing" onClick={onScreenShareClicked}>
-        {userInfoRef.current.isScreenSharing ? <StopScreenShareIcon /> : <ScreenShareIcon />}
+        {userInfo?.isScreenSharing ? <StopScreenShareIcon /> : <ScreenShareIcon />}
       </Button>
     );
   };
@@ -93,12 +93,12 @@ ButtonsBar.propTypes = {
   onMuteClicked: PropTypes.func.isRequired,
   onScreenShareClicked: PropTypes.func.isRequired,
   onLeaveClicked: PropTypes.func.isRequired,
-  userInfoRef: PropTypes.any,
+  userInfo: PropTypes.any,
 };
 
 const areEqual = (prev, next): boolean => {
   return (
-    prev.userInfoRef.current === next.userInfoRef.current &&
+    prev.userInfo === next.userInfoRef &&
     prev.onSettingsClicked === next.onSettingsClicked &&
     prev.onStatusClicked === next.onStatusClicked &&
     prev.onMuteClicked === next.onMuteClicked &&

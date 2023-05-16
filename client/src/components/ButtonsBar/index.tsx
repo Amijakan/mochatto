@@ -98,7 +98,7 @@ ButtonsBar.propTypes = {
 
 const areEqual = (prev, next): boolean => {
   return (
-    prev.userInfo === next.userInfoRef &&
+    prev.userInfo === next.userInfo &&
     prev.onSettingsClicked === next.onSettingsClicked &&
     prev.onStatusClicked === next.onStatusClicked &&
     prev.onMuteClicked === next.onMuteClicked &&

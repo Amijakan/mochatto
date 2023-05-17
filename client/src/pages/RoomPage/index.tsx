@@ -37,6 +37,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const { socket } = useContext(SocketContext);
   const { stream, setStream } = useContext(DeviceContext);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
+  const visualizerRef = useRef(visualizer);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
   const userInfosRef = useRef(userInfos);
   const history = useHistory();
@@ -44,23 +45,25 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const networkRef = useRef(null as unknown as Network);
   const [soundEffectPlayer, setSoundEffectPlayer] = useState<HTMLAudioElement | null>(null);
 
-  const selfInfo = useMemo(() => {
-    return userInfos[socket.id];
-  }, [userInfos[socket.id]]);
+  const selfInfo = useMemo(() => userInfosRef.current[socket.id], [userInfosRef.current[socket.id]]);
 
   // when new input is selected update all tracks and send a new offer out
   const onSelect = (_stream) => {
     setStream(_stream);
   };
 
-  const updateSelfUserInfo = useCallback((info: Partial<UserInfo>) => {
+  const updateSelfUserInfo = (info) => {
     let newInfo = { ...info };
     if (selfInfo) {
       newInfo = { ...selfInfo, ...info };
     }
-
     addUserInfo(socket.id)(newInfo);
-  }, [selfInfo]);
+  };
+
+  const updateVisualizer = (_visualizer) => {
+    visualizerRef.current = _visualizer;
+    setVisualizer(_visualizer);
+  };
 
   const updateNetwork = (_network) => {
     networkRef.current = _network;
@@ -68,7 +71,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const toggleMute = useCallback(() => {
     updateSelfUserInfo({ mute: !selfInfo.mute });
-  }, [selfInfo]);
+  }, [selfInfo?.mute]);
 
   const handleLeaveClicked = useCallback(() => {
     history.go(0);
@@ -80,10 +83,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const toggleActive = useCallback(() => {
     updateSelfUserInfo({
-      active: !selfInfo.active,
-      mute: selfInfo.active,
+      active: !userInfosRef.current[socket.id].active,
+      mute: userInfosRef.current[socket.id].active,
     });
-  }, [selfInfo]);
+  }, [selfInfo?.active]);
 
   const toggleScreenShare = useCallback(() => {
     // If currently screen sharing, end the stream.
@@ -93,7 +96,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     updateSelfUserInfo({
       isScreenSharing: !selfInfo.isScreenSharing,
     });
-  }, [selfInfo, stream]);
+  }, [selfInfo?.isScreenSharing, stream]);
 
   // announce and set a new user on join
   const onJoin = (name) => {
@@ -112,10 +115,19 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     // Remove the avatar.
     removeUserInfo(id);
     // Set announcement.
-    setAnnouncement(userInfosRef.current.name + " has left.");
+    setAnnouncement(userInfosRef.current[id].name + " has left.");
     setNotificationTheme("leave");
     setShowNotification(true);
     setSoundEffectPlayer(new Audio(leaveSoundSrc));
+  };
+
+  const onAudioActivity = (gain: number) => {
+    if (!selfInfo) {
+      return;
+    }
+
+    const newMultiplier = gainToMultiplier(gain);
+    updateSelfUserInfo({ multiplier: selfInfo.mute ? 0 : newMultiplier });
   };
 
   const onStartScreenSharing = (_stream: MediaStream) => {
@@ -161,7 +173,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     });
 
     socket.on(SIOChannel.DISCONNECT, ({ id }) => {
-      if (userInfosRef.current) {
+      if (userInfosRef.current[id]) {
         onLeave(id);
       }
     });
@@ -176,7 +188,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       }
     });
 
-    setVisualizer(new AudioVisualizer(addUserInfo(socket.id)));
+    updateVisualizer(new AudioVisualizer(onAudioActivity));
 
     window.onbeforeunload = () => {
       socket.emit(SIOChannel.LEAVE);
@@ -224,8 +236,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     networkRef.current?.replaceStream(stream);
     networkRef.current?.updateAllTracks(stream && stream.getAudioTracks()[0]);
     networkRef.current?.updateAllTracks(stream && _.last(stream.getVideoTracks()));
-    visualizer?.setStream(stream);
-  }, [stream, visualizer]);
+    visualizerRef.current?.setStream(stream);
+  }, [stream]);
 
   // Update remote user info  when self info has been changed.
   useEffect(() => {
@@ -233,15 +245,25 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       return;
     }
 
-    networkRef.current?.setDeaf(!selfInfo.active);
-
     if (stream.getAudioTracks().length) {
       stream
         .getAudioTracks()
         .forEach((audio: MediaStreamTrack) => (audio.enabled = !selfInfo.mute));
     }
     networkRef.current?.updateInfo(selfInfo);
-  }, [selfInfo, stream, visualizer]);
+  }, [selfInfo?.mute, stream]);
+
+  useEffect(() => {
+    if (!selfInfo) {
+      return;
+    }
+    
+    networkRef.current?.setDeaf(!selfInfo.active);
+  }, [selfInfo?.active]);
+
+  useEffect(() => {
+    userInfosRef.current = userInfos;
+  }, [userInfos]);
 
   const handleClickScreenSharing = useCallback(() => {
     if (!selfInfo.isScreenSharing) {
@@ -260,7 +282,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     } else {
       toggleScreenShare();
     }
-  }, [selfInfo, stream]);
+  }, [selfInfo?.isScreenSharing, stream]);
 
   return (
     <RoomTemplate
@@ -296,7 +318,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           {announcement}
         </Notification>
         <AvatarCanvas
-          selfUserInfo={selfInfo}
+          selfUserInfo={userInfosRef.current[socket.id]}
           updateSelfUserInfo={updateSelfUserInfo}
           userInfos={Object.values(userInfos)}
           setSoundEffectPlayer={setSoundEffectPlayer}
@@ -307,7 +329,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           onMuteClicked={toggleMute}
           onScreenShareClicked={handleClickScreenSharing}
           onLeaveClicked={handleLeaveClicked}
-          userInfo={selfInfo}
+          userInfo={userInfosRef.current[socket.id]}
         />
         <Sidebar />
       </>

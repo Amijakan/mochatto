@@ -71,7 +71,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const toggleMute = useCallback(() => {
     updateSelfUserInfo({ mute: !selfInfo.mute });
-  }, [selfInfo?.mute]);
+  }, [selfInfo]);
 
   const handleLeaveClicked = useCallback(() => {
     history.go(0);
@@ -83,10 +83,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const toggleActive = useCallback(() => {
     updateSelfUserInfo({
-      active: !userInfosRef.current[socket.id].active,
-      mute: userInfosRef.current[socket.id].active,
+      active: !selfInfo.active,
+      mute: selfInfo.active,
     });
-  }, [selfInfo?.active]);
+  }, [selfInfo]);
 
   const toggleScreenShare = useCallback(() => {
     // If currently screen sharing, end the stream.
@@ -96,7 +96,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     updateSelfUserInfo({
       isScreenSharing: !selfInfo.isScreenSharing,
     });
-  }, [selfInfo?.isScreenSharing, stream]);
+  }, [selfInfo, stream]);
 
   // announce and set a new user on join
   const onJoin = (name) => {
@@ -247,7 +247,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         .forEach((audio: MediaStreamTrack) => (audio.enabled = !selfInfo.mute));
     }
     networkRef.current?.updateInfo(selfInfo);
-  }, [selfInfo?.mute, stream]);
+  }, [selfInfo, stream]);
 
   useEffect(() => {
     if (!selfInfo) {
@@ -255,7 +255,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     }
     
     networkRef.current?.setDeaf(!selfInfo.active);
-  }, [selfInfo?.active]);
+  }, [selfInfo]);
 
   useEffect(() => {
     userInfosRef.current = userInfos;
@@ -278,7 +278,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     } else {
       toggleScreenShare();
     }
-  }, [selfInfo?.isScreenSharing, stream]);
+  }, [selfInfo, stream]);
 
   return (
     <RoomTemplate

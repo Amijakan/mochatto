@@ -181,6 +181,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       networkRef.current.close();
       stream.getTracks().forEach((track) => track.stop());
     };
+
     const onKey = (e) => {
       switch (e.key) {
         case "m":

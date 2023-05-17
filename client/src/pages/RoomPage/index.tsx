@@ -37,33 +37,29 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const { socket } = useContext(SocketContext);
   const { stream, setStream } = useContext(DeviceContext);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
-  const visualizerRef = useRef(visualizer);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
-  const userInfosRef = useRef(userInfos);
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
   const networkRef = useRef(null as unknown as Network);
   const [soundEffectPlayer, setSoundEffectPlayer] = useState<HTMLAudioElement | null>(null);
 
-  const selfInfo = useMemo(() => userInfosRef.current[socket.id], [userInfosRef.current[socket.id]]);
+  const selfInfo = useMemo(() => {
+    return userInfos[socket.id];
+  }, [userInfos[socket.id]]);
 
   // when new input is selected update all tracks and send a new offer out
   const onSelect = (_stream) => {
     setStream(_stream);
   };
 
-  const updateSelfUserInfo = (info) => {
+  const updateSelfUserInfo = useCallback((info: Partial<UserInfo>) => {
     let newInfo = { ...info };
     if (selfInfo) {
       newInfo = { ...selfInfo, ...info };
     }
-    addUserInfo(socket.id)(newInfo);
-  };
 
-  const updateVisualizer = (_visualizer) => {
-    visualizerRef.current = _visualizer;
-    setVisualizer(_visualizer);
-  };
+    addUserInfo(socket.id)(newInfo);
+  }, [selfInfo]);
 
   const updateNetwork = (_network) => {
     networkRef.current = _network;
@@ -71,7 +67,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const toggleMute = useCallback(() => {
     updateSelfUserInfo({ mute: !selfInfo.mute });
-  }, [selfInfo?.mute]);
+  }, [selfInfo]);
 
   const handleLeaveClicked = useCallback(() => {
     history.go(0);
@@ -83,10 +79,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const toggleActive = useCallback(() => {
     updateSelfUserInfo({
-      active: !userInfosRef.current[socket.id].active,
-      mute: userInfosRef.current[socket.id].active,
+      active: !selfInfo.active,
+      mute: selfInfo.active,
     });
-  }, [selfInfo?.active]);
+  }, [selfInfo]);
 
   const toggleScreenShare = useCallback(() => {
     // If currently screen sharing, end the stream.
@@ -96,7 +92,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     updateSelfUserInfo({
       isScreenSharing: !selfInfo.isScreenSharing,
     });
-  }, [selfInfo?.isScreenSharing, stream]);
+  }, [selfInfo, stream]);
 
   // announce and set a new user on join
   const onJoin = (name) => {
@@ -115,19 +111,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     // Remove the avatar.
     removeUserInfo(id);
     // Set announcement.
-    setAnnouncement(userInfosRef.current[id].name + " has left.");
+    setAnnouncement(userInfos[id].name + " has left.");
     setNotificationTheme("leave");
     setShowNotification(true);
     setSoundEffectPlayer(new Audio(leaveSoundSrc));
-  };
-
-  const onAudioActivity = (gain: number) => {
-    if (!selfInfo) {
-      return;
-    }
-
-    const newMultiplier = gainToMultiplier(gain);
-    updateSelfUserInfo({ multiplier: selfInfo.mute ? 0 : newMultiplier });
   };
 
   const onStartScreenSharing = (_stream: MediaStream) => {
@@ -173,7 +160,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     });
 
     socket.on(SIOChannel.DISCONNECT, ({ id }) => {
-      if (userInfosRef.current[id]) {
+      if (userInfos[id]) {
         onLeave(id);
       }
     });
@@ -182,13 +169,12 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       if (id === socket.id) {
         updateSelfUserInfo({ name });
       } else {
-        const newInfo = { ...userInfosRef.current, name };
-        userInfosRef.current = newInfo;
+        const newInfo = { ...userInfos, name };
         addUserInfo(newInfo);
       }
     });
 
-    updateVisualizer(new AudioVisualizer(onAudioActivity));
+    setVisualizer(new AudioVisualizer(addUserInfo(socket.id)));
 
     window.onbeforeunload = () => {
       socket.emit(SIOChannel.LEAVE);
@@ -235,8 +221,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     networkRef.current?.replaceStream(stream);
     networkRef.current?.updateAllTracks(stream && stream.getAudioTracks()[0]);
     networkRef.current?.updateAllTracks(stream && _.last(stream.getVideoTracks()));
-    visualizerRef.current?.setStream(stream);
-  }, [stream]);
+    visualizer?.setStream(stream);
+  }, [stream, visualizer]);
 
   // Update remote user info  when self info has been changed.
   useEffect(() => {
@@ -244,25 +230,15 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       return;
     }
 
+    networkRef.current?.setDeaf(!selfInfo.active);
+
     if (stream.getAudioTracks().length) {
       stream
         .getAudioTracks()
         .forEach((audio: MediaStreamTrack) => (audio.enabled = !selfInfo.mute));
     }
     networkRef.current?.updateInfo(selfInfo);
-  }, [selfInfo?.mute, stream]);
-
-  useEffect(() => {
-    if (!selfInfo) {
-      return;
-    }
-    
-    networkRef.current?.setDeaf(!selfInfo.active);
-  }, [selfInfo?.active]);
-
-  useEffect(() => {
-    userInfosRef.current = userInfos;
-  }, [userInfos]);
+  }, [selfInfo, stream, visualizer]);
 
   const handleClickScreenSharing = useCallback(() => {
     if (!selfInfo.isScreenSharing) {
@@ -281,7 +257,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     } else {
       toggleScreenShare();
     }
-  }, [selfInfo?.isScreenSharing, stream]);
+  }, [selfInfo, stream]);
 
   return (
     <RoomTemplate
@@ -317,7 +293,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           {announcement}
         </Notification>
         <AvatarCanvas
-          selfUserInfo={userInfosRef.current[socket.id]}
+          selfUserInfo={selfInfo}
           updateSelfUserInfo={updateSelfUserInfo}
           userInfos={Object.values(userInfos)}
           setSoundEffectPlayer={setSoundEffectPlayer}
@@ -328,7 +304,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           onMuteClicked={toggleMute}
           onScreenShareClicked={handleClickScreenSharing}
           onLeaveClicked={handleLeaveClicked}
-          userInfo={userInfosRef.current[socket.id]}
+          userInfo={selfInfo}
         />
         <Sidebar />
       </>

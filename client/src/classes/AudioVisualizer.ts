@@ -1,7 +1,16 @@
+import { UserInfo } from "@/contexts/UserInfoContext";
+
+type AddUserInfo = (info: Partial<UserInfo>) => void;
+
 export class AudioVisualizer {
-  onAudioActivity: (gain: number) => void;
-  constructor(_onAudioActivity: (gain: number) => void) {
-    this.onAudioActivity = _onAudioActivity;
+  addUserInfo: AddUserInfo;
+
+  constructor(addUserInfo: AddUserInfo) {
+    this.addUserInfo = addUserInfo;
+  }
+
+  onAudioActivity = (gain: number) => {
+    this.addUserInfo({ multiplier: gainToMultiplier(gain) });
   }
 
   setStream(stream: MediaStream): void {

@@ -120,12 +120,6 @@ export class PeerProcessor {
     this.visualizer = visualizer;
   }
 
-  onAudioActivity(gain: number): void {
-    this.multiplier = gainToMultiplier(gain);
-    const newInfo = { multiplier: this.multiplier };
-    this.addUserInfo(newInfo);
-  }
-
   initializeDataChannel(dc: RTCDataChannel): void {
     // if a datachannel is already open, close it
     if (this.dataChannel) {

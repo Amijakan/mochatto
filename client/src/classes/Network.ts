@@ -17,13 +17,13 @@ export interface Pack {
 export class Network {
   socket: Socket;
   peerProcessors: PeerProcessor[];
-  addUserInfo: (id: string) => (info: UserInfo) => void;
+  addUserInfo: (id: string) => (info: Partial<UserInfo>) => void;
   selfUserInfo: UserInfo;
   selfStream: MediaStream;
   constructor(
     socket: Socket,
     userName: string,
-    addUserInfo: (id: string) => (info: UserInfo) => void,
+    addUserInfo: (id: string) => (info: Partial<UserInfo>) => void,
     selfUserInfo: UserInfo,
     selfStream: MediaStream
   ) {
@@ -148,7 +148,7 @@ export class Network {
     const peerProcessor = new PeerProcessor(id, this.socket, this.addUserInfo(id));
     peerProcessor.initialize(
       this.selfUserInfo,
-      new AudioVisualizer(peerProcessor.onAudioActivity.bind(peerProcessor))
+      new AudioVisualizer(this.addUserInfo(id))
     );
     this.peerProcessors.push(peerProcessor);
 

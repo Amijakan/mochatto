@@ -38,6 +38,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const { stream, setStream } = useContext(DeviceContext);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
+  const userInfosRef = useRef(userInfos);
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
   const networkRef = useRef(null as unknown as Network);
@@ -111,7 +112,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     // Remove the avatar.
     removeUserInfo(id);
     // Set announcement.
-    setAnnouncement(userInfos[id].name + " has left.");
+    setAnnouncement(userInfosRef.current.name + " has left.");
     setNotificationTheme("leave");
     setShowNotification(true);
     setSoundEffectPlayer(new Audio(leaveSoundSrc));
@@ -160,7 +161,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     });
 
     socket.on(SIOChannel.DISCONNECT, ({ id }) => {
-      if (userInfos[id]) {
+      if (userInfosRef.current) {
         onLeave(id);
       }
     });
@@ -169,7 +170,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       if (id === socket.id) {
         updateSelfUserInfo({ name });
       } else {
-        const newInfo = { ...userInfos, name };
+        const newInfo = { ...userInfosRef.current, name };
+        userInfosRef.current = newInfo;
         addUserInfo(newInfo);
       }
     });

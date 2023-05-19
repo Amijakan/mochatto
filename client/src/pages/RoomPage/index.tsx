@@ -12,17 +12,18 @@ import {
 import _ from "lodash";
 import cx from "classnames";
 import { isMobile } from "@/utils";
-import { SocketContext, DeviceContext, UserInfoContext } from "@/contexts";
+import { SocketContext, UserInfoContext, UserStreamContext } from "@/contexts";
 import { SIOChannel } from "@/shared/socketIO";
-import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
+import { UserInfo } from "@/contexts/UserInfoContext";
 import { Network } from "@/classes/Network";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import { RoomTemplate } from "@/templates";
 import "./style.scss";
 import joinSoundSrc from "@/assets/sound/join.ogg";
 import leaveSoundSrc from "@/assets/sound/leave.ogg";
-
 import PropTypes from "prop-types";
+
+import type { UserStream } from "@/contexts/UserStreamContext";
 
 const notificationColors = {
   join: { color: "success", icon: "Success" },
@@ -35,7 +36,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const [notificationTheme, setNotificationTheme] = useState("join");
   const [isAutoSleepDisabled, setAutoSleepDisabled] = useState(false);
   const { socket } = useContext(SocketContext);
-  const { stream, setStream } = useContext(DeviceContext);
+  const { userStreams, updateUserStream } = useContext(UserStreamContext);
+  const selfStreamRef = useRef(null as unknown as UserStream);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
   const visualizerRef = useRef(visualizer);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
@@ -47,10 +49,11 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const [soundEffectPlayer, setSoundEffectPlayer] = useState<HTMLAudioElement | null>(null);
 
   const selfInfo = useMemo(() => userInfosRef.current[socket.id], [userInfosRef.current[socket.id]]);
+  const selfStream = useMemo(() => userStreams[socket.id], [userStreams[socket.id]]);
 
   // when new input is selected update all tracks and send a new offer out
   const onSelect = (_stream) => {
-    setStream(_stream);
+    updateSelfUserStream(_stream);
   };
 
   // Using ref here for the non-rerendered AudioVisualizer class
@@ -63,6 +66,11 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
     selfInfoRef.current = newInfo;
     addUserInfo(socket.id)(newInfo);
+  };
+
+  const updateSelfUserStream = (stream) => {
+    selfStreamRef.current = stream;
+    updateUserStream(socket.id)(stream);
   };
 
   const updateVisualizer = (_visualizer) => {
@@ -101,7 +109,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     updateSelfUserInfo({
       isScreenSharing: !selfInfo.isScreenSharing,
     });
-  }, [selfInfo, stream]);
+  }, [selfInfo, selfStream]);
 
   // announce and set a new user on join
   const onJoin = (name) => {
@@ -134,7 +142,11 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const onStartScreenSharing = (_stream: MediaStream) => {
     const videoPlayer = document.createElement("video");
     const screenShareTrack = _.last(_stream.getVideoTracks());
-    const mixedStream = stream.clone();
+    const mixedStream = selfStreamRef.current?.clone();
+
+    if (!mixedStream || !screenShareTrack) {
+      return;
+    }
 
     // Set video player configurations and append to self avatar
     videoPlayer.srcObject = _stream;
@@ -146,11 +158,11 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       toggleScreenShare();
     }
     mixedStream.addTrack(screenShareTrack);
-    setStream(mixedStream); // Seems reduntant but necessary to run the hook.
+    updateSelfUserStream(mixedStream); // Seems reduntant but necessary to run the hook.
   };
 
   const onEndScreenSharing = () => {
-    stream.getVideoTracks().forEach((track: MediaStreamTrack) => track.stop());
+    selfStreamRef.current?.getVideoTracks().forEach((track: MediaStreamTrack) => track.stop());
     document.getElementById("avatar-video-" + socket.id)?.firstChild?.remove();
   };
 
@@ -163,7 +175,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   // open all listeners on render
   useEffect(() => {
     updateSelfUserInfo({ name, id: socket.id });
-    updateNetwork(new Network(socket, name, addUserInfo, selfInfo, stream));
+    updateNetwork(new Network(socket, name, addUserInfo, selfInfo, selfStream));
 
     socket.on(SIOChannel.JOIN, ({ name }) => {
       onJoin(name);
@@ -194,7 +206,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     window.onbeforeunload = () => {
       socket.emit(SIOChannel.LEAVE);
       networkRef.current.close();
-      stream.getTracks().forEach((track) => track.stop());
+      selfStreamRef.current?.getTracks().forEach((track) => track.stop());
     };
 
     const onKey = (e) => {
@@ -234,11 +246,11 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, [soundEffectPlayer]);
 
   useEffect(() => {
-    networkRef.current?.replaceStream(stream);
-    networkRef.current?.updateAllTracks(stream && stream.getAudioTracks()[0]);
-    networkRef.current?.updateAllTracks(stream && _.last(stream.getVideoTracks()));
-    visualizerRef.current?.setStream(stream);
-  }, [stream]);
+    networkRef.current?.replaceStream(selfStream);
+    networkRef.current?.updateAllTracks(selfStream && selfStream.getAudioTracks()[0]);
+    networkRef.current?.updateAllTracks(selfStream && _.last(selfStream.getVideoTracks()));
+    visualizerRef.current?.setStream(selfStream);
+  }, [selfStream]);
 
   // Update remote user info  when self info has been changed.
   useEffect(() => {
@@ -246,13 +258,13 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       return;
     }
 
-    if (stream.getAudioTracks().length) {
-      stream
+    if (selfStream.getAudioTracks().length) {
+      selfStream
         .getAudioTracks()
         .forEach((audio: MediaStreamTrack) => (audio.enabled = !selfInfo.mute));
     }
     networkRef.current?.updateInfo(selfInfo);
-  }, [selfInfo, stream]);
+  }, [selfInfo, selfStream]);
 
   useEffect(() => {
     if (!selfInfo) {
@@ -271,9 +283,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       navigator.mediaDevices
         .getDisplayMedia()
         .then((stream) => {
-          onStartScreenSharing(stream);
+          onStartScreenSharing(selfStream);
           // Listener for toggling screen share info when the "Stop sharing" browser overlap button is pressed.
-          stream.getVideoTracks()[stream.getVideoTracks().length - 1].onended = () => {
+          stream.getVideoTracks()[selfStream.getVideoTracks().length - 1].onended = () => {
             toggleScreenShare();
           };
         })
@@ -283,7 +295,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     } else {
       toggleScreenShare();
     }
-  }, [selfInfo, stream]);
+  }, [selfInfo, selfStream]);
 
   return (
     <RoomTemplate

@@ -39,6 +39,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
   const visualizerRef = useRef(visualizer);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
+  const selfInfoRef = useRef(null as unknown as UserInfo);
   const userInfosRef = useRef(userInfos);
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
@@ -52,11 +53,15 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     setStream(_stream);
   };
 
+  // Using ref here for the non-rerendered AudioVisualizer class
+  // To-do: rf-369
   const updateSelfUserInfo = (info) => {
     let newInfo = { ...info };
-    if (selfInfo) {
-      newInfo = { ...selfInfo, ...info };
+    if (selfInfoRef.current) {
+      newInfo = { ...selfInfoRef.current, ...info };
     }
+
+    selfInfoRef.current = newInfo;
     addUserInfo(socket.id)(newInfo);
   };
 
@@ -123,7 +128,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const onAudioActivity = (gain: number) => {
     const newMultiplier = gainToMultiplier(gain);
-    updateSelfUserInfo({ multiplier: newMultiplier });
+    updateSelfUserInfo({ multiplier: selfInfoRef.current?.mute ? 0 : newMultiplier });
   };
 
   const onStartScreenSharing = (_stream: MediaStream) => {

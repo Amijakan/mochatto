@@ -316,7 +316,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           {announcement}
         </Notification>
         <AvatarCanvas
-          selfUserInfo={userInfosRef.current[socket.id]}
+          selfUserInfo={selfUserInfo}
           updateSelfUserInfo={updateSelfUserInfo}
           userInfos={Object.values(userInfos)}
           setSoundEffectPlayer={setSoundEffectPlayer}

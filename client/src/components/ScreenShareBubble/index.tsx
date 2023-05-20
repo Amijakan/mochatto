@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react'
+import "./style.scss";
 
 import type { UserStream } from "@/contexts/UserStreamContext";
 

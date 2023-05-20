@@ -327,7 +327,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
           onMuteClicked={toggleMute}
           onScreenShareClicked={handleClickScreenSharing}
           onLeaveClicked={handleLeaveClicked}
-          userInfo={userInfosRef.current[socket.id]}
+          userInfo={selfUserInfo}
         />
         <Sidebar />
       </>

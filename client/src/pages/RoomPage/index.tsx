@@ -175,7 +175,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   // open all listeners on render
   useEffect(() => {
     updateSelfUserInfo({ name, id: socket.id });
-    updateNetwork(new Network(socket, name, addUserInfo, selfInfo, selfStream));
+    updateNetwork(new Network(socket, name, addUserInfo, selfInfo, updateUserStream, selfStream));
 
     socket.on(SIOChannel.JOIN, ({ name }) => {
       onJoin(name);

@@ -153,7 +153,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const onEndScreenSharing = () => {
-    selfStreamRef.current?.getVideoTracks().forEach((track: MediaStreamTrack) => track.stop());
+    selfStreamRef.current?.getVideoTracks().forEach((track: MediaStreamTrack) => {
+      track.stop()
+      selfStreamRef.current?.removeTrack(track);
+    });
   };
 
   const onFailedScreenSharing = (e) => {
@@ -248,7 +251,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       return;
     }
 
-    if (selfStream.getAudioTracks().length) {
+    if (selfStream.getAudioTracks()?.length) {
       selfStream
         .getAudioTracks()
         .forEach((audio: MediaStreamTrack) => (audio.enabled = !selfUserInfo.mute));

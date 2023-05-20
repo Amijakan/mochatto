@@ -137,19 +137,12 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const onStartScreenSharing = (_stream: MediaStream) => {
-    const videoPlayer = document.createElement("video");
-    const screenShareTrack = _.last(_stream.getVideoTracks());
-    const mixedStream = selfStreamRef.current?.clone();
+    const screenShareTrack = _.last(_stream.getVideoTracks()),
+      mixedStream = selfStreamRef.current?.clone();
 
     if (!mixedStream || !screenShareTrack) {
       return;
     }
-
-    // Set video player configurations and append to self avatar
-    videoPlayer.srcObject = _stream;
-    videoPlayer.autoplay = true;
-    videoPlayer.muted = true;
-    document.getElementById("avatar-video-" + socket.id)?.appendChild(videoPlayer);
 
     if (!selfUserInfo.isScreenSharing) {
       toggleScreenShare();
@@ -160,7 +153,6 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const onEndScreenSharing = () => {
     selfStreamRef.current?.getVideoTracks().forEach((track: MediaStreamTrack) => track.stop());
-    document.getElementById("avatar-video-" + socket.id)?.firstChild?.remove();
   };
 
   const onFailedScreenSharing = (e) => {

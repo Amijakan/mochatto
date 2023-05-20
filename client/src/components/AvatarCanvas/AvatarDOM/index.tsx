@@ -86,7 +86,6 @@ function AvatarDOM({
     >
       <div className="avatar-initial">{initial}</div>
       <div className="avatar-active">{renderStatusIcon()}</div>
-      <div className="video-container" id={"avatar-video-" + id}></div>
     </div>
   );
 }

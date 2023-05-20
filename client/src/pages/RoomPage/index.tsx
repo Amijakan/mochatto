@@ -37,7 +37,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const [isAutoSleepDisabled, setAutoSleepDisabled] = useState(false);
   const { socket } = useContext(SocketContext);
   const { userStreams, updateUserStream } = useContext(UserStreamContext);
-  const selfStreamRef = useRef(null as unknown as UserStream);
+  const selfStreamRef = useRef<UserStream>(null);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
   const visualizerRef = useRef(visualizer);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
@@ -138,17 +138,18 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const onStartScreenSharing = (_stream: MediaStream) => {
     const screenShareTrack = _.last(_stream.getVideoTracks()),
-      mixedStream = selfStreamRef.current?.clone();
+      mixedStream = selfStream.clone();
 
     if (!mixedStream || !screenShareTrack) {
       return;
     }
 
+    mixedStream.addTrack(screenShareTrack);
+    updateSelfUserStream(mixedStream); // Seems reduntant but necessary to run the hook.
+
     if (!selfUserInfo.isScreenSharing) {
       toggleScreenShare();
     }
-    mixedStream.addTrack(screenShareTrack);
-    updateSelfUserStream(mixedStream); // Seems reduntant but necessary to run the hook.
   };
 
   const onEndScreenSharing = () => {
@@ -271,9 +272,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       navigator.mediaDevices
         .getDisplayMedia()
         .then((stream) => {
-          onStartScreenSharing(selfStream);
+          onStartScreenSharing(stream);
+          const tracks = stream.getVideoTracks();
           // Listener for toggling screen share info when the "Stop sharing" browser overlap button is pressed.
-          stream.getVideoTracks()[selfStream.getVideoTracks().length - 1].onended = () => {
+          tracks[tracks.length - 1].onended = () => {
             toggleScreenShare();
           };
         })

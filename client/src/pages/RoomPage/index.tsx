@@ -93,15 +93,15 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     });
   }, [selfInfo]);
 
-  const toggleScreenShare = useCallback(() => {
+  const toggleScreenShare = () => {
     // If currently screen sharing, end the stream.
-    if (selfInfo.isScreenSharing) {
+    if (selfInfoRef.current.isScreenSharing) {
       onEndScreenSharing();
     }
     updateSelfUserInfo({
-      isScreenSharing: !selfInfo.isScreenSharing,
+      isScreenSharing: !selfInfoRef.current.isScreenSharing,
     });
-  }, [selfInfo, stream]);
+  };
 
   // announce and set a new user on join
   const onJoin = (name) => {

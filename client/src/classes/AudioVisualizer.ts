@@ -1,7 +1,9 @@
 export class AudioVisualizer {
   onAudioActivity: (gain: number) => void;
+  animationFrameId: number | undefined;
   constructor(_onAudioActivity: (gain: number) => void) {
     this.onAudioActivity = _onAudioActivity;
+    this.animationFrameId = undefined;
   }
 
   setStream(stream: MediaStream): void {
@@ -15,6 +17,10 @@ export class AudioVisualizer {
       return;
     }
 
+    if (this.animationFrameId) {
+      window.cancelAnimationFrame(this.animationFrameId);
+    }
+
     const context = new AudioContext();
     const source = context.createMediaStreamSource(stream);
     const analyser = context.createAnalyser();
@@ -25,24 +31,24 @@ export class AudioVisualizer {
     // Feed mic. audio into the analyser.
     source.connect(analyser);
 
-    // Previous average to compare to current.
-    let prevAverage = 0;
     this.onAudioActivity(0);
-    const draw = () => {
-      const array = new Uint8Array(analyser.fftSize);
-      analyser.getByteFrequencyData(array);
-
-      const sum = array.reduce((current, next) => current + next * 4);
-      const average = sum / array.length;
-      if (isSignificantlyDifferent(prevAverage, average, 7)) {
-        this.onAudioActivity(average);
-        // Update previous average once current average meets threshold
-        prevAverage = average;
-      }
-      window.requestAnimationFrame(draw);
-    };
-    draw();
+    this.animationFrameId = window.requestAnimationFrame(this.draw(analyser, 0));
   }
+
+  draw = (analyser: AnalyserNode, prevAverage: number) => (_step: number) => {
+    const array = new Uint8Array(analyser.fftSize);
+    analyser.getByteFrequencyData(array);
+
+    const sum = array.reduce((current, next) => current + next * 4);
+    const average = sum / array.length;
+    if (isSignificantlyDifferent(prevAverage, average, 7)) {
+      this.onAudioActivity(average);
+      // Update previous average once current average meets threshold
+      prevAverage = average;
+    }
+
+    this.animationFrameId = window.requestAnimationFrame(this.draw(analyser, 0));
+  };
 }
 
 export const isSignificantlyDifferent = (

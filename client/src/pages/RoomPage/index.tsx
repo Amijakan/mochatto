@@ -39,14 +39,14 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
   const visualizerRef = useRef(visualizer);
   const { userInfos, addUserInfo, removeUserInfo } = useContext(UserInfoContext);
-  const selfInfoRef = useRef(null as unknown as UserInfo);
+  const selfUserInfoRef = useRef(null as unknown as UserInfo);
   const userInfosRef = useRef(userInfos);
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
   const networkRef = useRef(null as unknown as Network);
   const [soundEffectPlayer, setSoundEffectPlayer] = useState<HTMLAudioElement | null>(null);
 
-  const selfInfo = useMemo(() => userInfosRef.current[socket.id], [userInfosRef.current[socket.id]]);
+  const selfUserInfo = useMemo(() => userInfosRef.current[socket.id], [userInfosRef.current[socket.id]]);
 
   // when new input is selected update all tracks and send a new offer out
   const onSelect = (_stream) => {
@@ -55,13 +55,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // Using ref here for the non-rerendered AudioVisualizer class
   // To-do: rf-369
-  const updateSelfUserInfo = (info) => {
-    let newInfo = { ...info };
-    if (selfInfoRef.current) {
-      newInfo = { ...selfInfoRef.current, ...info };
-    }
+  const updateSelfUserInfo = (info: Partial<UserInfo>) => {
+    const newInfo = { ...selfUserInfoRef.current, ...info };
 
-    selfInfoRef.current = newInfo;
+    selfUserInfoRef.current = newInfo;
     addUserInfo(socket.id)(newInfo);
   };
 
@@ -75,8 +72,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const toggleMute = useCallback(() => {
-    updateSelfUserInfo({ mute: !selfInfo.mute });
-  }, [selfInfo]);
+    updateSelfUserInfo({ mute: !selfUserInfo.mute });
+  }, [selfUserInfo]);
 
   const handleLeaveClicked = useCallback(() => {
     history.go(0);
@@ -88,18 +85,18 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const toggleActive = useCallback(() => {
     updateSelfUserInfo({
-      active: !selfInfo.active,
-      mute: selfInfo.active,
+      active: !selfUserInfo.active,
+      mute: selfUserInfo.active,
     });
-  }, [selfInfo]);
+  }, [selfUserInfo]);
 
   const toggleScreenShare = () => {
     // If currently screen sharing, end the stream.
-    if (selfInfoRef.current.isScreenSharing) {
+    if (selfUserInfoRef.current.isScreenSharing) {
       onEndScreenSharing();
     }
     updateSelfUserInfo({
-      isScreenSharing: !selfInfoRef.current.isScreenSharing,
+      isScreenSharing: !selfUserInfoRef.current.isScreenSharing,
     });
   };
 
@@ -128,7 +125,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const onAudioActivity = (gain: number) => {
     const newMultiplier = gainToMultiplier(gain);
-    updateSelfUserInfo({ multiplier: selfInfoRef.current?.mute ? 0 : newMultiplier });
+    updateSelfUserInfo({ multiplier: selfUserInfoRef.current?.mute ? 0 : newMultiplier });
   };
 
   const onStartScreenSharing = (_stream: MediaStream) => {
@@ -142,7 +139,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     videoPlayer.muted = true;
     document.getElementById("avatar-video-" + socket.id)?.appendChild(videoPlayer);
 
-    if (!selfInfo.isScreenSharing) {
+    if (!selfUserInfo.isScreenSharing) {
       toggleScreenShare();
     }
     mixedStream.addTrack(screenShareTrack);
@@ -155,7 +152,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const onFailedScreenSharing = (e) => {
-    if (selfInfo.isScreenSharing) {
+    if (selfUserInfo.isScreenSharing) {
       toggleScreenShare();
     }
   };
@@ -163,7 +160,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   // open all listeners on render
   useEffect(() => {
     updateSelfUserInfo({ name, id: socket.id });
-    updateNetwork(new Network(socket, name, addUserInfo, selfInfo, stream));
+    updateNetwork(new Network(socket, name, addUserInfo, selfUserInfo, stream));
 
     socket.on(SIOChannel.JOIN, ({ name }) => {
       onJoin(name);
@@ -242,32 +239,32 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // Update remote user info  when self info has been changed.
   useEffect(() => {
-    if (!selfInfo) {
+    if (!selfUserInfo) {
       return;
     }
 
     if (stream.getAudioTracks().length) {
       stream
         .getAudioTracks()
-        .forEach((audio: MediaStreamTrack) => (audio.enabled = !selfInfo.mute));
+        .forEach((audio: MediaStreamTrack) => (audio.enabled = !selfUserInfo.mute));
     }
-    networkRef.current?.updateInfo(selfInfo);
-  }, [selfInfo, stream]);
+    networkRef.current?.updateInfo(selfUserInfo);
+  }, [selfUserInfo, stream]);
 
   useEffect(() => {
-    if (!selfInfo) {
+    if (!selfUserInfo) {
       return;
     }
     
-    networkRef.current?.setDeaf(!selfInfo.active);
-  }, [selfInfo]);
+    networkRef.current?.setDeaf(!selfUserInfo.active);
+  }, [selfUserInfo]);
 
   useEffect(() => {
     userInfosRef.current = userInfos;
   }, [userInfos]);
 
   const handleClickScreenSharing = useCallback(() => {
-    if (!selfInfo.isScreenSharing) {
+    if (!selfUserInfo.isScreenSharing) {
       navigator.mediaDevices
         .getDisplayMedia()
         .then((stream) => {
@@ -283,7 +280,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     } else {
       toggleScreenShare();
     }
-  }, [selfInfo, stream]);
+  }, [selfUserInfo, stream]);
 
   return (
     <RoomTemplate

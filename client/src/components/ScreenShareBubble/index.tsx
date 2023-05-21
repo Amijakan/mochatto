@@ -30,7 +30,12 @@ const ScreenShareBubble = ({
     }
   }, [isScreenSharing, stream]);
 
-  return <div className="video-container">{isScreenSharing && <video ref={videoPlayer} />}</div>;
+  return <div className="video-container">
+    <video
+      ref={videoPlayer}
+      data-disabled={!isScreenSharing && "true"}
+      />
+  </div>;
 };
 
 export default ScreenShareBubble;

@@ -15,5 +15,9 @@
     border-width: 5px;
     border-radius: 1rem;
     border-color: #ffffff78;
+
+    &[data-disabled=true] {
+      display: none;
+    }
   }
 }

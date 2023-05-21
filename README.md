@@ -15,7 +15,7 @@
 
 ### Dev Requirements
 - `yarn`
-- `node` ~14.17.3
+- `node` ^18.16
 
 ![image](https://user-images.githubusercontent.com/34047281/197360016-db9e242a-61ca-4975-937a-0008ea3a7449.png)
 

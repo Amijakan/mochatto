@@ -260,6 +260,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         .getAudioTracks()
         .forEach((audio: MediaStreamTrack) => (audio.enabled = !selfUserInfo.mute));
     }
+    networkRef.current?.updateInfo(selfUserInfo);
   }, [selfUserInfo, selfStream]);
 
   useEffect(() => {

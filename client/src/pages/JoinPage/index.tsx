@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { SocketContext, DeviceContext } from "@/contexts";
 import { SIOChannel } from "@/shared/socketIO";
@@ -51,8 +51,6 @@ const JoinPage = ({
   const [isPasswordTextVisible, setPasswordTextVisibility] = useState(false);
 
   const history = useHistory();
-
-  const joinButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const [gain, setGain] = useState(0);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
@@ -107,10 +105,14 @@ const JoinPage = ({
     const keyListener = (event) => {
       if (event.code === "Enter") {
         event.preventDefault();
-        joinButtonRef.current?.click();
+        onJoinClicked();
       }
     };
     document.addEventListener("keydown", keyListener);
+
+    return () => {
+      document.removeEventListener("keydown", keyListener);
+    }
   }, []);
 
   useEffect(() => {
@@ -229,7 +231,7 @@ const JoinPage = ({
             </Div>
             {Visualizer()}
             <div className="join-back-container">
-              <Button onClick={() => onJoinClicked()} ref={joinButtonRef} className="primary">
+              <Button onClick={() => onJoinClicked()} className="primary">
                 Join
               </Button>
               <Button

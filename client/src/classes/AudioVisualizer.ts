@@ -35,21 +35,25 @@ export class AudioVisualizer {
     this.animationFrameId = window.requestAnimationFrame(this.draw(analyser, 0));
   }
 
-  draw = (analyser: AnalyserNode, prevAverage: number) => (_step: number) => {
-    const array = new Uint8Array(analyser.fftSize);
-    analyser.getByteFrequencyData(array);
+  draw(analyser: AnalyserNode, prevAverage: number): RequestAnimationFrameCallback {
+    return (_step: number) => {
+      const array = new Uint8Array(analyser.fftSize);
+      analyser.getByteFrequencyData(array);
 
-    const sum = array.reduce((current, next) => current + next * 4);
-    const average = sum / array.length;
-    if (isSignificantlyDifferent(prevAverage, average, 7)) {
-      this.onAudioActivity(average);
-      // Update previous average once current average meets threshold
-      prevAverage = average;
-    }
+      const sum = array.reduce((current, next) => current + next * 4);
+      const average = sum / array.length;
+      if (isSignificantlyDifferent(prevAverage, average, 7)) {
+        this.onAudioActivity(average);
+        // Update previous average once current average meets threshold
+        prevAverage = average;
+      }
 
-    this.animationFrameId = window.requestAnimationFrame(this.draw(analyser, 0));
-  };
+      this.animationFrameId = window.requestAnimationFrame(this.draw(analyser, prevAverage));
+    };
+  }
 }
+
+type RequestAnimationFrameCallback = (step: number) => void;
 
 export const isSignificantlyDifferent = (
   prev: number,

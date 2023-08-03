@@ -80,7 +80,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const toggleMute = useCallback(() => {
-    updateSelfUserInfo({ mute: !selfUserInfo.mute });
+    updateSelfUserInfo({ 
+      mute: !selfUserInfo.mute, 
+      active: selfUserInfo.mute
+    });
   }, [selfUserInfo]);
 
   const handleLeaveClicked = useCallback(() => {

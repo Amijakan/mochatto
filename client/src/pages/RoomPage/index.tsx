@@ -192,7 +192,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       if (id === socket.id) {
         updateSelfUserInfo({ name });
       } else {
-        const newInfo = { ...userInfosRef.current, name };
+        const newInfo = { ...userInfosRef.current[id], name };
         userInfosRef.current = newInfo;
         addUserInfo(id)(newInfo);
       }

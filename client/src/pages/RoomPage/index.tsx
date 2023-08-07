@@ -194,7 +194,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       } else {
         const newInfo = { ...userInfosRef.current, name };
         userInfosRef.current = newInfo;
-        addUserInfo(newInfo);
+        addUserInfo(id)(newInfo);
       }
     });
 

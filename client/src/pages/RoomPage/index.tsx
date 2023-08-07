@@ -244,8 +244,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   useEffect(() => {
     networkRef.current?.replaceStream(selfStream);
-    networkRef.current?.updateAllTracks(selfStream && selfStream.getAudioTracks()[0]);
-    networkRef.current?.updateAllTracks(selfStream && _.last(selfStream.getVideoTracks()));
+    networkRef.current?.updateAllTracks(selfStream && selfStream?.getAudioTracks()[0]);
+    networkRef.current?.updateAllTracks(selfStream && _.last(selfStream?.getVideoTracks()));
     visualizerRef.current?.setStream(selfStream);
   }, [selfStream]);
 
@@ -255,9 +255,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       return;
     }
 
-    if (selfStream.getAudioTracks().length) {
+    if (selfStream?.getAudioTracks().length) {
       selfStream
-        .getAudioTracks()
+        ?.getAudioTracks()
         .forEach((audio: MediaStreamTrack) => (audio.enabled = !selfUserInfo.mute));
     }
     networkRef.current?.updateInfo(selfUserInfo);

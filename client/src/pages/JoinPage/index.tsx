@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo, useCallback } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { SocketContext, DeviceContext } from "@/contexts";
+import { SocketContext, UserStreamContext } from "@/contexts";
 import { SIOChannel } from "@/shared/socketIO";
 import { DeviceSelector, Button } from "@/components";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
@@ -30,24 +30,18 @@ const JoinPage = ({
   setJoined: (string) => void;
 }): JSX.Element => {
   const { socket } = useContext(SocketContext);
-  const { stream, setStream } = useContext(DeviceContext);
+  const { userStreams, updateUserStream } = useContext(UserStreamContext);
   const { room_id } = useParams<{ room_id: string }>();
   const [notificationState, setNotificationState] = useState({
     text: "",
     isOpen: false,
   } as NotificationState);
 
-  // The password text.
   const [password, setPassword] = useState("");
-  // A boolean to decide whether to disable the password input or not.
   const [isPasswordRequired, setPasswordRequired] = useState(false);
-  // A boolean to decide whether to show the password input or not.
   const [showPasswordInput, setShowPasswordInput] = useState(false);
-  // A boolean to decide whether to show the password choice button or not.
   const [showPasswordChoice, setShowPasswordChoice] = useState(false);
-  // Has all asynchronous data finished loading?
   const [finishedLoading, setFinishedLoading] = useState(false);
-  // A boolean to toggle the visibility of password text.
   const [isPasswordTextVisible, setPasswordTextVisibility] = useState(false);
 
   const history = useHistory();
@@ -62,6 +56,8 @@ const JoinPage = ({
     const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
     return hashHex;
   };
+
+  const selfStream = useMemo(() => userStreams[socket?.id], [socket, userStreams]);
 
   const onJoinClicked = () => {
     if (!socket) {
@@ -96,9 +92,9 @@ const JoinPage = ({
     });
   };
 
-  const onSelect = (_stream) => {
-    setStream(_stream);
-  };
+  const onSelect = useCallback((_stream) => {
+    updateUserStream(socket?.id)(_stream);
+  }, [socket]);
 
   useEffect(() => {
     setVisualizer(new AudioVisualizer(onAudioActivity));
@@ -140,9 +136,9 @@ const JoinPage = ({
 
   useEffect(() => {
     if (visualizer) {
-      visualizer.setStream(stream);
+      visualizer.setStream(selfStream);
     }
-  }, [stream]);
+  }, [selfStream]);
 
   const onAudioActivity = (_gain: number) => {
     setGain(_gain);

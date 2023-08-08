@@ -1,8 +1,11 @@
-import { UserInfo, defaultUserInfo } from "@/contexts/UserInfoContext";
+import { defaultUserInfo } from "@/contexts/UserInfoContext";
 import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
 import { Socket } from "socket.io-client";
 import { DCLabel, Pack } from "@/classes/Network";
 import { SIOChannel } from "@/shared/socketIO";
+
+import type { UserStream } from "@/contexts/UserStreamContext";
+import { UserInfo } from "@/contexts/UserInfoContext";
 
 export interface DataPackage {
   position: [number, number];
@@ -22,11 +25,12 @@ export class PeerProcessor {
   visualizer: AudioVisualizer;
   multiplier: number;
   // a function to update the positions array context
-  addUserInfo: (info) => void;
+  addUserInfo: (info: Partial<UserInfo>) => void;
   selfUserInfo: UserInfo;
   peerUserInfo: UserInfo;
+  updateUserStream: (stream: UserStream) => void;
   screenShareTrigger: boolean;
-  constructor(peerId: string, socket: Socket, addUserInfo: (info) => void) {
+  constructor(peerId: string, socket: Socket, addUserInfo: (info: Partial<UserInfo>) => void, updateUserStream: (stream: UserStream) => void) {
     this.peerId = peerId;
     this.audioSender = null as unknown as RTCRtpSender;
     this.videoSender = null as unknown as RTCRtpSender;
@@ -43,6 +47,7 @@ export class PeerProcessor {
     this.screenShareTrigger = false;
     // the function is re-assigned during the user's initialization
     this.addUserInfo = addUserInfo;
+    this.updateUserStream = updateUserStream;
     this.selfUserInfo = defaultUserInfo;
     this.peerUserInfo = defaultUserInfo;
     this.socket = socket;
@@ -229,21 +234,20 @@ export class PeerProcessor {
     if (!track.readyState) {
       return false;
     }
+
+    const { peerStream, updateUserStream } = this;
+
     switch (track.kind) {
       case "audio":
         // if there's already a track assigned to the stream, remove it
-        if (this.peerStream.getAudioTracks()[0]) {
-          this.peerStream.removeTrack(this.peerStream.getAudioTracks()[0]);
+        if (peerStream.getAudioTracks()[0]) {
+          peerStream.removeTrack(peerStream.getAudioTracks()[0]);
         }
         // add the track
-        this.peerStream.addTrack(track);
-
-        if (this.visualizer) {
-          this.visualizer.setStream(this.peerStream);
-        }
+        peerStream.addTrack(track);
 
         // set the new stream as the audio source and play
-        this.audioPlayer.srcObject = this.peerStream;
+        this.audioPlayer.srcObject = peerStream;
         this.audioPlayer.play();
         this.audioPlayer.autoplay = true;
         break;
@@ -253,7 +257,7 @@ export class PeerProcessor {
         //   this.peerStream.removeTrack(this.peerStream.getVideoTracks()[numVideos - 1]);
         // }
         // add the track
-        this.peerStream.addTrack(track);
+        peerStream.addTrack(track);
 
         // If video player doesn't exist, create.
         this.videoPlayer ??= document.createElement("video");
@@ -266,6 +270,8 @@ export class PeerProcessor {
         this.videoPlayer.autoplay = true;
         break;
     }
+
+    updateUserStream(peerStream);
     return true;
   }
 

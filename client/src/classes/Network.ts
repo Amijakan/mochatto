@@ -5,6 +5,8 @@ import { UserInfo } from "@/contexts/UserInfoContext";
 import { SIOChannel } from "@/shared/socketIO"
 import { Socket } from "socket.io-client";
 
+import type { UserStream } from "@/contexts/UserStreamContext";
+
 export const DCLabel = "DATACHANNEL";
 
 export interface Pack {
@@ -17,20 +19,23 @@ export interface Pack {
 export class Network {
   socket: Socket;
   peerProcessors: PeerProcessor[];
-  addUserInfo: (id: string) => (info: UserInfo) => void;
+  addUserInfo: (id: string) => (info: Partial<UserInfo>) => void;
   selfUserInfo: UserInfo;
-  selfStream: MediaStream;
+  updateUserStream: (id: string) => (stream: UserStream) => void;
+  selfStream: UserStream;
   constructor(
     socket: Socket,
     userName: string,
-    addUserInfo: (id: string) => (info: UserInfo) => void,
+    addUserInfo: (id: string) => (info: Partial<UserInfo>) => void,
     selfUserInfo: UserInfo,
-    selfStream: MediaStream
+    updateUserStream: (id: string) => (stream: UserStream) => void,
+    selfStream: UserStream
   ) {
     this.socket = socket;
     this.peerProcessors = [];
     this.addUserInfo = addUserInfo;
     this.selfUserInfo = selfUserInfo;
+    this.updateUserStream = updateUserStream;
     this.selfStream = selfStream;
 
     // AS A NEW COMER
@@ -145,17 +150,20 @@ export class Network {
 
   // add peerProcessor to the network
   pushToNetwork(id: string): PeerProcessor {
-    const peerProcessor = new PeerProcessor(id, this.socket, this.addUserInfo(id));
+    const peerProcessor = new PeerProcessor(id, this.socket, this.addUserInfo(id), this.updateUserStream(id));
     peerProcessor.initialize(
       this.selfUserInfo,
       new AudioVisualizer(peerProcessor.onAudioActivity.bind(peerProcessor))
     );
     this.peerProcessors.push(peerProcessor);
 
-    // If there are streams that need to be sent, send them to the peer.
-    this.updateAllTracks(this.selfStream?.getAudioTracks()[0]);
+    if (this.selfStream) {
+      // If there are streams that need to be sent, send them to the peer.
+      this.updateAllTracks(this.selfStream.getAudioTracks()[0]);
 
-    this.updateAllTracks(_.last(this.selfStream.getVideoTracks()) as MediaStreamTrack);
+      this.updateAllTracks(_.last(this.selfStream.getVideoTracks()) as MediaStreamTrack);
+    }
+
     // Send the user info to the peer as well.
     this.broadcastInfo(this.selfUserInfo);
     return peerProcessor;

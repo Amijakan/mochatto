@@ -188,9 +188,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       if (id === socket.id) {
         updateSelfUserInfo({ name });
       } else {
-        const newInfo = { ...userInfosRef.current, name };
+        const newInfo = { ...userInfosRef.current[id], name };
         userInfosRef.current = newInfo;
-        addUserInfo(newInfo);
+        addUserInfo(id)(newInfo);
       }
     });
 
@@ -239,10 +239,15 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, [soundEffectPlayer]);
 
   useEffect(() => {
-    networkRef.current?.replaceStream(selfStream);
-    networkRef.current?.updateAllTracks(selfStream && selfStream.getAudioTracks()[0]);
-    networkRef.current?.updateAllTracks(selfStream && _.last(selfStream.getVideoTracks()));
-    visualizerRef.current?.setStream(selfStream);
+    if(selfStream) {
+        networkRef.current?.replaceStream(selfStream);
+        networkRef.current?.updateAllTracks(selfStream.getAudioTracks()[0]);
+        const lastTrack = selfStream.getVideoTracks()[selfStream.getAudioTracks().length - 1];
+        if(lastTrack) {
+            networkRef.current?.updateAllTracks(lastTrack);
+        }
+        visualizerRef.current?.setStream(selfStream);
+    }
   }, [selfStream]);
 
   // Update remote user info  when self info has been changed.
@@ -251,7 +256,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
       return;
     }
 
-    if (selfStream.getAudioTracks().length) {
+    if (selfStream?.getAudioTracks().length) {
       selfStream
         .getAudioTracks()
         .forEach((audio: MediaStreamTrack) => (audio.enabled = !selfUserInfo.mute));

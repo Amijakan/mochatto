@@ -1,7 +1,9 @@
 export class AudioVisualizer {
   onAudioActivity: (gain: number) => void;
+  animationFrameId: number | undefined;
   constructor(_onAudioActivity: (gain: number) => void) {
     this.onAudioActivity = _onAudioActivity;
+    this.animationFrameId = undefined;
   }
 
   setStream(stream: MediaStream): void {
@@ -15,6 +17,10 @@ export class AudioVisualizer {
       return;
     }
 
+    if (this.animationFrameId) {
+      window.cancelAnimationFrame(this.animationFrameId);
+    }
+
     const context = new AudioContext();
     const source = context.createMediaStreamSource(stream);
     const analyser = context.createAnalyser();
@@ -25,10 +31,12 @@ export class AudioVisualizer {
     // Feed mic. audio into the analyser.
     source.connect(analyser);
 
-    // Previous average to compare to current.
-    let prevAverage = 0;
     this.onAudioActivity(0);
-    const draw = () => {
+    this.animationFrameId = window.requestAnimationFrame(this.draw(analyser, 0));
+  }
+
+  draw(analyser: AnalyserNode, prevAverage: number): RequestAnimationFrameCallback {
+    return (_step: number) => {
       const array = new Uint8Array(analyser.fftSize);
       analyser.getByteFrequencyData(array);
 
@@ -39,11 +47,13 @@ export class AudioVisualizer {
         // Update previous average once current average meets threshold
         prevAverage = average;
       }
-      window.requestAnimationFrame(draw);
+
+      this.animationFrameId = window.requestAnimationFrame(this.draw(analyser, prevAverage));
     };
-    draw();
   }
 }
+
+type RequestAnimationFrameCallback = (step: number) => void;
 
 export const isSignificantlyDifferent = (
   prev: number,

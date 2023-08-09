@@ -1,0 +1,23 @@
+@import "@/constants/style";
+
+.video-container {
+  overflow: hidden;
+  margin-top: -1 * $avatar-size - 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+
+  video {
+    position: absolute;
+    max-width: 35rem;
+    max-height: 35rem;
+    border-style: solid;
+    border-width: 5px;
+    border-radius: 1rem;
+    border-color: #ffffff78;
+
+    &[data-disabled=true] {
+      display: none;
+    }
+  }
+}

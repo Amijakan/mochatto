@@ -1,8 +1,8 @@
 import React, { useState, useRef, useCallback, useEffect, useContext } from "react";
-import { SocketContext } from "@/contexts";
+import { SocketContext, UserStreamContext } from "@/contexts";
 import AvatarDOM from "./AvatarDOM";
 import { UserInfo } from "@/contexts/UserInfoContext";
-import { Draggable } from "@/components";
+import { Draggable, ScreenShareBubble } from "@/components";
 
 // for dragging and rendering avatars
 function AvatarCanvas({
@@ -17,6 +17,7 @@ function AvatarCanvas({
   setSoundEffectPlayer: (arg0: HTMLAudioElement) => void;
 }): JSX.Element {
   const { socket } = useContext(SocketContext);
+  const { userStreams } = useContext(UserStreamContext);
   const selfPositionRef = useRef({ x: 100, y: 100 })
 
   // on mouse down, add listeners for moving and mouse up
@@ -55,6 +56,10 @@ function AvatarCanvas({
               active={info.active}
               mute={info.mute}
               setSoundEffectPlayer={setSoundEffectPlayer}
+            />
+            <ScreenShareBubble
+              stream={userStreams[info.id]}
+              isScreenSharing={info.isScreenSharing}
             />
           </Draggable>
         )

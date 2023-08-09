@@ -137,30 +137,26 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const onStartScreenSharing = (_stream: MediaStream) => {
-    const videoPlayer = document.createElement("video");
-    const screenShareTrack = _.last(_stream.getVideoTracks());
-    const mixedStream = selfStream.clone();
+    const screenShareTrack = _.last(_stream.getVideoTracks()),
+      mixedStream = selfStream.clone();
 
     if (!mixedStream || !screenShareTrack) {
       return;
     }
 
-    // Set video player configurations and append to self avatar
-    videoPlayer.srcObject = _stream;
-    videoPlayer.autoplay = true;
-    videoPlayer.muted = true;
-    document.getElementById("avatar-video-" + socket.id)?.appendChild(videoPlayer);
+    mixedStream.addTrack(screenShareTrack);
+    updateSelfUserStream(mixedStream); // Seems reduntant but necessary to run the hook.
 
     if (!selfUserInfo.isScreenSharing) {
       toggleScreenShare();
     }
-    mixedStream.addTrack(screenShareTrack);
-    updateSelfUserStream(mixedStream); // Seems reduntant but necessary to run the hook.
   };
 
   const onEndScreenSharing = () => {
-    selfStreamRef.current?.getVideoTracks().forEach((track: MediaStreamTrack) => track.stop());
-    document.getElementById("avatar-video-" + socket.id)?.firstChild?.remove();
+    selfStreamRef.current?.getVideoTracks().forEach((track: MediaStreamTrack) => {
+      track.stop()
+      selfStreamRef.current?.removeTrack(track);
+    });
   };
 
   const onFailedScreenSharing = (e) => {
@@ -256,13 +252,13 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   // Update remote user info  when self info has been changed.
   useEffect(() => {
-    if (!selfUserInfo) {
+    if (!selfUserInfo || !selfStream) {
       return;
     }
 
     if (selfStream?.getAudioTracks().length) {
       selfStream
-        ?.getAudioTracks()
+        .getAudioTracks()
         .forEach((audio: MediaStreamTrack) => (audio.enabled = !selfUserInfo.mute));
     }
     networkRef.current?.updateInfo(selfUserInfo);

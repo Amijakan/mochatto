@@ -15,6 +15,10 @@ export const UserStreamProvider = ({ children }: { children: JSX.Element }): JSX
   const reducer = (userStreams: { [key: string]: UserStream }, action: Action) => {
     switch (action.type) {
       case "update": {
+        if (!userStreams) {
+          return {};
+        }
+
         return { ...userStreams, [action.id]: action.data };
       }
       case "remove": {

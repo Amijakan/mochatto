@@ -21,7 +21,6 @@ export class PeerProcessor {
   peerId: string;
   peerStream: MediaStream;
   audioPlayer: HTMLAudioElement;
-  videoPlayer: HTMLVideoElement;
   visualizer: AudioVisualizer;
   multiplier: number;
   // a function to update the positions array context
@@ -43,7 +42,6 @@ export class PeerProcessor {
     this.peerStream = new MediaStream();
     this.visualizer = null as unknown as AudioVisualizer;
     this.audioPlayer = new Audio();
-    this.videoPlayer = null as unknown as HTMLVideoElement;
     this.screenShareTrigger = false;
     // the function is re-assigned during the user's initialization
     this.addUserInfo = addUserInfo;
@@ -150,25 +148,6 @@ export class PeerProcessor {
   onDataChannelMessage(event: MessageEvent): void {
     const info = JSON.parse(event.data);
     this.addUserInfo(info);
-    if (info.isScreenSharing) {
-      if (!this.screenShareTrigger) {
-        this.screenShareTrigger = true;
-        this.videoPlayer ??= document.createElement("video");
-        // Append player to div.
-        document.getElementById("avatar-video-" + this.peerId)?.appendChild(this.videoPlayer);
-        this.videoPlayer.muted = true;
-        // Set the new stream as the video source and play.
-        this.videoPlayer.srcObject = this.peerStream;
-        this.videoPlayer.play();
-        this.videoPlayer.autoplay = true;
-      }
-    } else {
-      if (this.screenShareTrigger) {
-        this.screenShareTrigger = false;
-        this.videoPlayer?.remove();
-        this.videoPlayer = null as unknown as HTMLVideoElement;
-      }
-    }
     this.peerUserInfo = info;
     this.updateVolume();
   }
@@ -258,16 +237,6 @@ export class PeerProcessor {
         // }
         // add the track
         peerStream.addTrack(track);
-
-        // If video player doesn't exist, create.
-        this.videoPlayer ??= document.createElement("video");
-        // Append player to div.
-        document.getElementById("avatar-video-" + this.peerId)?.appendChild(this.videoPlayer);
-        // Set the new stream as the video source and play.
-        this.videoPlayer.muted = true;
-        this.videoPlayer.srcObject = this.peerStream;
-        this.videoPlayer.play();
-        this.videoPlayer.autoplay = true;
         break;
     }
 

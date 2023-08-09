@@ -1,5 +1,6 @@
 import jetbrains.buildServer.configs.kotlin.*
 import jetbrains.buildServer.configs.kotlin.buildSteps.script
+import jetbrains.buildServer.configs.kotlin.projectFeatures.githubIssues
 import jetbrains.buildServer.configs.kotlin.triggers.vcs
 
 /*
@@ -29,6 +30,14 @@ version = "2022.10"
 project {
 
     buildType(Build)
+
+    features {
+        githubIssues {
+            id = "PROJECT_EXT_4"
+            displayName = "Amijakan/mochatto"
+            repositoryURL = "https://github.com/Amijakan/mochatto"
+        }
+    }
 }
 
 object Build : BuildType({

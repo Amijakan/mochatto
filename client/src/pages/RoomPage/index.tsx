@@ -59,7 +59,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   // Using ref here for the non-rerendered AudioVisualizer class
   // To-do: rf-369
   const updateSelfUserInfo = (info: Partial<UserInfo>) => {
-    const newInfo = { ...selfUserInfoRef.current, ...info };
+    const newInfo = { ...selfUserInfo, ...info };
 
     selfUserInfoRef.current = newInfo;
     addUserInfo(socket.id)(newInfo);
@@ -80,7 +80,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const toggleMute = useCallback(() => {
-    updateSelfUserInfo({ mute: !selfUserInfo.mute });
+  const mute = !selfUserInfo.mute;
+    updateSelfUserInfo({ mute, isAudible: !mute && selfUserInfo.isAudible});
   }, [selfUserInfo]);
 
   const handleLeaveClicked = useCallback(() => {
@@ -131,9 +132,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     setSoundEffectPlayer(new Audio(leaveSoundSrc));
   };
 
-  const onAudioActivity = (gain: number) => {
-    const newMultiplier = gainToMultiplier(gain);
-    updateSelfUserInfo({ multiplier: selfUserInfoRef.current?.mute ? 0 : newMultiplier });
+  const onAudioActivity = (isAudible: boolean) => {
+    updateSelfUserInfo({ isAudible: !selfUserInfoRef.current?.mute && isAudible });
   };
 
   const onStartScreenSharing = (_stream: MediaStream) => {
@@ -262,7 +262,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
         .forEach((audio: MediaStreamTrack) => (audio.enabled = !selfUserInfo.mute));
     }
     networkRef.current?.updateInfo(selfUserInfo);
-  }, [selfUserInfo, selfStream]);
+  }, [userInfosRef.current, userInfos, selfStream]);
 
   useEffect(() => {
     if (!selfUserInfo) {

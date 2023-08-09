@@ -48,7 +48,7 @@ function AvatarCanvas({
             <AvatarDOM
               id={info.id}
               key={index}
-              multiplier={info.multiplier}
+              isAudible={info.isAudible}
               _backgroundColor={info.avatarColor.background}
               _borderColor={info.avatarColor.border}
               isSelf={info.id === socket.id}

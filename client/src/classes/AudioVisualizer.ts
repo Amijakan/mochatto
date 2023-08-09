@@ -1,7 +1,11 @@
+const audioThreshold = 50;
+const audibleFramerate = 2;
+const inAudibleFramerate = 15;
+
 export class AudioVisualizer {
-  onAudioActivity: (gain: number) => void;
+  onAudioActivity: (isAudible: boolean) => void;
   animationFrameId: number | undefined;
-  constructor(_onAudioActivity: (gain: number) => void) {
+  constructor(_onAudioActivity: (isAudible: boolean) => void) {
     this.onAudioActivity = _onAudioActivity;
     this.animationFrameId = undefined;
   }
@@ -31,39 +35,40 @@ export class AudioVisualizer {
     // Feed mic. audio into the analyser.
     source.connect(analyser);
 
-    this.onAudioActivity(0);
-    this.animationFrameId = window.requestAnimationFrame(this.draw(analyser, 0));
+    this.animationFrameId = window.requestAnimationFrame(this.draw(analyser, true));
   }
 
-  draw(analyser: AnalyserNode, prevAverage: number): RequestAnimationFrameCallback {
+  draw(analyser: AnalyserNode, prevIsAudible: boolean): RequestAnimationFrameCallback {
     return (_step: number) => {
       const array = new Uint8Array(analyser.fftSize);
       analyser.getByteFrequencyData(array);
 
       const sum = array.reduce((current, next) => current + next * 4);
       const average = sum / array.length;
-      if (isSignificantlyDifferent(prevAverage, average, 7)) {
-        this.onAudioActivity(average);
-        // Update previous average once current average meets threshold
-        prevAverage = average;
+
+      let isAudible = prevIsAudible;
+      let isAudibleDirty = false;
+
+      if (average > audioThreshold && !prevIsAudible) {
+        isAudible = true;
+        isAudibleDirty = true;
+      } else if (average <= audioThreshold && prevIsAudible) {
+        isAudible = false;
+        isAudibleDirty = true;
       }
 
-      this.animationFrameId = window.requestAnimationFrame(this.draw(analyser, prevAverage));
+      if (isAudibleDirty) {
+        this.onAudioActivity(isAudible);
+      }
+
+      const framerate = isAudible ? audibleFramerate : inAudibleFramerate;
+
+
+      setTimeout(() => {
+        this.animationFrameId = window.requestAnimationFrame(this.draw(analyser, isAudible));
+      }, 1000 / framerate);
     };
   }
 }
 
 type RequestAnimationFrameCallback = (step: number) => void;
-
-export const isSignificantlyDifferent = (
-  prev: number,
-  curr: number,
-  threshold: number
-): boolean => {
-  return Math.abs(prev - curr) > threshold;
-};
-
-export const gainToMultiplier = (gain: number): number => {
-  const max = 250;
-  return Math.min(gain / max, 1);
-};

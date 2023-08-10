@@ -1,4 +1,4 @@
-const audioThreshold = 50;
+const audioThreshold = 75;
 const audibleFramerate = 2;
 const inAudibleFramerate = 15;
 

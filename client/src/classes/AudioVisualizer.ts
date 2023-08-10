@@ -1,6 +1,6 @@
 const audioThreshold = 75;
-const audibleFramerate = 2;
-const inAudibleFramerate = 15;
+const audibleFramerate = 2; // Lower framerate when sound is already audible.
+const inAudibleFramerate = 15; // Increase the framerate when inaudible to make visualizer more responsive.
 
 export class AudioVisualizer {
   onAudioActivity: (isAudible: boolean) => void;

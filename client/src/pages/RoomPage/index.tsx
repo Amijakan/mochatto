@@ -16,7 +16,7 @@ import { SocketContext, UserInfoContext, UserStreamContext } from "@/contexts";
 import { SIOChannel } from "@/shared/socketIO";
 import { UserInfo } from "@/contexts/UserInfoContext";
 import { Network } from "@/classes/Network";
-import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
+import { AudioVisualizer } from "@/classes/AudioVisualizer";
 import { RoomTemplate } from "@/templates";
 import "./style.scss";
 import joinSoundSrc from "@/assets/sound/join.ogg";

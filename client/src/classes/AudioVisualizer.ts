@@ -63,7 +63,6 @@ export class AudioVisualizer {
 
       const framerate = isAudible ? audibleFramerate : inAudibleFramerate;
 
-
       setTimeout(() => {
         this.animationFrameId = window.requestAnimationFrame(this.draw(analyser, isAudible));
       }, 1000 / framerate);

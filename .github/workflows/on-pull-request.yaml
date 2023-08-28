@@ -12,6 +12,16 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '18'
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path-client
+        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: client/${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: client-${{ runner.os }}-yarn-${{ hashFiles('client/yarn.lock') }}
+          restore-keys: |
+            client-${{ runner.os }}-yarn-
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Install Playwright
@@ -36,6 +46,16 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '18'
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path-client
+        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: client/${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: client-${{ runner.os }}-yarn-${{ hashFiles('client/yarn.lock') }}
+          restore-keys: |
+            client-${{ runner.os }}-yarn-
       - name: Install modules
         run: yarn install --frozen-lockfile 
       - name: Run ESLint
@@ -54,6 +74,16 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '18'
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path-server
+        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: server/${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: server-${{ runner.os }}-yarn-${{ hashFiles('server/yarn.lock') }}
+          restore-keys: |
+            server-${{ runner.os }}-yarn-
       - name: Install modules
         run: yarn install --frozen-lockfile 
       - name: Run TSLint

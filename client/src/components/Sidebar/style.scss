@@ -71,7 +71,7 @@
 
 .sidebar[data-open=open] {
   border-radius: 16px;
-  height: calc(100vh - 2 * $spacing);
+  height: calc(100dvh - 2 * $spacing);
   min-width: 300px;
   width: 30%;
 }
@@ -90,7 +90,7 @@
 
 @media (max-width: $breakpoint-tablet) {
   .sidebar[data-open=open] {
-    height: calc(100vh - 6rem);
+    height: calc(100dvh - 6rem);
     width: calc(100vw - 1rem);
   }
 }

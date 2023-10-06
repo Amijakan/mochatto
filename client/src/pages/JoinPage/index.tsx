@@ -3,7 +3,7 @@ import { useParams, useHistory } from "react-router-dom";
 import { SocketContext, UserStreamContext } from "@/contexts";
 import { SIOChannel } from "@/shared/socketIO";
 import { DeviceSelector, Button } from "@/components";
-import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
+import { AudioVisualizer } from "@/classes/AudioVisualizer";
 import PropTypes from "prop-types";
 import { Div, Notification, Icon } from "atomize";
 import { Card, Text, Input, Label } from "@/components/atomize_wrapper";
@@ -46,7 +46,7 @@ const JoinPage = ({
 
   const history = useHistory();
 
-  const [gain, setGain] = useState(0);
+  const [isAudible, setIsAudible] = useState(false);
   const [visualizer, setVisualizer] = useState(null as unknown as AudioVisualizer);
 
   const sha256 = async (message: string) => {
@@ -140,8 +140,8 @@ const JoinPage = ({
     }
   }, [selfStream]);
 
-  const onAudioActivity = (_gain: number) => {
-    setGain(_gain);
+  const onAudioActivity = (isAudible: boolean) => {
+    setIsAudible(isAudible);
   };
 
   const togglePasswordRequirement = () => {
@@ -154,7 +154,7 @@ const JoinPage = ({
       <div
         className="visualizer"
         style={{
-          width: (gainToMultiplier(gain) * 100).toString() + "%",
+          width: isAudible ? "100%" : "0%",
         }}
       />
     );

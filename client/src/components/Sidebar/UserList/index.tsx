@@ -25,7 +25,7 @@ const UserList = () => {
         <AvatarDOM
           id={userInfo.id}
           size="small"
-          multiplier={0}
+          isAudible={false}
           _backgroundColor={userInfo.avatarColor.background}
           _borderColor={userInfo.avatarColor.border}
           isSelf={false}

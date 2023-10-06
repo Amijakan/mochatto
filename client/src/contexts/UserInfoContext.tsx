@@ -9,7 +9,7 @@ export type UserInfo = {
     background: string;
     border: string;
   };
-  multiplier: number;
+  isAudible: boolean;
   position: Position;
   active: boolean;
   mute: boolean;
@@ -20,7 +20,7 @@ export const defaultUserInfo: UserInfo = {
   id: "",
   name: "",
   avatarColor: { background: "rgb(0 0 0 / 0%)", border: "rgb(0 0 0 / 0%)" },
-  multiplier: 0,
+  isAudible: false,
   position: [100, 100] as Position,
   active: true,
   mute: false,

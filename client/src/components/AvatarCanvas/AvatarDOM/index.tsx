@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Icon } from "atomize";
 import MicOffIcon from "@material-ui/icons/MicOff";
 import cx from "classnames";
@@ -11,7 +11,7 @@ import "./style.scss";
 
 function AvatarDOM({
   isSelf,
-  multiplier = 1,
+  isAudible = false,
   _backgroundColor,
   _borderColor,
   initial,
@@ -22,7 +22,7 @@ function AvatarDOM({
   setSoundEffectPlayer
 }: {
   isSelf: boolean;
-  multiplier?: number;
+  isAudible?: boolean;
   _backgroundColor: string;
   _borderColor: string;
   initial: string;
@@ -33,12 +33,14 @@ function AvatarDOM({
   setSoundEffectPlayer?: (arg0: HTMLAudioElement) => void;
 }): JSX.Element {
   const [isRendered, setIsRendered] = useState(false);
-  function calculateSpecificStyles() {
+
+  const avatarStyle = useCallback(() => {
+    const boxShadow = isAudible ? "0 0 0 0.5rem " + _borderColor : "0 0 0 0 " + _borderColor;
     return {
-      boxShadow: "0 0 0 " + multiplier.toString() + "rem " + _borderColor,
+      boxShadow,
       background: _backgroundColor,
     };
-  }
+  }, [isAudible]);
 
   useEffect(() => {
     setIsRendered(true);
@@ -82,7 +84,7 @@ function AvatarDOM({
       className={cx("avatar", "avatar-outer", { "no-show": !isRendered })}
       data-size={size}
       data-self={isSelf && "self"}
-      style={calculateSpecificStyles()}
+      style={avatarStyle()}
     >
       <div className="avatar-initial">{initial}</div>
       <div className="avatar-active">{renderStatusIcon()}</div>
@@ -98,7 +100,7 @@ const areEqual = (prev, next) => {
     prev.initial === next.initial &&
     prev.active === next.active &&
     prev.mute === next.mute &&
-    prev.multiplier === next.multiplier
+    prev.isAudible === next.isAudible
   );
 };
 

@@ -1,5 +1,5 @@
 import { defaultUserInfo } from "@/contexts/UserInfoContext";
-import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
+import { AudioVisualizer } from "@/classes/AudioVisualizer";
 import { Socket } from "socket.io-client";
 import { DCLabel, Pack } from "@/classes/Network";
 import { SIOChannel } from "@/shared/socketIO";
@@ -22,7 +22,7 @@ export class PeerProcessor {
   peerStream: MediaStream;
   audioPlayer: HTMLAudioElement;
   visualizer: AudioVisualizer;
-  multiplier: number;
+  isAudible: boolean;
   // a function to update the positions array context
   addUserInfo: (info: Partial<UserInfo>) => void;
   selfUserInfo: UserInfo;
@@ -38,7 +38,7 @@ export class PeerProcessor {
     this.peerConnection = new RTCPeerConnection({
       iceServers: [{ urls: "stun:mochatto.com:3478" }],
     });
-    this.multiplier = 0;
+    this.isAudible = false;
     this.peerStream = new MediaStream();
     this.visualizer = null as unknown as AudioVisualizer;
     this.audioPlayer = new Audio();
@@ -123,9 +123,9 @@ export class PeerProcessor {
     this.visualizer = visualizer;
   }
 
-  onAudioActivity(gain: number): void {
-    this.multiplier = gainToMultiplier(gain);
-    const newInfo = { multiplier: this.multiplier };
+  onAudioActivity(isAudible: boolean): void {
+    this.isAudible = isAudible;
+    const newInfo = { isAudible };
     this.addUserInfo(newInfo);
   }
 

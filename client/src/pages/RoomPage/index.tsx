@@ -16,7 +16,7 @@ import { SocketContext, UserInfoContext, UserStreamContext } from "@/contexts";
 import { SIOChannel } from "@/shared/socketIO";
 import { UserInfo } from "@/contexts/UserInfoContext";
 import { Network } from "@/classes/Network";
-import { AudioVisualizer, gainToMultiplier } from "@/classes/AudioVisualizer";
+import { AudioVisualizer } from "@/classes/AudioVisualizer";
 import { RoomTemplate } from "@/templates";
 import "./style.scss";
 import joinSoundSrc from "@/assets/sound/join.ogg";
@@ -48,7 +48,10 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   const networkRef = useRef(null as unknown as Network);
   const [soundEffectPlayer, setSoundEffectPlayer] = useState<HTMLAudioElement | null>(null);
 
-  const selfUserInfo = useMemo(() => userInfosRef.current[socket.id], [userInfosRef.current[socket.id]]);
+  const selfUserInfo = useMemo(() => {
+    return userInfos[socket.id];
+  }, [userInfos[socket.id]]);
+
   const selfStream = useMemo(() => userStreams[socket.id], [userStreams[socket.id]]);
 
   // when new input is selected update all tracks and send a new offer out
@@ -80,7 +83,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   };
 
   const toggleMute = useCallback(() => {
-    updateSelfUserInfo({ mute: !selfUserInfo.mute });
+    const mute = !selfUserInfo.mute;
+    updateSelfUserInfo({ mute, isAudible: !mute && selfUserInfo.isAudible });
   }, [selfUserInfo]);
 
   const handleLeaveClicked = useCallback(() => {
@@ -131,9 +135,8 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     setSoundEffectPlayer(new Audio(leaveSoundSrc));
   };
 
-  const onAudioActivity = (gain: number) => {
-    const newMultiplier = gainToMultiplier(gain);
-    updateSelfUserInfo({ multiplier: selfUserInfoRef.current?.mute ? 0 : newMultiplier });
+  const onAudioActivity = (isAudible: boolean) => {
+    updateSelfUserInfo({ isAudible: !selfUserInfoRef.current?.mute && isAudible });
   };
 
   const onStartScreenSharing = (_stream: MediaStream) => {
@@ -154,7 +157,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
 
   const onEndScreenSharing = () => {
     selfStreamRef.current?.getVideoTracks().forEach((track: MediaStreamTrack) => {
-      track.stop()
+      track.stop();
       selfStreamRef.current?.removeTrack(track);
     });
   };
@@ -168,7 +171,9 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   // open all listeners on render
   useEffect(() => {
     updateSelfUserInfo({ name, id: socket.id });
-    updateNetwork(new Network(socket, name, addUserInfo, selfUserInfo, updateUserStream, selfStream));
+    updateNetwork(
+      new Network(socket, name, addUserInfo, selfUserInfo, updateUserStream, selfStream)
+    );
 
     socket.on(SIOChannel.JOIN, ({ name }) => {
       onJoin(name);
@@ -239,14 +244,14 @@ function RoomPage({ name }: { name: string }): JSX.Element {
   }, [soundEffectPlayer]);
 
   useEffect(() => {
-    if(selfStream) {
-        networkRef.current?.replaceStream(selfStream);
-        networkRef.current?.updateAllTracks(selfStream.getAudioTracks()[0]);
-        const lastTrack = _.last(selfStream.getVideoTracks()) as MediaStreamTrack;
-        if(lastTrack) {
-            networkRef.current?.updateAllTracks(lastTrack);
-        }
-        visualizerRef.current?.setStream(selfStream);
+    if (selfStream) {
+      networkRef.current?.replaceStream(selfStream);
+      networkRef.current?.updateAllTracks(selfStream.getAudioTracks()[0]);
+      const lastTrack = _.last(selfStream.getVideoTracks()) as MediaStreamTrack;
+      if (lastTrack) {
+        networkRef.current?.updateAllTracks(lastTrack);
+      }
+      visualizerRef.current?.setStream(selfStream);
     }
   }, [selfStream]);
 
@@ -268,7 +273,7 @@ function RoomPage({ name }: { name: string }): JSX.Element {
     if (!selfUserInfo) {
       return;
     }
-    
+
     networkRef.current?.setDeaf(!selfUserInfo.active);
   }, [selfUserInfo]);
 
